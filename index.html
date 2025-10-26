@@ -674,13 +674,10 @@
         auth.onAuthStateChanged((user) => {
             currentUser = user;
             renderAuthSection();
+            loadEnemies();  // Load enemies regardless of auth state
             
             if (user) {
-                loadEnemies();
                 checkForLocalData();
-            } else {
-                document.getElementById('mainContent').innerHTML = '';
-                document.getElementById('controls').classList.add('hidden');
             }
         });
 
@@ -704,8 +701,9 @@
             } else {
                 authSection.innerHTML = `
                     <div class="sign-in-prompt">
-                        <h2>Welcome to Enemy Design Database</h2>
-                        <p>Sign in with Google to add and edit enemies. Anyone can view the database.</p>
+                        <h2>Welcome to Enemy Design Database!</h2>
+                        <p>Currently, only Tri can add enemies but anyone can view the database.</p>
+                        <p>You can check me out here: https://linktr.ee/trigrows</p>
                         <button class="btn" onclick="signIn()">Sign in with Google</button>
                     </div>
                 `;
@@ -760,7 +758,6 @@
                 renderEnemies();
                 updateCount();
                 updateVariantDropdown();
-                document.getElementById('mainContent').innerHTML = '';
                 document.getElementById('controls').classList.remove('hidden');
             });
         }
