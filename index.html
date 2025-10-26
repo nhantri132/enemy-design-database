@@ -391,6 +391,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="enemyFaction">Enemy Faction</label>
+                    <input type="text" id="enemyFaction" placeholder="e.g., Undead Legion, Crimson Fleet, etc.">
+                </div>
+                
+                <div class="form-group">
                     <label for="enemyType">Enemy Type</label>
                     <select id="enemyType">
                         <option value="">Select type...</option>
@@ -614,6 +619,7 @@
                 document.getElementById('gameName').value = enemy.game;
                 document.getElementById('enemyType').value = enemy.type || '';
                 document.getElementById('enemySize').value = enemy.size || '';
+                document.getElementById('enemyFaction').value = enemy.faction || '';
                 document.getElementById('enemyWeapon').value = enemy.weapon || '';
                 document.getElementById('referenceLink').value = enemy.referenceLink || '';
                 document.getElementById('videoLink').value = enemy.videoLink || '';
@@ -665,6 +671,7 @@
                 let badges = '';
                 if (enemy.type) badges += `<span class="badge type">${enemy.type}</span>`;
                 if (enemy.size) badges += `<span class="badge size">${enemy.size}</span>`;
+                if (enemy.faction) badges += `<span class="badge">${enemy.faction}</span>`;
                 if (enemy.weapon) badges += `<span class="badge weapon">${enemy.weapon}</span>`;
                 
                 let links = '';
@@ -710,6 +717,7 @@
                 game: document.getElementById('gameName').value,
                 type: document.getElementById('enemyType').value,
                 size: document.getElementById('enemySize').value,
+                faction: document.getElementById('enemyFaction').value,
                 weapon: document.getElementById('enemyWeapon').value,
                 referenceLink: document.getElementById('referenceLink').value,
                 videoLink: document.getElementById('videoLink').value,
