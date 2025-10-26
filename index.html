@@ -290,10 +290,57 @@
             transform: translateY(-2px);
         }
 
+        .enemy-card:nth-child(even) {
+            background: #f8f9fa;
+        }
+
         .enemy-card:last-child {
             margin-bottom: 0;
         }
 
+        .enemy-compact-info {
+            /* This stays visible always */
+        }
+
+        .enemy-detailed-info {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .enemy-detailed-info.expanded {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .expand-button {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            width: fit-content;
+        }
+
+        .expand-button:hover {
+            background: #bdc3c7;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+        
         .enemy-header {
             display: flex;
             justify-content: space-between;
@@ -769,6 +816,22 @@
             document.getElementById('enemyCount').textContent = count;
         }
 
+        function toggleEnemyDetails(key) {
+            const details = document.getElementById(`details-${key}`);
+            const icon = document.getElementById(`icon-${key}`);
+            const text = document.getElementById(`text-${key}`);
+            
+            if (details.classList.contains('expanded')) {
+                details.classList.remove('expanded');
+                icon.classList.remove('expanded');
+                text.textContent = 'Show Details';
+            } else {
+                details.classList.add('expanded');
+                icon.classList.add('expanded');
+                text.textContent = 'Hide Details';
+            }
+        }
+        
         function updateVariantDropdown() {
             const select = document.getElementById('variantEnemy');
             const currentSelection = select.value;
@@ -1442,16 +1505,31 @@
                 
                 return `
                     <div class="enemy-card" id="enemy-${enemy.key}">
-                        <div class="enemy-header">
-                            <div class="enemy-title">
-                                <h3>${enemy.name}</h3>
-                                <div class="enemy-game">${enemy.game}</div>
+                        <div class="enemy-compact-info">
+                            <div class="enemy-header">
+                                <div class="enemy-title">
+                                    <h3>${enemy.name}</h3>
+                                    <div class="enemy-game">${enemy.game}</div>
+                                </div>
                             </div>
+                            ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
+                            ${links ? `<div class="enemy-links">${links}</div>` : ''}
+                            
+                            ${complexSections || enemy.notes ? `
+                                <button class="expand-button" onclick="toggleEnemyDetails('${enemy.key}')">
+                                    <span class="expand-icon" id="icon-${enemy.key}">▼</span>
+                                    <span id="text-${enemy.key}">Show Details</span>
+                                </button>
+                            ` : ''}
                         </div>
-                        ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
-                        ${enemy.notes ? `<div class="enemy-notes">${enemy.notes}</div>` : ''}
-                        ${links ? `<div class="enemy-links">${links}</div>` : ''}
-                        ${complexSections}
+                        
+                        ${complexSections || enemy.notes ? `
+                            <div class="enemy-detailed-info" id="details-${enemy.key}">
+                                ${enemy.notes ? `<div class="enemy-notes" style="margin-top: 15px;">${enemy.notes}</div>` : ''}
+                                ${complexSections}
+                            </div>
+                        ` : ''}
+                        
                         ${actions}
                     </div>
                 `;
