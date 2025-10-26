@@ -970,6 +970,35 @@
             input.value = currentDisplay;
         }
 
+        function findAllVariants(enemyKey) {
+            const variantNetwork = new Set();
+            const visited = new Set();
+            
+            function explore(key) {
+                if (visited.has(key) || !enemies[key]) return;
+                visited.add(key);
+                
+                // Check if this enemy links to others
+                if (enemies[key].variant && enemies[key].variant !== '') {
+                    variantNetwork.add(enemies[key].variant);
+                    explore(enemies[key].variant);
+                }
+                
+                // Find enemies that link to this one (reverse lookup)
+                Object.keys(enemies).forEach(otherKey => {
+                    if (enemies[otherKey].variant === key) {
+                        variantNetwork.add(otherKey);
+                        explore(otherKey);
+                    }
+                });
+            }
+            
+            explore(enemyKey);
+            variantNetwork.delete(enemyKey); // Remove self
+            
+            return Array.from(variantNetwork);
+        }
+        
         // Offensive Actions
         function addOffensiveAction() {
             const action = {
@@ -1629,15 +1658,27 @@
                     `;
                 }
                 
-                // Variant
-                if (enemy.variant && enemies[enemy.variant]) {
-                    const variantEnemy = enemies[enemy.variant];
+                // Variants - show entire network
+                const allVariants = findAllVariants(enemy.key);
+                if (allVariants.length > 0) {
+                    const variantLinks = allVariants
+                        .filter(key => enemies[key]) // Make sure enemy still exists
+                        .map(key => {
+                            const variantEnemy = enemies[key];
+                            return `
+                                <a href="#" class="variant-link" onclick="event.preventDefault(); scrollToEnemy('${key}')" style="margin-right: 8px; margin-bottom: 8px; display: inline-block;">
+                                    → ${variantEnemy.name} (${variantEnemy.game})
+                                </a>
+                            `;
+                        })
+                        .join('');
+                    
                     complexSections += `
                         <div class="enemy-section">
-                            <h4>🔗 Variant</h4>
-                            <a href="#" class="variant-link" onclick="event.preventDefault(); scrollToEnemy('${enemy.variant}')">
-                                → ${variantEnemy.name} (${variantEnemy.game})
-                            </a>
+                            <h4>🔗 Variants (${allVariants.length})</h4>
+                            <div style="display: flex; flex-wrap: wrap;">
+                                ${variantLinks}
+                            </div>
                         </div>
                     `;
                 }
