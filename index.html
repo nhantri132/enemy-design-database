@@ -793,6 +793,7 @@
         function addOffensiveAction() {
             const action = {
                 id: Date.now(),
+                name: '',
                 type: '',
                 range: '',
                 comboCount: '',
@@ -823,6 +824,10 @@
                     <div class="list-item-header">
                         <strong>Action ${offensiveActions.indexOf(action) + 1}</strong>
                         <button type="button" class="btn btn-small btn-danger" onclick="removeOffensiveAction(${action.id})">Remove</button>
+                    </div>
+                    <div class="field-inline" style="margin-bottom: 10px;">
+                        <label>Action Name</label>
+                        <input type="text" value="${action.name}" onchange="updateOffensiveAction(${action.id}, 'name', this.value)" placeholder="e.g., Slash, Fireball, Charge">
                     </div>
                     <div class="list-item-grid">
                         <div class="field-inline">
@@ -1290,7 +1295,7 @@
                             <h4>⚔️ Offensive Actions (${enemy.offensiveActions.length})</h4>
                             ${enemy.offensiveActions.map(a => `
                                 <div class="action-display">
-                                    <strong>${a.type || 'Action'}:</strong> 
+                                    <strong>${a.name || a.type || 'Action'}:</strong> 
                                     ${a.range ? `Range: ${a.range}` : ''} 
                                     ${a.comboCount ? `| Combo: ${a.comboCount}` : ''} 
                                     ${a.windupTime ? `| Windup: ${a.windupTime}` : ''}
