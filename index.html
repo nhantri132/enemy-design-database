@@ -506,14 +506,101 @@
         .variant-link:hover {
             background: #d4ebf2;
         }
+
+        .about-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .about-link:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #000;
+        }
+        
     </style>
 </head>
 <body>
     <header>
         <div class="container">
             <h1>🎮 Enemy Design Database</h1>
+            <a class="about-link" onclick="openAbout()">ℹ️ About</a>
         </div>
     </header>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeAbout()">&times;</span>
+            <h2>About Enemy Design Database</h2>
+            <p style="margin-top: 15px; line-height: 1.8;">
+                This database is a comprehensive reference tool for cataloging and analyzing enemy designs across video games.
+            </p>
+            <h3 style="margin-top: 20px; color: #2c3e50;">Purpose</h3>
+            <p style="margin-top: 10px; line-height: 1.8;">
+                Document enemy combat behaviors, movement patterns, and design philosophies to build a searchable library of combat design patterns.
+            </p>
+            <h3 style="margin-top: 20px; color: #2c3e50;">How to Use</h3>
+            <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
+                <li><strong>Anyone can view</strong> all enemy entries</li>
+                <li><strong>Currently, only Tri</strong> can add, edit, or delete entries</li>
+                <li><strong>Search</strong> across all fields (name, game, damage types, actions, etc.)</li>
+                <li><strong>Click "Show Details"</strong> to expand enemy information</li>
+                <li>Check me out here:<strong> linktr.ee/trigrows</strong></li>
+            </ul>
+            <h3 style="margin-top: 20px; color: #2c3e50;">Contact</h3>
+            <p style="margin-top: 10px; line-height: 1.8;">
+                Created by Tri Nguyen. For questions or suggestions, reach out via email.
+            </p>
+        </div>
+    </div>
 
     <div class="container">
         <div id="authSection"></div>
@@ -545,18 +632,18 @@
                 <!-- Basic Info -->
                 <div class="form-group">
                     <label for="enemyName">Enemy Name *</label>
-                    <input type="text" id="enemyName" required>
+                    <input type="text" id="enemyName" placeholder="What's the enemy's name?" required>
                 </div>
 
                 <div class="form-group">
                     <label for="gameName">Game *</label>
-                    <input type="text" id="gameName" required>
+                    <input type="text" id="gameName" placeholder="What game are they from?" required>
                 </div>
 
                 <div class="form-group">
                     <label for="enemyType">Enemy Type</label>
                     <select id="enemyType">
-                        <option value="">Select type...</option>
+                        <option value="">How tough are they?</option>
                         <option value="Regular">Regular</option>
                         <option value="Elite">Elite</option>
                         <option value="Mini-Boss">Mini-Boss</option>
@@ -567,7 +654,7 @@
                 <div class="form-group">
                     <label for="enemySize">Enemy Size</label>
                     <select id="enemySize">
-                        <option value="">Select size...</option>
+                        <option value="">How big are they? Medium is the size of the player.</option>
                         <option value="Tiny">Tiny</option>
                         <option value="Small">Small</option>
                         <option value="Medium">Medium</option>
@@ -576,7 +663,6 @@
                         <option value="Gargantuan">Gargantuan</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="enemyFaction">Enemy Faction</label>
                     <input type="text" id="enemyFaction" placeholder="e.g., Undead Legion, Crimson Fleet, etc.">
@@ -674,9 +760,8 @@
                 <!-- Variant -->
                 <div class="form-group">
                     <label for="variantEnemy">Variant (Link to similar enemy)</label>
-                    <select id="variantEnemy">
-                        <option value="">None</option>
-                    </select>
+                    <input type="text" id="variantEnemy" list="variantOptions" placeholder="Type to search for an enemy...">
+                    <datalist id="variantOptions"></datalist>
                 </div>
 
                 <div class="form-actions">
@@ -799,6 +884,22 @@
             alert(`Successfully migrated ${migrated} enemies to the cloud!`);
         }
 
+        function openAbout() {
+            document.getElementById('aboutModal').classList.add('active');
+        }
+
+        function closeAbout() {
+            document.getElementById('aboutModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('aboutModal');
+            if (event.target === modal) {
+                closeAbout();
+            }
+        }
+
         function loadEnemies() {
             const enemiesRef = database.ref('enemies');
             
@@ -834,10 +935,11 @@
         }
         
         function updateVariantDropdown() {
-            const select = document.getElementById('variantEnemy');
-            const currentSelection = select.value;
+            const datalist = document.getElementById('variantOptions');
+            const input = document.getElementById('variantEnemy');
+            const currentValue = input.value;
             
-            select.innerHTML = '<option value="">None</option>';
+            datalist.innerHTML = '<option value="">None</option>';
             
             Object.keys(enemies).forEach(key => {
                 if (key !== editingKey) {
@@ -845,11 +947,11 @@
                     const option = document.createElement('option');
                     option.value = key;
                     option.textContent = `${enemy.name} (${enemy.game})`;
-                    select.appendChild(option);
+                    datalist.appendChild(option);
                 }
             });
             
-            select.value = currentSelection;
+            input.value = currentValue;
         }
 
         // Offensive Actions
