@@ -118,6 +118,11 @@
             cursor: not-allowed;
         }
 
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
         .btn-danger {
             background: #e74c3c;
         }
@@ -148,6 +153,8 @@
             border-radius: 8px;
             margin-bottom: 30px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .form-section.hidden {
@@ -182,7 +189,7 @@
         }
 
         .form-group textarea {
-            min-height: 120px;
+            min-height: 80px;
             resize: vertical;
         }
 
@@ -190,6 +197,78 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+        }
+
+        /* Complex sections */
+        .complex-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .complex-section h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .list-item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .field-inline {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-inline label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 3px;
+        }
+
+        .field-inline input,
+        .field-inline select {
+            padding: 6px;
+            font-size: 13px;
+        }
+
+        .trait-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .empty-list {
+            color: #95a5a6;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
         }
 
         .enemy-list {
@@ -254,6 +333,30 @@
         .badge.type { background: #3498db; color: white; }
         .badge.size { background: #9b59b6; color: white; }
         .badge.weapon { background: #e67e22; color: white; }
+
+        .enemy-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .enemy-section h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .action-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .action-display strong {
+            color: #2c3e50;
+        }
 
         .enemy-notes {
             margin-top: 10px;
@@ -338,6 +441,22 @@
             padding: 40px;
             color: #7f8c8d;
         }
+
+        .variant-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #e8f4f8;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .variant-link:hover {
+            background: #d4ebf2;
+        }
     </style>
 </head>
 <body>
@@ -348,10 +467,8 @@
     </header>
 
     <div class="container">
-        <!-- Auth Section -->
         <div id="authSection"></div>
 
-        <!-- Migration Banner -->
         <div id="migrationBanner" class="migration-banner hidden">
             <div>
                 <strong>Local data found!</strong> You have enemies saved locally. Migrate them to the cloud?
@@ -359,27 +476,24 @@
             <button class="btn btn-success" onclick="migrateLocalData()">Migrate Now</button>
         </div>
 
-        <!-- Stats -->
         <div class="stats">
             <h3 id="enemyCount">-</h3>
             <p>Enemies Cataloged</p>
         </div>
 
-        <!-- Main Content (hidden until loaded) -->
         <div id="mainContent" class="loading">
             <p>Loading...</p>
         </div>
 
-        <!-- Controls -->
         <div class="controls hidden" id="controls">
             <input type="text" id="searchBox" class="search-box" placeholder="Search by enemy name or game...">
             <button class="btn" id="addNewBtn" disabled>+ Add New Enemy</button>
         </div>
 
-        <!-- Form -->
         <div class="form-section hidden" id="formSection">
             <h2 id="formTitle">Add New Enemy</h2>
             <form id="enemyForm">
+                <!-- Basic Info -->
                 <div class="form-group">
                     <label for="enemyName">Enemy Name *</label>
                     <input type="text" id="enemyName" required>
@@ -390,11 +504,6 @@
                     <input type="text" id="gameName" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="enemyFaction">Enemy Faction</label>
-                    <input type="text" id="enemyFaction" placeholder="e.g., Undead Legion, Crimson Fleet, etc.">
-                </div>
-                
                 <div class="form-group">
                     <label for="enemyType">Enemy Type</label>
                     <select id="enemyType">
@@ -417,6 +526,11 @@
                         <option value="Huge">Huge</option>
                         <option value="Gargantuan">Gargantuan</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="enemyFaction">Enemy Faction</label>
+                    <input type="text" id="enemyFaction" placeholder="e.g., Undead Legion, Crimson Fleet, etc.">
                 </div>
 
                 <div class="form-group">
@@ -454,6 +568,68 @@
                     <textarea id="notes" placeholder="Your observations about this enemy's design..."></textarea>
                 </div>
 
+                <!-- Offensive Actions -->
+                <div class="complex-section">
+                    <h3>
+                        Offensive Actions
+                        <button type="button" class="btn btn-small btn-success" onclick="addOffensiveAction()">+ Add Action</button>
+                    </h3>
+                    <div id="offensiveActionsList"></div>
+                </div>
+
+                <!-- Defensive Actions -->
+                <div class="complex-section">
+                    <h3>
+                        Defensive Actions
+                        <button type="button" class="btn btn-small btn-success" onclick="addDefensiveAction()">+ Add Action</button>
+                    </h3>
+                    <div id="defensiveActionsList"></div>
+                </div>
+
+                <!-- Support Actions -->
+                <div class="complex-section">
+                    <h3>
+                        Support Actions
+                        <button type="button" class="btn btn-small btn-success" onclick="addSupportAction()">+ Add Action</button>
+                    </h3>
+                    <div id="supportActionsList"></div>
+                </div>
+
+                <!-- Reactions -->
+                <div class="complex-section">
+                    <h3>
+                        Reactions
+                        <button type="button" class="btn btn-small btn-success" onclick="addReaction()">+ Add Reaction</button>
+                    </h3>
+                    <div id="reactionsList"></div>
+                </div>
+
+                <!-- Locomotion -->
+                <div class="complex-section">
+                    <h3>
+                        Locomotion
+                        <button type="button" class="btn btn-small btn-success" onclick="addLocomotion()">+ Add Locomotion</button>
+                    </h3>
+                    <div id="locomotionList"></div>
+                </div>
+
+                <!-- Special Traits -->
+                <div class="complex-section">
+                    <h3>
+                        Special Traits
+                        <button type="button" class="btn btn-small btn-success" onclick="addSpecialTrait()">+ Add Trait</button>
+                    </h3>
+                    <div id="specialTraitsList"></div>
+                </div>
+
+                <!-- Variant -->
+                <div class="form-group">
+                    <label for="variantEnemy">Variant (Link to similar enemy)</label>
+                    <select id="variantEnemy">
+                        <option value="">None</option>
+                    </select>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn" id="saveBtn">Save Enemy</button>
                     <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
@@ -461,17 +637,14 @@
             </form>
         </div>
 
-        <!-- Enemy List -->
         <div class="enemy-list" id="enemyList"></div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAyBO6IwnOdqFbC7Hf65sifksRDaKnjZmM",
             authDomain: "enemy-design-database.firebaseapp.com",
@@ -482,17 +655,22 @@
             appId: "1:652811505513:web:cbe13d7665b4fa991177f8"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
 
-        // State
         let currentUser = null;
         let enemies = {};
         let editingKey = null;
 
-        // Auth state observer
+        // Temporary storage for complex lists
+        let offensiveActions = [];
+        let defensiveActions = [];
+        let supportActions = [];
+        let reactions = [];
+        let locomotion = [];
+        let specialTraits = [];
+
         auth.onAuthStateChanged((user) => {
             currentUser = user;
             renderAuthSection();
@@ -506,7 +684,6 @@
             }
         });
 
-        // Render auth section
         function renderAuthSection() {
             const authSection = document.getElementById('authSection');
             
@@ -536,7 +713,6 @@
             }
         }
 
-        // Sign in
         function signIn() {
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider).catch((error) => {
@@ -544,12 +720,10 @@
             });
         }
 
-        // Sign out
         function signOut() {
             auth.signOut();
         }
 
-        // Check for local data
         function checkForLocalData() {
             const localData = localStorage.getItem('enemyDatabase');
             if (localData) {
@@ -560,7 +734,6 @@
             }
         }
 
-        // Migrate local data
         function migrateLocalData() {
             const localData = localStorage.getItem('enemyDatabase');
             if (!localData) return;
@@ -579,7 +752,6 @@
             alert(`Successfully migrated ${migrated} enemies to the cloud!`);
         }
 
-        // Load enemies from Firebase
         function loadEnemies() {
             const enemiesRef = database.ref('enemies');
             
@@ -587,18 +759,405 @@
                 enemies = snapshot.val() || {};
                 renderEnemies();
                 updateCount();
+                updateVariantDropdown();
                 document.getElementById('mainContent').innerHTML = '';
                 document.getElementById('controls').classList.remove('hidden');
             });
         }
 
-        // Update count
         function updateCount() {
             const count = Object.keys(enemies).length;
             document.getElementById('enemyCount').textContent = count;
         }
 
-        // Show form
+        function updateVariantDropdown() {
+            const select = document.getElementById('variantEnemy');
+            const currentSelection = select.value;
+            
+            select.innerHTML = '<option value="">None</option>';
+            
+            Object.keys(enemies).forEach(key => {
+                if (key !== editingKey) {
+                    const enemy = enemies[key];
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = `${enemy.name} (${enemy.game})`;
+                    select.appendChild(option);
+                }
+            });
+            
+            select.value = currentSelection;
+        }
+
+        // Offensive Actions
+        function addOffensiveAction() {
+            const action = {
+                id: Date.now(),
+                type: '',
+                range: '',
+                comboCount: '',
+                windupTime: '',
+                damageType: '',
+                condition: '',
+                details: ''
+            };
+            offensiveActions.push(action);
+            renderOffensiveActions();
+        }
+
+        function removeOffensiveAction(id) {
+            offensiveActions = offensiveActions.filter(a => a.id !== id);
+            renderOffensiveActions();
+        }
+
+        function renderOffensiveActions() {
+            const container = document.getElementById('offensiveActionsList');
+            
+            if (offensiveActions.length === 0) {
+                container.innerHTML = '<div class="empty-list">No offensive actions added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = offensiveActions.map(action => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <strong>Action ${offensiveActions.indexOf(action) + 1}</strong>
+                        <button type="button" class="btn btn-small btn-danger" onclick="removeOffensiveAction(${action.id})">Remove</button>
+                    </div>
+                    <div class="list-item-grid">
+                        <div class="field-inline">
+                            <label>Type</label>
+                            <select onchange="updateOffensiveAction(${action.id}, 'type', this.value)" value="${action.type}">
+                                <option value="">Select...</option>
+                                <option value="melee" ${action.type === 'melee' ? 'selected' : ''}>Melee</option>
+                                <option value="ranged" ${action.type === 'ranged' ? 'selected' : ''}>Ranged</option>
+                                <option value="grab" ${action.type === 'grab' ? 'selected' : ''}>Grab</option>
+                            </select>
+                        </div>
+                        <div class="field-inline">
+                            <label>Range</label>
+                            <select onchange="updateOffensiveAction(${action.id}, 'range', this.value)">
+                                <option value="">Select...</option>
+                                <option value="close" ${action.range === 'close' ? 'selected' : ''}>Close</option>
+                                <option value="medium" ${action.range === 'medium' ? 'selected' : ''}>Medium</option>
+                                <option value="far" ${action.range === 'far' ? 'selected' : ''}>Far</option>
+                            </select>
+                        </div>
+                        <div class="field-inline">
+                            <label>Combo Count</label>
+                            <input type="number" value="${action.comboCount}" onchange="updateOffensiveAction(${action.id}, 'comboCount', this.value)" min="0">
+                        </div>
+                        <div class="field-inline">
+                            <label>Windup Time</label>
+                            <select onchange="updateOffensiveAction(${action.id}, 'windupTime', this.value)">
+                                <option value="">Select...</option>
+                                <option value="slow" ${action.windupTime === 'slow' ? 'selected' : ''}>Slow</option>
+                                <option value="medium" ${action.windupTime === 'medium' ? 'selected' : ''}>Medium</option>
+                                <option value="fast" ${action.windupTime === 'fast' ? 'selected' : ''}>Fast</option>
+                            </select>
+                        </div>
+                        <div class="field-inline">
+                            <label>Damage Type</label>
+                            <select onchange="updateOffensiveAction(${action.id}, 'damageType', this.value)">
+                                <option value="">Select...</option>
+                                <option value="physical" ${action.damageType === 'physical' ? 'selected' : ''}>Physical</option>
+                                <option value="fire" ${action.damageType === 'fire' ? 'selected' : ''}>Fire</option>
+                                <option value="ice" ${action.damageType === 'ice' ? 'selected' : ''}>Ice</option>
+                                <option value="poison" ${action.damageType === 'poison' ? 'selected' : ''}>Poison</option>
+                                <option value="force" ${action.damageType === 'force' ? 'selected' : ''}>Force</option>
+                                <option value="lightning" ${action.damageType === 'lightning' ? 'selected' : ''}>Lightning</option>
+                                <option value="psychic" ${action.damageType === 'psychic' ? 'selected' : ''}>Psychic</option>
+                                <option value="radiant" ${action.damageType === 'radiant' ? 'selected' : ''}>Radiant</option>
+                                <option value="necrotic" ${action.damageType === 'necrotic' ? 'selected' : ''}>Necrotic</option>
+                            </select>
+                        </div>
+                        <div class="field-inline">
+                            <label>Condition</label>
+                            <select onchange="updateOffensiveAction(${action.id}, 'condition', this.value)">
+                                <option value="">Select...</option>
+                                <option value="blind" ${action.condition === 'blind' ? 'selected' : ''}>Blind</option>
+                                <option value="deaf" ${action.condition === 'deaf' ? 'selected' : ''}>Deaf</option>
+                                <option value="grappled" ${action.condition === 'grappled' ? 'selected' : ''}>Grappled</option>
+                                <option value="paralyze" ${action.condition === 'paralyze' ? 'selected' : ''}>Paralyze</option>
+                                <option value="poisoned" ${action.condition === 'poisoned' ? 'selected' : ''}>Poisoned</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field-inline">
+                        <label>Details</label>
+                        <textarea onchange="updateOffensiveAction(${action.id}, 'details', this.value)">${action.details}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateOffensiveAction(id, field, value) {
+            const action = offensiveActions.find(a => a.id === id);
+            if (action) action[field] = value;
+        }
+
+        // Defensive Actions
+        function addDefensiveAction() {
+            const action = {
+                id: Date.now(),
+                type: '',
+                defensiveReaction: '',
+                details: ''
+            };
+            defensiveActions.push(action);
+            renderDefensiveActions();
+        }
+
+        function removeDefensiveAction(id) {
+            defensiveActions = defensiveActions.filter(a => a.id !== id);
+            renderDefensiveActions();
+        }
+
+        function renderDefensiveActions() {
+            const container = document.getElementById('defensiveActionsList');
+            
+            if (defensiveActions.length === 0) {
+                container.innerHTML = '<div class="empty-list">No defensive actions added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = defensiveActions.map(action => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <strong>Action ${defensiveActions.indexOf(action) + 1}</strong>
+                        <button type="button" class="btn btn-small btn-danger" onclick="removeDefensiveAction(${action.id})">Remove</button>
+                    </div>
+                    <div class="list-item-grid">
+                        <div class="field-inline">
+                            <label>Type</label>
+                            <select onchange="updateDefensiveAction(${action.id}, 'type', this.value)">
+                                <option value="">Select...</option>
+                                <option value="block" ${action.type === 'block' ? 'selected' : ''}>Block</option>
+                                <option value="evade" ${action.type === 'evade' ? 'selected' : ''}>Evade</option>
+                                <option value="deflect" ${action.type === 'deflect' ? 'selected' : ''}>Deflect</option>
+                                <option value="none" ${action.type === 'none' ? 'selected' : ''}>None</option>
+                            </select>
+                        </div>
+                        <div class="field-inline">
+                            <label>Defensive Reaction</label>
+                            <select onchange="updateDefensiveAction(${action.id}, 'defensiveReaction', this.value)">
+                                <option value="">Select...</option>
+                                <option value="block followup" ${action.defensiveReaction === 'block followup' ? 'selected' : ''}>Block Followup</option>
+                                <option value="evade followup" ${action.defensiveReaction === 'evade followup' ? 'selected' : ''}>Evade Followup</option>
+                                <option value="deflect followup" ${action.defensiveReaction === 'deflect followup' ? 'selected' : ''}>Deflect Followup</option>
+                                <option value="none" ${action.defensiveReaction === 'none' ? 'selected' : ''}>None</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field-inline">
+                        <label>Details</label>
+                        <textarea onchange="updateDefensiveAction(${action.id}, 'details', this.value)">${action.details}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateDefensiveAction(id, field, value) {
+            const action = defensiveActions.find(a => a.id === id);
+            if (action) action[field] = value;
+        }
+
+        // Support Actions
+        function addSupportAction() {
+            const action = {
+                id: Date.now(),
+                type: '',
+                details: ''
+            };
+            supportActions.push(action);
+            renderSupportActions();
+        }
+
+        function removeSupportAction(id) {
+            supportActions = supportActions.filter(a => a.id !== id);
+            renderSupportActions();
+        }
+
+        function renderSupportActions() {
+            const container = document.getElementById('supportActionsList');
+            
+            if (supportActions.length === 0) {
+                container.innerHTML = '<div class="empty-list">No support actions added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = supportActions.map(action => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <strong>Action ${supportActions.indexOf(action) + 1}</strong>
+                        <button type="button" class="btn btn-small btn-danger" onclick="removeSupportAction(${action.id})">Remove</button>
+                    </div>
+                    <div class="list-item-grid">
+                        <div class="field-inline">
+                            <label>Type</label>
+                            <select onchange="updateSupportAction(${action.id}, 'type', this.value)">
+                                <option value="">Select...</option>
+                                <option value="heal self" ${action.type === 'heal self' ? 'selected' : ''}>Heal Self</option>
+                                <option value="heal other" ${action.type === 'heal other' ? 'selected' : ''}>Heal Other</option>
+                                <option value="buff self" ${action.type === 'buff self' ? 'selected' : ''}>Buff Self</option>
+                                <option value="buff other" ${action.type === 'buff other' ? 'selected' : ''}>Buff Other</option>
+                                <option value="summon" ${action.type === 'summon' ? 'selected' : ''}>Summon</option>
+                                <option value="resurrect" ${action.type === 'resurrect' ? 'selected' : ''}>Resurrect</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field-inline">
+                        <label>Details</label>
+                        <textarea onchange="updateSupportAction(${action.id}, 'details', this.value)">${action.details}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateSupportAction(id, field, value) {
+            const action = supportActions.find(a => a.id === id);
+            if (action) action[field] = value;
+        }
+
+        // Reactions
+        function addReaction() {
+            const reaction = {
+                id: Date.now(),
+                type: '',
+                details: ''
+            };
+            reactions.push(reaction);
+            renderReactions();
+        }
+
+        function removeReaction(id) {
+            reactions = reactions.filter(r => r.id !== id);
+            renderReactions();
+        }
+
+        function renderReactions() {
+            const container = document.getElementById('reactionsList');
+            
+            if (reactions.length === 0) {
+                container.innerHTML = '<div class="empty-list">No reactions added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = reactions.map(reaction => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <strong>Reaction ${reactions.indexOf(reaction) + 1}</strong>
+                        <button type="button" class="btn btn-small btn-danger" onclick="removeReaction(${reaction.id})">Remove</button>
+                    </div>
+                    <div class="list-item-grid">
+                        <div class="field-inline">
+                            <label>Type</label>
+                            <select onchange="updateReaction(${reaction.id}, 'type', this.value)">
+                                <option value="">Select...</option>
+                                <option value="standard" ${reaction.type === 'standard' ? 'selected' : ''}>Standard</option>
+                                <option value="special" ${reaction.type === 'special' ? 'selected' : ''}>Special</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field-inline">
+                        <label>Details</label>
+                        <textarea onchange="updateReaction(${reaction.id}, 'details', this.value)">${reaction.details}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateReaction(id, field, value) {
+            const reaction = reactions.find(r => r.id === id);
+            if (reaction) reaction[field] = value;
+        }
+
+        // Locomotion
+        function addLocomotion() {
+            const loco = {
+                id: Date.now(),
+                type: ''
+            };
+            locomotion.push(loco);
+            renderLocomotion();
+        }
+
+        function removeLocomotion(id) {
+            locomotion = locomotion.filter(l => l.id !== id);
+            renderLocomotion();
+        }
+
+        function renderLocomotion() {
+            const container = document.getElementById('locomotionList');
+            
+            if (locomotion.length === 0) {
+                container.innerHTML = '<div class="empty-list">No locomotion added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = locomotion.map(loco => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <strong>Locomotion ${locomotion.indexOf(loco) + 1}</strong>
+                        <button type="button" class="btn btn-small btn-danger" onclick="removeLocomotion(${loco.id})">Remove</button>
+                    </div>
+                    <div class="list-item-grid">
+                        <div class="field-inline">
+                            <label>Type</label>
+                            <select onchange="updateLocomotion(${loco.id}, 'type', this.value)">
+                                <option value="">Select...</option>
+                                <option value="grounded" ${loco.type === 'grounded' ? 'selected' : ''}>Grounded</option>
+                                <option value="hovering" ${loco.type === 'hovering' ? 'selected' : ''}>Hovering</option>
+                                <option value="flying" ${loco.type === 'flying' ? 'selected' : ''}>Flying</option>
+                                <option value="swimming" ${loco.type === 'swimming' ? 'selected' : ''}>Swimming</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateLocomotion(id, field, value) {
+            const loco = locomotion.find(l => l.id === id);
+            if (loco) loco[field] = value;
+        }
+
+        // Special Traits
+        function addSpecialTrait() {
+            const trait = {
+                id: Date.now(),
+                text: ''
+            };
+            specialTraits.push(trait);
+            renderSpecialTraits();
+        }
+
+        function removeSpecialTrait(id) {
+            specialTraits = specialTraits.filter(t => t.id !== id);
+            renderSpecialTraits();
+        }
+
+        function renderSpecialTraits() {
+            const container = document.getElementById('specialTraitsList');
+            
+            if (specialTraits.length === 0) {
+                container.innerHTML = '<div class="empty-list">No special traits added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = specialTraits.map(trait => `
+                <div class="trait-item">
+                    <input type="text" value="${trait.text}" onchange="updateSpecialTrait(${trait.id}, this.value)" placeholder="Enter trait..." style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
+                    <button type="button" class="btn btn-small btn-danger" onclick="removeSpecialTrait(${trait.id})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function updateSpecialTrait(id, value) {
+            const trait = specialTraits.find(t => t.id === id);
+            if (trait) trait.text = value;
+        }
+
         function showForm(isEdit = false, key = null) {
             if (!currentUser) {
                 alert('Please sign in to add or edit enemies.');
@@ -612,9 +1171,19 @@
             formSection.classList.remove('hidden');
             formTitle.textContent = isEdit ? 'Edit Enemy' : 'Add New Enemy';
             
+            // Clear complex lists
+            offensiveActions = [];
+            defensiveActions = [];
+            supportActions = [];
+            reactions = [];
+            locomotion = [];
+            specialTraits = [];
+            
             if (isEdit && key) {
                 editingKey = key;
                 const enemy = enemies[key];
+                
+                // Basic fields
                 document.getElementById('enemyName').value = enemy.name;
                 document.getElementById('gameName').value = enemy.game;
                 document.getElementById('enemyType').value = enemy.type || '';
@@ -625,22 +1194,55 @@
                 document.getElementById('videoLink').value = enemy.videoLink || '';
                 document.getElementById('imageLink').value = enemy.imageLink || '';
                 document.getElementById('notes').value = enemy.notes || '';
+                document.getElementById('variantEnemy').value = enemy.variant || '';
+                
+                // Complex fields
+                if (enemy.offensiveActions) {
+                    offensiveActions = enemy.offensiveActions.map(a => ({...a, id: Date.now() + Math.random()}));
+                }
+                if (enemy.defensiveActions) {
+                    defensiveActions = enemy.defensiveActions.map(a => ({...a, id: Date.now() + Math.random()}));
+                }
+                if (enemy.supportActions) {
+                    supportActions = enemy.supportActions.map(a => ({...a, id: Date.now() + Math.random()}));
+                }
+                if (enemy.reactions) {
+                    reactions = enemy.reactions.map(r => ({...r, id: Date.now() + Math.random()}));
+                }
+                if (enemy.locomotion) {
+                    locomotion = enemy.locomotion.map(l => ({...l, id: Date.now() + Math.random()}));
+                }
+                if (enemy.specialTraits) {
+                    specialTraits = enemy.specialTraits.map(t => ({id: Date.now() + Math.random(), text: t}));
+                }
             } else {
                 editingKey = null;
                 form.reset();
             }
             
+            renderOffensiveActions();
+            renderDefensiveActions();
+            renderSupportActions();
+            renderReactions();
+            renderLocomotion();
+            renderSpecialTraits();
+            updateVariantDropdown();
+            
             formSection.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Hide form
         function hideForm() {
             document.getElementById('formSection').classList.add('hidden');
             document.getElementById('enemyForm').reset();
             editingKey = null;
+            offensiveActions = [];
+            defensiveActions = [];
+            supportActions = [];
+            reactions = [];
+            locomotion = [];
+            specialTraits = [];
         }
 
-        // Render enemies
         function renderEnemies(searchTerm = '') {
             const listContainer = document.getElementById('enemyList');
             
@@ -679,6 +1281,107 @@
                 if (enemy.videoLink) links += `<a href="${enemy.videoLink}" target="_blank">🎥 Video</a>`;
                 if (enemy.imageLink) links += `<a href="${enemy.imageLink}" target="_blank">🖼️ Image</a>`;
                 
+                let complexSections = '';
+                
+                // Offensive Actions
+                if (enemy.offensiveActions && enemy.offensiveActions.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>⚔️ Offensive Actions (${enemy.offensiveActions.length})</h4>
+                            ${enemy.offensiveActions.map(a => `
+                                <div class="action-display">
+                                    <strong>${a.type || 'Action'}:</strong> 
+                                    ${a.range ? `Range: ${a.range}` : ''} 
+                                    ${a.comboCount ? `| Combo: ${a.comboCount}` : ''} 
+                                    ${a.windupTime ? `| Windup: ${a.windupTime}` : ''}
+                                    ${a.damageType ? `| Damage: ${a.damageType}` : ''}
+                                    ${a.condition ? `| Condition: ${a.condition}` : ''}
+                                    ${a.details ? `<br>${a.details}` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Defensive Actions
+                if (enemy.defensiveActions && enemy.defensiveActions.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>🛡️ Defensive Actions (${enemy.defensiveActions.length})</h4>
+                            ${enemy.defensiveActions.map(a => `
+                                <div class="action-display">
+                                    <strong>${a.type || 'Defense'}:</strong> 
+                                    ${a.defensiveReaction ? `Reaction: ${a.defensiveReaction}` : ''}
+                                    ${a.details ? `<br>${a.details}` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Support Actions
+                if (enemy.supportActions && enemy.supportActions.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>✨ Support Actions (${enemy.supportActions.length})</h4>
+                            ${enemy.supportActions.map(a => `
+                                <div class="action-display">
+                                    <strong>${a.type || 'Support'}:</strong> 
+                                    ${a.details || ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Reactions
+                if (enemy.reactions && enemy.reactions.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>⚡ Reactions (${enemy.reactions.length})</h4>
+                            ${enemy.reactions.map(r => `
+                                <div class="action-display">
+                                    <strong>${r.type || 'Reaction'}:</strong> 
+                                    ${r.details || ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Locomotion
+                if (enemy.locomotion && enemy.locomotion.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>🦶 Locomotion</h4>
+                            ${enemy.locomotion.map(l => `<span class="badge">${l.type}</span>`).join(' ')}
+                        </div>
+                    `;
+                }
+                
+                // Special Traits
+                if (enemy.specialTraits && enemy.specialTraits.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>⭐ Special Traits</h4>
+                            ${enemy.specialTraits.map(t => `<div class="action-display">${t}</div>`).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Variant
+                if (enemy.variant && enemies[enemy.variant]) {
+                    const variantEnemy = enemies[enemy.variant];
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>🔗 Variant</h4>
+                            <a href="#" class="variant-link" onclick="event.preventDefault(); scrollToEnemy('${enemy.variant}')">
+                                → ${variantEnemy.name} (${variantEnemy.game})
+                            </a>
+                        </div>
+                    `;
+                }
+                
                 const actions = currentUser ? `
                     <div class="enemy-actions">
                         <button class="btn btn-secondary" onclick="editEnemy('${enemy.key}')">Edit</button>
@@ -687,7 +1390,7 @@
                 ` : '';
                 
                 return `
-                    <div class="enemy-card">
+                    <div class="enemy-card" id="enemy-${enemy.key}">
                         <div class="enemy-header">
                             <div class="enemy-title">
                                 <h3>${enemy.name}</h3>
@@ -697,13 +1400,24 @@
                         ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
                         ${enemy.notes ? `<div class="enemy-notes">${enemy.notes}</div>` : ''}
                         ${links ? `<div class="enemy-links">${links}</div>` : ''}
+                        ${complexSections}
                         ${actions}
                     </div>
                 `;
             }).join('');
         }
 
-        // Add/Edit enemy
+        function scrollToEnemy(key) {
+            const element = document.getElementById(`enemy-${key}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.style.background = '#fff3cd';
+                setTimeout(() => {
+                    element.style.background = '';
+                }, 2000);
+            }
+        }
+
         document.getElementById('enemyForm').addEventListener('submit', (e) => {
             e.preventDefault();
             
@@ -711,6 +1425,29 @@
                 alert('Please sign in to save enemies.');
                 return;
             }
+            
+            // Clean up actions (remove temp IDs)
+            const cleanOffensive = offensiveActions.map(a => {
+                const {id, ...rest} = a;
+                return rest;
+            });
+            const cleanDefensive = defensiveActions.map(a => {
+                const {id, ...rest} = a;
+                return rest;
+            });
+            const cleanSupport = supportActions.map(a => {
+                const {id, ...rest} = a;
+                return rest;
+            });
+            const cleanReactions = reactions.map(r => {
+                const {id, ...rest} = r;
+                return rest;
+            });
+            const cleanLocomotion = locomotion.map(l => {
+                const {id, ...rest} = l;
+                return rest;
+            });
+            const cleanTraits = specialTraits.map(t => t.text).filter(t => t.trim() !== '');
             
             const enemy = {
                 name: document.getElementById('enemyName').value,
@@ -723,6 +1460,13 @@
                 videoLink: document.getElementById('videoLink').value,
                 imageLink: document.getElementById('imageLink').value,
                 notes: document.getElementById('notes').value,
+                variant: document.getElementById('variantEnemy').value,
+                offensiveActions: cleanOffensive,
+                defensiveActions: cleanDefensive,
+                supportActions: cleanSupport,
+                reactions: cleanReactions,
+                locomotion: cleanLocomotion,
+                specialTraits: cleanTraits,
                 createdBy: currentUser.uid,
                 createdAt: firebase.database.ServerValue.TIMESTAMP
             };
@@ -738,12 +1482,10 @@
             hideForm();
         });
 
-        // Edit enemy
         function editEnemy(key) {
             showForm(true, key);
         }
 
-        // Delete enemy
         function deleteEnemy(key) {
             if (!currentUser) {
                 alert('Please sign in to delete enemies.');
@@ -755,7 +1497,6 @@
             }
         }
 
-        // Event listeners
         document.getElementById('addNewBtn').addEventListener('click', () => showForm());
         document.getElementById('cancelBtn').addEventListener('click', hideForm);
         document.getElementById('searchBox').addEventListener('input', (e) => {
