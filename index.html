@@ -945,21 +945,29 @@
         function updateVariantDropdown() {
             const datalist = document.getElementById('variantOptions');
             const input = document.getElementById('variantEnemy');
-            const currentValue = input.value;
             
-            datalist.innerHTML = '<option value="">None</option>';
+            // If we have a key stored, convert it to display name
+            let currentDisplay = '';
+            if (input.dataset.variantKey && enemies[input.dataset.variantKey]) {
+                const enemy = enemies[input.dataset.variantKey];
+                currentDisplay = `${enemy.name} (${enemy.game})`;
+            } else {
+                currentDisplay = input.value;
+            }
+            
+            datalist.innerHTML = '';
             
             Object.keys(enemies).forEach(key => {
                 if (key !== editingKey) {
                     const enemy = enemies[key];
                     const option = document.createElement('option');
-                    option.value = key;
-                    option.textContent = `${enemy.name} (${enemy.game})`;
+                    option.value = `${enemy.name} (${enemy.game})`;
+                    option.dataset.key = key;
                     datalist.appendChild(option);
                 }
             });
             
-            input.value = currentValue;
+            input.value = currentDisplay;
         }
 
         // Offensive Actions
@@ -1336,6 +1344,23 @@
             if (trait) trait.text = value;
         }
 
+        function getVariantKey(displayValue) {
+            if (!displayValue) return '';
+            
+            // Check if we have the key stored
+            const input = document.getElementById('variantEnemy');
+            if (input.dataset.variantKey) return input.dataset.variantKey;
+            
+            // Otherwise search for matching enemy
+            for (let key in enemies) {
+                const enemy = enemies[key];
+                if (`${enemy.name} (${enemy.game})` === displayValue) {
+                    return key;
+                }
+            }
+            return '';
+        }
+        
         function showForm(isEdit = false, key = null) {
             if (!currentUser) {
                 alert('Please sign in to add or edit enemies.');
@@ -1372,7 +1397,16 @@
                 document.getElementById('videoLink').value = enemy.videoLink || '';
                 document.getElementById('imageLink').value = enemy.imageLink || '';
                 document.getElementById('notes').value = enemy.notes || '';
-                document.getElementById('variantEnemy').value = enemy.variant || '';
+                
+                const variantInput = document.getElementById('variantEnemy');
+                if (enemy.variant && enemies[enemy.variant]) {
+                    const variantEnemy = enemies[enemy.variant];
+                    variantInput.value = `${variantEnemy.name} (${variantEnemy.game})`;
+                    variantInput.dataset.variantKey = enemy.variant;
+                } else {
+                    variantInput.value = '';
+                    variantInput.dataset.variantKey = '';
+                }
                 
                 // Complex fields
                 if (enemy.offensiveActions) {
@@ -1700,7 +1734,7 @@
                 videoLink: document.getElementById('videoLink').value,
                 imageLink: document.getElementById('imageLink').value,
                 notes: document.getElementById('notes').value,
-                variant: document.getElementById('variantEnemy').value,
+                variant: getVariantKey(document.getElementById('variantEnemy').value),
                 offensiveActions: cleanOffensive,
                 defensiveActions: cleanDefensive,
                 supportActions: cleanSupport,
