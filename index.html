@@ -188,6 +188,18 @@
             font-family: inherit;
         }
 
+        .form-group select option:first-child {
+            color: #999;
+        }
+
+        .form-group select:invalid {
+            color: #999;
+        }
+
+        .form-group select:valid {
+            color: #333;
+        }
+        
         .form-group textarea {
             min-height: 80px;
             resize: vertical;
@@ -640,12 +652,13 @@
                 <!-- Basic Info -->
                 <div class="form-group">
                     <label for="enemyName">Enemy Name *</label>
-                    <input type="text" id="enemyName" placeholder="What's the enemy's name?" required>
+                    <input type="text" id="enemyName" placeholder="What's the enemy's name?" autocomplete="off" required>
                 </div>
 
                 <div class="form-group">
                     <label for="gameName">Game *</label>
-                    <input type="text" id="gameName" placeholder="What game are they from?" required>
+                    <input type="text" id="gameName" list="gameOptions" placeholder="What game are they from?" autocomplete="off" required>
+                    <datalist id="gameOptions"></datalist>
                 </div>
 
                 <div class="form-group">
@@ -673,37 +686,29 @@
                 </div>
                 <div class="form-group">
                     <label for="enemyFaction">Enemy Faction</label>
-                    <input type="text" id="enemyFaction" placeholder="e.g., Undead Legion, Crimson Fleet, etc.">
+                    <input type="text" id="enemyFaction" list="factionOptions" placeholder="e.g., Undead Legion, Crimson Fleet, etc." autocomplete="off">
+                    <datalist id="factionOptions"></datalist>
                 </div>
 
                 <div class="form-group">
                     <label for="enemyWeapon">Weapon Type</label>
-                    <input type="text" id="enemyWeapon" list="weaponOptions" placeholder="Select or type custom weapon...">
-                    <datalist id="weaponOptions">
-                        <option value="One-handed">
-                        <option value="Two-handed">
-                        <option value="Dual-wield">
-                        <option value="Ranged">
-                        <option value="Magic/Casting">
-                        <option value="Unarmed">
-                        <option value="Natural weapons (claws, teeth, etc.)">
-                        <option value="Environmental">
-                    </datalist>
+                    <input type="text" id="enemyWeapon" list="weaponOptions" placeholder="Select or type custom weapon..." autocomplete="off">
+                    <datalist id="weaponOptions"></datalist>
                 </div>
 
                 <div class="form-group">
                     <label for="referenceLink">Reference Link</label>
-                    <input type="url" id="referenceLink" placeholder="https://wiki.example.com/enemy">
+                    <input type="url" id="referenceLink" placeholder="https://wiki.example.com/enemy" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label for="videoLink">Video Reference</label>
-                    <input type="url" id="videoLink" placeholder="https://youtube.com/...">
+                    <input type="url" id="videoLink" placeholder="https://youtube.com/..." autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label for="imageLink">Image Reference</label>
-                    <input type="url" id="imageLink" placeholder="https://example.com/image.jpg">
+                    <input type="url" id="imageLink" placeholder="https://example.com/image.jpg" autocomplete="off">
                 </div>
 
                 <div class="form-group">
@@ -916,6 +921,7 @@
                 renderEnemies();
                 updateCount();
                 updateVariantDropdown();
+                updateFormDatalists();
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('controls').classList.remove('hidden');
             });
@@ -940,6 +946,46 @@
                 icon.classList.add('expanded');
                 text.textContent = 'Hide Details';
             }
+        }
+
+        function updateFormDatalists() {
+            // Get unique values from database
+            const games = new Set();
+            const factions = new Set();
+            const weapons = new Set();
+            
+            Object.values(enemies).forEach(enemy => {
+                if (enemy.game) games.add(enemy.game);
+                if (enemy.faction) factions.add(enemy.faction);
+                if (enemy.weapon) weapons.add(enemy.weapon);
+            });
+            
+            // Update Game datalist
+            const gameList = document.getElementById('gameOptions');
+            gameList.innerHTML = '';
+            Array.from(games).sort().forEach(game => {
+                const option = document.createElement('option');
+                option.value = game;
+                gameList.appendChild(option);
+            });
+            
+            // Update Faction datalist
+            const factionList = document.getElementById('factionOptions');
+            factionList.innerHTML = '';
+            Array.from(factions).sort().forEach(faction => {
+                const option = document.createElement('option');
+                option.value = faction;
+                factionList.appendChild(option);
+            });
+            
+            // Update Weapon datalist
+            const weaponList = document.getElementById('weaponOptions');
+            weaponList.innerHTML = '';
+            Array.from(weapons).sort().forEach(weapon => {
+                const option = document.createElement('option');
+                option.value = weapon;
+                weaponList.appendChild(option);
+            });
         }
         
         function updateVariantDropdown() {
@@ -1469,6 +1515,7 @@
             renderLocomotion();
             renderSpecialTraits();
             updateVariantDropdown();
+            updateFormDatalists();
             
             formSection.scrollIntoView({ behavior: 'smooth' });
         }
