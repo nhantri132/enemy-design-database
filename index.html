@@ -1551,31 +1551,36 @@
                     if (enemy.faction?.toLowerCase().includes(term)) return true;
                     if (enemy.weapon?.toLowerCase().includes(term)) return true;
                     if (enemy.notes?.toLowerCase().includes(term)) return true;
+                    if (enemy.referenceLink?.toLowerCase().includes(term)) return true;
+                    if (enemy.videoLink?.toLowerCase().includes(term)) return true;
+                    if (enemy.imageLink?.toLowerCase().includes(term)) return true;
                     
-                    // Search offensive actions
+                    // Search offensive actions - ALL FIELDS
                     if (enemy.offensiveActions?.some(a => 
                         a.name?.toLowerCase().includes(term) ||
                         a.type?.toLowerCase().includes(term) ||
                         a.range?.toLowerCase().includes(term) ||
+                        a.comboCount?.toString().toLowerCase().includes(term) ||
+                        a.windupTime?.toLowerCase().includes(term) ||
                         a.damageType?.toLowerCase().includes(term) ||
                         a.condition?.toLowerCase().includes(term) ||
                         a.details?.toLowerCase().includes(term)
                     )) return true;
                     
-                    // Search defensive actions
+                    // Search defensive actions - ALL FIELDS
                     if (enemy.defensiveActions?.some(a =>
                         a.type?.toLowerCase().includes(term) ||
                         a.defensiveReaction?.toLowerCase().includes(term) ||
                         a.details?.toLowerCase().includes(term)
                     )) return true;
                     
-                    // Search support actions
+                    // Search support actions - ALL FIELDS
                     if (enemy.supportActions?.some(a =>
                         a.type?.toLowerCase().includes(term) ||
                         a.details?.toLowerCase().includes(term)
                     )) return true;
                     
-                    // Search reactions
+                    // Search reactions - ALL FIELDS
                     if (enemy.reactions?.some(r =>
                         r.type?.toLowerCase().includes(term) ||
                         r.details?.toLowerCase().includes(term)
