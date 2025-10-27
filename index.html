@@ -89,6 +89,93 @@
             gap: 10px;
         }
 
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .filters.hidden {
+            display: none;
+        }
+
+        .filters h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-item label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .filter-item select {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-item select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .active-filters {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-tag {
+            background: #3498db;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-tag-close {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .clear-filters {
+            padding: 6px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .clear-filters:hover {
+            background: #c0392b;
+        }
+        
         .search-box {
             flex: 1;
             padding: 12px;
@@ -646,6 +733,97 @@
             <button class="btn" id="addNewBtn" disabled>+ Add New Enemy</button>
         </div>
 
+        <div class="filters hidden" id="filters">
+            <h3>🔍 Filters</h3>
+            <div class="filter-grid">
+                <div class="filter-item">
+                    <label>Game</label>
+                    <select id="filterGame" onchange="applyFilters()">
+                        <option value="">All Games</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Enemy Type</label>
+                    <select id="filterType" onchange="applyFilters()">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Enemy Size</label>
+                    <select id="filterSize" onchange="applyFilters()">
+                        <option value="">All Sizes</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Action Type</label>
+                    <select id="filterOffensiveType" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Range</label>
+                    <select id="filterOffensiveRange" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Combo Count</label>
+                    <select id="filterOffensiveCombo" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Windup Time</label>
+                    <select id="filterOffensiveWindup" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Damage Type</label>
+                    <select id="filterOffensiveDamage" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Condition</label>
+                    <select id="filterOffensiveCondition" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Def. Action Type</label>
+                    <select id="filterDefensiveType" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Def. Reaction</label>
+                    <select id="filterDefensiveReaction" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Support Type</label>
+                    <select id="filterSupportType" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Reaction Type</label>
+                    <select id="filterReactionType" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Locomotion</label>
+                    <select id="filterLocomotion" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+            </div>
+            <div class="active-filters" id="activeFilters"></div>
+        </div>
+        
         <div class="form-section hidden" id="formSection">
             <h2 id="formTitle">Add New Enemy</h2>
             <form id="enemyForm">
@@ -921,8 +1099,10 @@
                 updateCount();
                 updateVariantDropdown();
                 updateFormDatalists();
+                populateFilterOptions();  // ADD THIS
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('controls').classList.remove('hidden');
+                document.getElementById('filters').classList.remove('hidden');  // ADD THIS
             });
         }
 
@@ -985,6 +1165,162 @@
                 option.value = weapon;
                 weaponList.appendChild(option);
             });
+        }
+
+        function populateFilterOptions() {
+            const filters = {
+                game: new Set(),
+                type: new Set(),
+                size: new Set(),
+                offensiveType: new Set(),
+                offensiveRange: new Set(),
+                offensiveCombo: new Set(),
+                offensiveWindup: new Set(),
+                offensiveDamage: new Set(),
+                offensiveCondition: new Set(),
+                defensiveType: new Set(),
+                defensiveReaction: new Set(),
+                supportType: new Set(),
+                reactionType: new Set(),
+                locomotion: new Set()
+            };
+            
+            Object.values(enemies).forEach(enemy => {
+                if (enemy.game) filters.game.add(enemy.game);
+                if (enemy.type) filters.type.add(enemy.type);
+                if (enemy.size) filters.size.add(enemy.size);
+                
+                enemy.offensiveActions?.forEach(a => {
+                    if (a.type) filters.offensiveType.add(a.type);
+                    if (a.range) filters.offensiveRange.add(a.range);
+                    if (a.comboCount) filters.offensiveCombo.add(a.comboCount);
+                    if (a.windupTime) filters.offensiveWindup.add(a.windupTime);
+                    if (a.damageType) filters.offensiveDamage.add(a.damageType);
+                    if (a.condition) filters.offensiveCondition.add(a.condition);
+                });
+                
+                enemy.defensiveActions?.forEach(a => {
+                    if (a.type) filters.defensiveType.add(a.type);
+                    if (a.defensiveReaction) filters.defensiveReaction.add(a.defensiveReaction);
+                });
+                
+                enemy.supportActions?.forEach(a => {
+                    if (a.type) filters.supportType.add(a.type);
+                });
+                
+                enemy.reactions?.forEach(r => {
+                    if (r.type) filters.reactionType.add(r.type);
+                });
+                
+                enemy.locomotion?.forEach(l => {
+                    if (l.type) filters.locomotion.add(l.type);
+                });
+            });
+
+            
+            // Populate dropdowns
+            populateSelect('filterGame', filters.game);
+            populateSelect('filterType', filters.type);
+            populateSelect('filterSize', filters.size);
+            populateSelect('filterOffensiveType', filters.offensiveType);
+            populateSelect('filterOffensiveRange', filters.offensiveRange);
+            populateSelect('filterOffensiveCombo', filters.offensiveCombo);
+            populateSelect('filterOffensiveWindup', filters.offensiveWindup);
+            populateSelect('filterOffensiveDamage', filters.offensiveDamage);
+            populateSelect('filterOffensiveCondition', filters.offensiveCondition);
+            populateSelect('filterDefensiveType', filters.defensiveType);
+            populateSelect('filterDefensiveReaction', filters.defensiveReaction);
+            populateSelect('filterSupportType', filters.supportType);
+            populateSelect('filterReactionType', filters.reactionType);
+            populateSelect('filterLocomotion', filters.locomotion);
+        }
+
+        function applyFilters() {
+            renderEnemies(document.getElementById('searchBox').value);
+            updateActiveFilterTags();
+        }
+        
+        function getActiveFilters() {
+            return {
+                game: document.getElementById('filterGame').value,
+                type: document.getElementById('filterType').value,
+                size: document.getElementById('filterSize').value,
+                offensiveType: document.getElementById('filterOffensiveType').value,
+                offensiveRange: document.getElementById('filterOffensiveRange').value,
+                offensiveCombo: document.getElementById('filterOffensiveCombo').value,
+                offensiveWindup: document.getElementById('filterOffensiveWindup').value,
+                offensiveDamage: document.getElementById('filterOffensiveDamage').value,
+                offensiveCondition: document.getElementById('filterOffensiveCondition').value,
+                defensiveType: document.getElementById('filterDefensiveType').value,
+                defensiveReaction: document.getElementById('filterDefensiveReaction').value,
+                supportType: document.getElementById('filterSupportType').value,
+                reactionType: document.getElementById('filterReactionType').value,
+                locomotion: document.getElementById('filterLocomotion').value
+            };
+        }
+        
+        function updateActiveFilterTags() {
+            const container = document.getElementById('activeFilters');
+            const filters = getActiveFilters();
+            const activeTags = [];
+            
+            Object.entries(filters).forEach(([key, value]) => {
+                if (value) {
+                    const label = document.querySelector(`#filter${key.charAt(0).toUpperCase() + key.slice(1)}`).previousElementSibling.textContent;
+                    activeTags.push(`
+                        <div class="filter-tag">
+                            ${label}: ${value}
+                            <span class="filter-tag-close" onclick="clearFilter('${key}')">×</span>
+                        </div>
+                    `);
+                }
+            });
+            
+            if (activeTags.length > 0) {
+                container.innerHTML = activeTags.join('') + `
+                    <button class="clear-filters" onclick="clearAllFilters()">Clear All</button>
+                `;
+            } else {
+                container.innerHTML = '';
+            }
+        }
+        
+        function clearFilter(filterKey) {
+            const elementId = 'filter' + filterKey.charAt(0).toUpperCase() + filterKey.slice(1);
+            document.getElementById(elementId).value = '';
+            applyFilters();
+        }
+        
+        function clearAllFilters() {
+            const filterIds = [
+                'filterGame', 'filterType', 'filterSize',
+                'filterOffensiveType', 'filterOffensiveRange', 'filterOffensiveCombo',
+                'filterOffensiveWindup', 'filterOffensiveDamage', 'filterOffensiveCondition',
+                'filterDefensiveType', 'filterDefensiveReaction',
+                'filterSupportType', 'filterReactionType', 'filterLocomotion'
+            ];
+            
+            filterIds.forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            
+            applyFilters();
+        }
+        
+        function populateSelect(id, values) {
+            const select = document.getElementById(id);
+            const currentValue = select.value;
+            const firstOption = select.options[0].text;
+            
+            select.innerHTML = `<option value="">${firstOption}</option>`;
+            Array.from(values).sort().forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
+            });
+            
+            select.value = currentValue;
         }
         
         function updateVariantDropdown() {
@@ -1596,6 +1932,40 @@
                     )) return true;
                     
                     return false;
+                });
+            }
+
+            // Apply filters
+            const filters = getActiveFilters();
+            if (Object.values(filters).some(v => v !== '')) {
+                enemyArray = enemyArray.filter(enemy => {
+                    // Basic field filters
+                    if (filters.game && enemy.game !== filters.game) return false;
+                    if (filters.type && enemy.type !== filters.type) return false;
+                    if (filters.size && enemy.size !== filters.size) return false;
+                    
+                    // Offensive action filters
+                    if (filters.offensiveType && !enemy.offensiveActions?.some(a => a.type === filters.offensiveType)) return false;
+                    if (filters.offensiveRange && !enemy.offensiveActions?.some(a => a.range === filters.offensiveRange)) return false;
+                    if (filters.offensiveCombo && !enemy.offensiveActions?.some(a => a.comboCount == filters.offensiveCombo)) return false;
+                    if (filters.offensiveWindup && !enemy.offensiveActions?.some(a => a.windupTime === filters.offensiveWindup)) return false;
+                    if (filters.offensiveDamage && !enemy.offensiveActions?.some(a => a.damageType === filters.offensiveDamage)) return false;
+                    if (filters.offensiveCondition && !enemy.offensiveActions?.some(a => a.condition === filters.offensiveCondition)) return false;
+                    
+                    // Defensive action filters
+                    if (filters.defensiveType && !enemy.defensiveActions?.some(a => a.type === filters.defensiveType)) return false;
+                    if (filters.defensiveReaction && !enemy.defensiveActions?.some(a => a.defensiveReaction === filters.defensiveReaction)) return false;
+                    
+                    // Support action filters
+                    if (filters.supportType && !enemy.supportActions?.some(a => a.type === filters.supportType)) return false;
+                    
+                    // Reaction filters
+                    if (filters.reactionType && !enemy.reactions?.some(r => r.type === filters.reactionType)) return false;
+                    
+                    // Locomotion filters
+                    if (filters.locomotion && !enemy.locomotion?.some(l => l.type === filters.locomotion)) return false;
+                    
+                    return true;
                 });
             }
             
