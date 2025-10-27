@@ -1580,6 +1580,7 @@
                                 <option value="">Select...</option>
                                 <option value="block" ${action.type === 'block' ? 'selected' : ''}>Block</option>
                                 <option value="evade" ${action.type === 'evade' ? 'selected' : ''}>Evade</option>
+                                <option value="evasive dash" ${action.type === 'evasive dash' ? 'selected' : ''}>Evasive Dash</option>
                                 <option value="deflect" ${action.type === 'deflect' ? 'selected' : ''}>Deflect</option>
                                 <option value="none" ${action.type === 'none' ? 'selected' : ''}>None</option>
                             </select>
@@ -1700,8 +1701,11 @@
                             <label>Type</label>
                             <select onchange="updateReaction(${reaction.id}, 'type', this.value)">
                                 <option value="">Select...</option>
-                                <option value="standard" ${reaction.type === 'standard' ? 'selected' : ''}>Standard</option>
-                                <option value="special" ${reaction.type === 'special' ? 'selected' : ''}>Special</option>
+                                <option value="reduced" ${reaction.type === 'reduced' ? 'selected' : ''}>Reduced Reactions</option>
+                                <option value="hyper armor" ${reaction.type === 'hyper armor' ? 'selected' : ''}>Hyper Armor/Poise</option>
+                                <option value="defensive" ${reaction.type === 'defensive' ? 'selected' : ''}>Defensive Reactions</option>
+                                <option value="offensive" ${reaction.type === 'offensive' ? 'selected' : ''}>Offensive Reactions</option>
+                                <option value="death" ${reaction.type === 'death' ? 'selected' : ''}>Death Reactions</option>
                             </select>
                         </div>
                     </div>
@@ -1772,6 +1776,7 @@
         function addSpecialTrait() {
             const trait = {
                 id: Date.now(),
+                category: '',
                 text: ''
             };
             specialTraits.push(trait);
@@ -1792,16 +1797,32 @@
             }
             
             container.innerHTML = specialTraits.map(trait => `
-                <div class="trait-item">
-                    <input type="text" value="${trait.text}" onchange="updateSpecialTrait(${trait.id}, this.value)" placeholder="Enter trait..." style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
-                    <button type="button" class="btn btn-small btn-danger" onclick="removeSpecialTrait(${trait.id})">Remove</button>
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <strong>Trait ${specialTraits.indexOf(trait) + 1}</strong>
+                        <button type="button" class="btn btn-small btn-danger" onclick="removeSpecialTrait(${trait.id})">Remove</button>
+                    </div>
+                    <div class="field-inline" style="margin-bottom: 10px;">
+                        <label>Category</label>
+                        <select onchange="updateSpecialTrait(${trait.id}, 'category', this.value)" style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
+                            <option value="">Select...</option>
+                            <option value="equipment" ${trait.category === 'equipment' ? 'selected' : ''}>Equipment</option>
+                            <option value="passive debuff" ${trait.category === 'passive debuff' ? 'selected' : ''}>Passive Debuff</option>
+                            <option value="passive buff" ${trait.category === 'passive buff' ? 'selected' : ''}>Passive Buff</option>
+                            <option value="aura" ${trait.category === 'aura' ? 'selected' : ''}>Aura</option>
+                        </select>
+                    </div>
+                    <div class="field-inline">
+                        <label>Description</label>
+                        <input type="text" value="${trait.text}" onchange="updateSpecialTrait(${trait.id}, 'text', this.value)" placeholder="Describe the trait..." style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
+                    </div>
                 </div>
             `).join('');
         }
 
-        function updateSpecialTrait(id, value) {
+        function updateSpecialTrait(id, field, value) {
             const trait = specialTraits.find(t => t.id === id);
-            if (trait) trait.text = value;
+            if (trait) trait[field] = value;
         }
 
         function getVariantKey(displayValue) {
@@ -1885,7 +1906,14 @@
                     locomotion = enemy.locomotion.map(l => ({...l, id: Date.now() + Math.random()}));
                 }
                 if (enemy.specialTraits) {
-                    specialTraits = enemy.specialTraits.map(t => ({id: Date.now() + Math.random(), text: t}));
+                    specialTraits = enemy.specialTraits.map(t => {
+                        // Handle both old format (string) and new format (object with category)
+                        if (typeof t === 'string') {
+                            return {id: Date.now() + Math.random(), category: '', text: t};
+                        } else {
+                            return {...t, id: Date.now() + Math.random()};
+                        }
+                    });
                 }
             } else {
                 editingKey = null;
@@ -2098,12 +2126,15 @@
                     complexSections += `
                         <div class="enemy-section">
                             <h4>⚡ Reactions (${enemy.reactions.length})</h4>
-                            ${enemy.reactions.map(r => `
-                                <div class="action-display">
-                                    <strong>${r.type || 'Reaction'}:</strong> 
-                                    ${r.details || ''}
-                                </div>
-                            `).join('')}
+                            ${enemy.reactions.map(r => {
+                                const typeDisplay = r.type ? r.type.charAt(0).toUpperCase() + r.type.slice(1) : 'Reaction';
+                                return `
+                                    <div class="action-display">
+                                        <strong>${typeDisplay}:</strong> 
+                                        ${r.details || ''}
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     `;
                 }
@@ -2123,7 +2154,15 @@
                     complexSections += `
                         <div class="enemy-section">
                             <h4>⭐ Special Traits</h4>
-                            ${enemy.specialTraits.map(t => `<div class="action-display">${t}</div>`).join('')}
+                            ${enemy.specialTraits.map(t => {
+                                // Handle both old format (string) and new format (object)
+                                if (typeof t === 'string') {
+                                    return `<div class="action-display">${t}</div>`;
+                                } else {
+                                    const category = t.category ? `<strong>${t.category}:</strong> ` : '';
+                                    return `<div class="action-display">${category}${t.text || ''}</div>`;
+                                }
+                            }).join('')}
                         </div>
                     `;
                 }
@@ -2233,7 +2272,12 @@
                 const {id, ...rest} = l;
                 return rest;
             });
-            const cleanTraits = specialTraits.map(t => t.text).filter(t => t.trim() !== '');
+            const cleanTraits = specialTraits
+                .filter(t => t.text && t.text.trim() !== '')
+                .map(t => {
+                    const {id, ...rest} = t;
+                    return rest;
+                });
             
             const enemy = {
                 name: document.getElementById('enemyName').value,
