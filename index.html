@@ -1842,6 +1842,25 @@
             return '';
         }
         
+        // Helper function to extract YouTube video ID from URL
+        function getYouTubeVideoId(url) {
+            if (!url) return null;
+            
+            // Handle youtube.com/watch?v=
+            const watchMatch = url.match(/[?&]v=([^&]+)/);
+            if (watchMatch) return watchMatch[1];
+            
+            // Handle youtu.be/
+            const shortMatch = url.match(/youtu\.be\/([^?]+)/);
+            if (shortMatch) return shortMatch[1];
+            
+            // Handle youtube.com/embed/
+            const embedMatch = url.match(/youtube\.com\/embed\/([^?]+)/);
+            if (embedMatch) return embedMatch[1];
+            
+            return null;
+        }
+        
         function showForm(isEdit = false, key = null) {
             if (!currentUser) {
                 alert('Please sign in to add or edit enemies.');
@@ -2065,7 +2084,28 @@
                 
                 let links = '';
                 if (enemy.referenceLink) links += `<a href="${enemy.referenceLink}" target="_blank">📚 Wiki</a>`;
-                if (enemy.videoLink) links += `<a href="${enemy.videoLink}" target="_blank">🎥 Video</a>`;
+                if (enemy.videoLink) {
+                    const videoId = getYouTubeVideoId(enemy.videoLink);
+                    if (videoId) {
+                        complexSections += `
+                            <div class="enemy-section">
+                                <h4>🎥 Video Reference</h4>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; margin-top: 10px;">
+                                    <iframe 
+                                        loading="lazy"
+                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                                        src="https://www.youtube.com/embed/${videoId}"
+                                        frameborder="0"
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Fallback to link if URL format not recognized
+                        links += `<a href="${enemy.videoLink}" target="_blank">🎥 Video</a>`;
+                    }
+                }
                 if (enemy.imageLink) links += `<a href="${enemy.imageLink}" target="_blank">🖼️ Image</a>`;
                 
                 let complexSections = '';
