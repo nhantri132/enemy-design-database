@@ -107,6 +107,36 @@
             font-size: 16px;
         }
 
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 15px;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+
+        .filters-header:hover {
+            background: #f8f9fa;
+        }
+
+        .filter-toggle-icon {
+            font-size: 14px;
+            transition: transform 0.3s;
+            color: #7f8c8d;
+        }
+
+        .filter-toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .filter-grid.hidden {
+            display: none;
+        }
+        
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -140,10 +170,11 @@
         }
 
         .active-filters {
-            margin-top: 15px;
+            margin-bottom: 15px;
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            min-height: 0;
         }
 
         .filter-tag {
@@ -734,8 +765,12 @@
         </div>
 
         <div class="filters hidden" id="filters">
-            <h3>🔍 Filters</h3>
-            <div class="filter-grid">
+            <div class="filters-header" onclick="toggleFilters()">
+                <h3>🔍 Filters</h3>
+                <span class="filter-toggle-icon" id="filterToggleIcon">▼</span>
+            </div>
+            <div class="active-filters" id="activeFilters"></div>
+            <div class="filter-grid hidden" id="filterGrid">
                 <div class="filter-item">
                     <label>Game</label>
                     <select id="filterGame" onchange="applyFilters()">
@@ -1305,6 +1340,14 @@
             });
             
             applyFilters();
+        }
+
+        function toggleFilters() {
+            const filterGrid = document.getElementById('filterGrid');
+            const icon = document.getElementById('filterToggleIcon');
+            
+            filterGrid.classList.toggle('hidden');
+            icon.classList.toggle('expanded');
         }
         
         function populateSelect(id, values) {
