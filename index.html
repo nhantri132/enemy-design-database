@@ -2083,6 +2083,8 @@
                 if (enemy.weapon) badges += `<span class="badge weapon">${enemy.weapon}</span>`;
                 
                 let links = '';
+                let complexSections = '';
+                
                 if (enemy.referenceLink) links += `<a href="${enemy.referenceLink}" target="_blank">📚 Wiki</a>`;
                 if (enemy.videoLink) {
                     const videoId = getYouTubeVideoId(enemy.videoLink);
@@ -2107,8 +2109,6 @@
                     }
                 }
                 if (enemy.imageLink) links += `<a href="${enemy.imageLink}" target="_blank">🖼️ Image</a>`;
-                
-                let complexSections = '';
                 
                 // Offensive Actions
                 if (enemy.offensiveActions && enemy.offensiveActions.length > 0) {
