@@ -1786,6 +1786,7 @@
                             <select onchange="updateReaction(${reaction.id}, 'type', this.value)">
                                 <option value="">Select...</option>
                                 <option value="reduced" ${reaction.type === 'reduced' ? 'selected' : ''}>Reduced Reactions</option>
+                                <option value="increased" ${reaction.type === 'increased' ? 'selected' : ''}>Increased Reactions</option>
                                 <option value="hyper armor" ${reaction.type === 'hyper armor' ? 'selected' : ''}>Hyper Armor/Poise</option>
                                 <option value="defensive" ${reaction.type === 'defensive' ? 'selected' : ''}>Defensive Reactions</option>
                                 <option value="offensive" ${reaction.type === 'offensive' ? 'selected' : ''}>Offensive Reactions</option>
