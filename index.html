@@ -2408,11 +2408,11 @@
                     <div class="enemy-actions">
                         <button class="btn btn-secondary" onclick="editEnemy('${enemy.key}')">Edit</button>
                         <button class="btn btn-danger" onclick="deleteEnemy('${enemy.key}')">Delete</button>
-                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}')">📋 Share</button>
+                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
                     </div>
                 ` : `
                     <div class="enemy-actions">
-                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}')">📋 Share</button>
+                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
                     </div>
                 `;
                 
@@ -2460,11 +2460,10 @@
             }
         }
 
-        function copyShareLink(key) {
+        function copyShareLink(key, button) {
             const url = `${window.location.origin}${window.location.pathname}#enemy-${key}`;
             navigator.clipboard.writeText(url).then(() => {
                 // Show temporary "Copied!" message
-                const button = event.target;
                 const originalText = button.innerHTML;
                 button.innerHTML = '✅ Copied!';
                 button.disabled = true;
