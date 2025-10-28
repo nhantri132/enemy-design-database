@@ -942,7 +942,7 @@
 
                 <div class="form-group">
                     <label for="gameName">Game *</label>
-                    <select id="gameName" required>
+                    <select id="gameName" required onchange="handleGameSelection()">
                         <option value="">Select a game...</option>
                     </select>
                 </div>
@@ -1286,7 +1286,18 @@
                 option.textContent = game;
                 gameSelect.appendChild(option);
             });
-            if (currentValue && games.has(currentValue)) {
+            
+            // Add "New Game" option only if user is signed in
+            if (currentUser) {
+                const addNewOption = document.createElement('option');
+                addNewOption.value = 'ADD_NEW_GAME';
+                addNewOption.textContent = '➕ Add New Game...';
+                addNewOption.style.color = '#3498db';
+                addNewOption.style.fontWeight = 'bold';
+                gameSelect.appendChild(addNewOption);
+            }
+            
+            if (currentValue && currentValue !== 'ADD_NEW_GAME' && games.has(currentValue)) {
                 gameSelect.value = currentValue;
             }
             
@@ -1307,6 +1318,32 @@
                 option.value = weapon;
                 weaponList.appendChild(option);
             });
+        }
+
+        function handleGameSelection() {
+            const gameSelect = document.getElementById('gameName');
+            if (gameSelect.value === 'ADD_NEW_GAME') {
+                const newGame = prompt('Enter new game name:');
+                if (newGame && newGame.trim() !== '') {
+                    const trimmedGame = newGame.trim();
+                    // Check if game already exists (case-insensitive)
+                    const existingGames = Object.values(enemies).map(e => e.game?.toLowerCase());
+                    if (existingGames.includes(trimmedGame.toLowerCase())) {
+                        alert('This game already exists in the database.');
+                        gameSelect.value = trimmedGame; // Select the existing one
+                    } else {
+                        // Add new option before the "Add New Game" option
+                        const newOption = document.createElement('option');
+                        newOption.value = trimmedGame;
+                        newOption.textContent = trimmedGame;
+                        // Insert before the last option (which is "Add New Game")
+                        gameSelect.insertBefore(newOption, gameSelect.lastElementChild);
+                        gameSelect.value = trimmedGame;
+                    }
+                } else {
+                    gameSelect.value = ''; // Reset to default if cancelled or empty
+                }
+            }
         }
 
         function populateFilterOptions() {
