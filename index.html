@@ -27,13 +27,52 @@
         header {
             background: #2c3e50;
             color: white;
-            padding: 30px 0;
-            margin-bottom: 30px;
+            padding: 20px 0;
+            margin-bottom: 0;
+            position: relative;
         }
 
         header h1 {
             text-align: center;
             font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .header-user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+        
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+        }
+        
+        .header-stats strong {
+            font-size: 24px;
+            color: #3498db;
         }
 
         .auth-section {
@@ -42,14 +81,7 @@
         }
 
         .user-info {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
         }
 
         .user-details {
@@ -88,12 +120,24 @@
             margin-bottom: 20px;
             gap: 10px;
         }
+        
+        .workspace {
+            background: #ecf0f1;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        .workspace .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
         .filters {
             background: white;
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
@@ -583,21 +627,7 @@
         }
 
         .stats {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .stats h3 {
-            color: #2c3e50;
-            font-size: 2em;
-        }
-
-        .stats p {
-            color: #7f8c8d;
+            display: none;
         }
 
         .migration-banner {
@@ -711,6 +741,12 @@
     <header>
         <div class="container">
             <h1>🎮 Enemy Design Database</h1>
+            <div class="header-info">
+                <div class="header-user" id="headerUser"></div>
+                <div class="header-stats">
+                    <span id="headerEnemyCount">-</span> <span>enemies cataloged</span>
+                </div>
+            </div>
             <a class="about-link" onclick="openAbout()">ℹ️ About</a>
         </div>
     </header>
@@ -764,13 +800,16 @@
         <div id="mainContent" class="loading">
             <p>Loading...</p>
         </div>
+    </div>
 
-        <div class="controls hidden" id="controls">
-            <input type="text" id="searchBox" class="search-box" placeholder="Search by typing any part of the enemy description...">
-            <button class="btn" id="addNewBtn" disabled>+ Add New Enemy</button>
-        </div>
+    <div class="workspace hidden" id="workspace">
+        <div class="container">
+            <div class="controls" id="controls">
+                <input type="text" id="searchBox" class="search-box" placeholder="Search by typing any part of the enemy description...">
+                <button class="btn" id="addNewBtn" disabled>+ Add New Enemy</button>
+            </div>
 
-        <div class="filters hidden" id="filters">
+            <div class="filters" id="filters">
             <div class="filters-header" onclick="toggleFilters()">
                 <h3>🔍 Filters</h3>
                 <span class="filter-toggle-icon" id="filterToggleIcon">▼</span>
@@ -865,7 +904,7 @@
             <div class="active-filters" id="activeFilters"></div>
         </div>
 
-        <div class="filters hidden" id="sortSection">
+        <div class="filters" id="sortSection">
             <h3 style="margin-bottom: 15px;">📊 Sort</h3>
             <div class="filter-item">
                 <label>Sort By</label>
@@ -883,7 +922,9 @@
                 </select>
             </div>
         </div>
-        
+    </div>
+
+    <div class="container">
         <div class="form-section hidden" id="formSection">
             <h2 id="formTitle">Add New Enemy</h2>
             <form id="enemyForm">
@@ -1068,6 +1109,7 @@
 
         function renderAuthSection() {
             const authSection = document.getElementById('authSection');
+            const headerUser = document.getElementById('headerUser');
             
             if (currentUser) {
                 authSection.innerHTML = `
@@ -1082,6 +1124,10 @@
                         <button class="btn btn-secondary" onclick="signOut()">Sign Out</button>
                     </div>
                 `;
+                headerUser.innerHTML = `
+                    <img src="${currentUser.photoURL}" alt="${currentUser.displayName}" class="header-user-avatar">
+                    <span>${currentUser.displayName.split(' ')[0]}</span>
+                `;
                 document.getElementById('addNewBtn').disabled = false;
             } else {
                 authSection.innerHTML = `
@@ -1091,6 +1137,7 @@
                         <button class="btn" onclick="signIn()">Sign in with Google</button>
                     </div>
                 `;
+                headerUser.innerHTML = '';
                 document.getElementById('addNewBtn').disabled = true;
             }
         }
@@ -1161,15 +1208,14 @@
                 updateFormDatalists();
                 populateFilterOptions();  // ADD THIS
                 document.getElementById('mainContent').style.display = 'none';
-                document.getElementById('controls').classList.remove('hidden');
-                document.getElementById('filters').classList.remove('hidden');  // ADD THIS
-                document.getElementById('sortSection').classList.remove('hidden');
+                document.getElementById('workspace').classList.remove('hidden');
             });
         }
 
         function updateCount() {
             const count = Object.keys(enemies).length;
             document.getElementById('enemyCount').textContent = count;
+            document.getElementById('headerEnemyCount').textContent = count;
         }
 
         function toggleEnemyDetails(key) {
