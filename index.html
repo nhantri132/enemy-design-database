@@ -864,6 +864,25 @@
             </div>
             <div class="active-filters" id="activeFilters"></div>
         </div>
+
+        <div class="filters hidden" id="sortSection">
+            <h3 style="margin-bottom: 15px;">📊 Sort</h3>
+            <div class="filter-item">
+                <label>Sort By</label>
+                <select id="sortField" onchange="applySorting()">
+                    <option value="dateDesc">Date Added (Newest First)</option>
+                    <option value="dateAsc">Date Added (Oldest First)</option>
+                    <option value="nameAZ">Enemy Name (A-Z)</option>
+                    <option value="nameZA">Enemy Name (Z-A)</option>
+                    <option value="gameAZ">Game (A-Z)</option>
+                    <option value="gameZA">Game (Z-A)</option>
+                    <option value="sizeSmallLarge">Size (Small → Large)</option>
+                    <option value="sizeLargeSmall">Size (Large → Small)</option>
+                    <option value="typeWeakStrong">Type (Regular → Boss)</option>
+                    <option value="typeStrongWeak">Type (Boss → Regular)</option>
+                </select>
+            </div>
+        </div>
         
         <div class="form-section hidden" id="formSection">
             <h2 id="formTitle">Add New Enemy</h2>
@@ -1144,6 +1163,7 @@
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('controls').classList.remove('hidden');
                 document.getElementById('filters').classList.remove('hidden');  // ADD THIS
+                document.getElementById('sortSection').classList.remove('hidden');
             });
         }
 
@@ -1298,6 +1318,71 @@
                 reactionType: document.getElementById('filterReactionType').value,
                 locomotion: document.getElementById('filterLocomotion').value
             };
+        }
+        
+        function applySorting() {
+            renderEnemies(document.getElementById('searchBox').value);
+        }
+        
+        function sortEnemies(enemyArray) {
+            const sortField = document.getElementById('sortField').value;
+            
+            const sizeOrder = { 'Tiny': 1, 'Small': 2, 'Medium': 3, 'Large': 4, 'Huge': 5 };
+            const typeOrder = { 'Regular': 1, 'Elite': 2, 'Mini-Boss': 3, 'Boss': 4 };
+            
+            const sorted = [...enemyArray].sort((a, b) => {
+                let comparison = 0;
+                
+                switch(sortField) {
+                    case 'dateDesc':
+                        const aTime = a.createdAt || 0;
+                        const bTime = b.createdAt || 0;
+                        comparison = bTime - aTime;
+                        break;
+                        
+                    case 'dateAsc':
+                        const aTimeAsc = a.createdAt || 0;
+                        const bTimeAsc = b.createdAt || 0;
+                        comparison = aTimeAsc - bTimeAsc;
+                        break;
+                        
+                    case 'nameAZ':
+                        comparison = (a.name || '').localeCompare(b.name || '');
+                        break;
+                        
+                    case 'nameZA':
+                        comparison = (b.name || '').localeCompare(a.name || '');
+                        break;
+                        
+                    case 'gameAZ':
+                        comparison = (a.game || '').localeCompare(b.game || '');
+                        break;
+                        
+                    case 'gameZA':
+                        comparison = (b.game || '').localeCompare(a.game || '');
+                        break;
+                        
+                    case 'sizeSmallLarge':
+                        comparison = (sizeOrder[a.size] || 3) - (sizeOrder[b.size] || 3);
+                        break;
+                        
+                    case 'sizeLargeSmall':
+                        comparison = (sizeOrder[b.size] || 3) - (sizeOrder[a.size] || 3);
+                        break;
+                        
+                    case 'typeWeakStrong':
+                        comparison = (typeOrder[a.type] || 1) - (typeOrder[b.type] || 1);
+                        break;
+                        
+                    case 'typeStrongWeak':
+                        comparison = (typeOrder[b.type] || 1) - (typeOrder[a.type] || 1);
+                        break;
+                }
+                
+                return comparison;
+            });
+            
+            return sorted;
         }
         
         function updateActiveFilterTags() {
@@ -2065,6 +2150,9 @@
                     return true;
                 });
             }
+            
+            // Apply sorting
+            enemyArray = sortEnemies(enemyArray);
             
             if (enemyArray.length === 0) {
                 listContainer.innerHTML = `
