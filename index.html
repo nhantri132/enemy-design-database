@@ -478,7 +478,37 @@
         }
 
         .enemy-compact-info {
-            /* This stays visible always */
+            display: flex;
+            gap: 15px;
+        }
+
+        .game-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .game-thumbnail-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 6px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .enemy-content {
+            flex: 1;
+            min-width: 0;
         }
 
         .enemy-detailed-info {
@@ -1094,6 +1124,7 @@
 
         let currentUser = null;
         let enemies = {};
+        let gameImages = {}; // Loaded from Firebase
         let editingKey = null;
 
         // Temporary storage for complex lists
@@ -1107,6 +1138,7 @@
         auth.onAuthStateChanged((user) => {
             currentUser = user;
             renderAuthSection();
+            loadGameImages();  // Load game images first
             loadEnemies();  // Load enemies regardless of auth state
             
             if (user) {
@@ -1222,6 +1254,13 @@
             });
         }
 
+        function loadGameImages() {
+            const gameImagesRef = database.ref('gameImages');
+            gameImagesRef.on('value', (snapshot) => {
+                gameImages = snapshot.val() || {};
+            });
+        }
+
         function handleEnemyHash() {
             const hash = window.location.hash;
             if (hash.startsWith('#enemy-')) {
@@ -1332,6 +1371,14 @@
                         alert('This game already exists in the database.');
                         gameSelect.value = trimmedGame; // Select the existing one
                     } else {
+                        // Ask for cover art URL (optional)
+                        const imageUrl = prompt('Enter cover art URL (optional - you can skip this):\n\nTip: Upload to imgur.com and paste the direct image link');
+                        
+                        // Save image URL to Firebase if provided
+                        if (imageUrl && imageUrl.trim() !== '') {
+                            database.ref('gameImages').child(trimmedGame).set(imageUrl.trim());
+                        }
+                        
                         // Add new option before the "Add New Game" option
                         const newOption = document.createElement('option');
                         newOption.value = trimmedGame;
@@ -2453,24 +2500,33 @@
                     </div>
                 `;
                 
+                // Get game thumbnail
+                const gameImage = gameImages[enemy.game];
+                const thumbnailHtml = gameImage 
+                    ? `<img src="${gameImage}" alt="${enemy.game}" class="game-thumbnail" onerror="this.style.display='none'">` 
+                    : `<div class="game-thumbnail-placeholder">${enemy.game.charAt(0)}</div>`;
+                
                 return `
                     <div class="enemy-card" id="enemy-${enemy.key}">
                         <div class="enemy-compact-info">
-                            <div class="enemy-header">
-                                <div class="enemy-title">
-                                    <h3>${enemy.name}</h3>
-                                    <div class="enemy-game">${enemy.game}</div>
+                            ${thumbnailHtml}
+                            <div class="enemy-content">
+                                <div class="enemy-header">
+                                    <div class="enemy-title">
+                                        <h3>${enemy.name}</h3>
+                                        <div class="enemy-game">${enemy.game}</div>
+                                    </div>
                                 </div>
+                                ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
+                                ${links ? `<div class="enemy-links">${links}</div>` : ''}
+                                
+                                ${complexSections || enemy.notes ? `
+                                    <button class="expand-button" onclick="toggleEnemyDetails('${enemy.key}')">
+                                        <span class="expand-icon" id="icon-${enemy.key}">▼</span>
+                                        <span id="text-${enemy.key}">Show Details</span>
+                                    </button>
+                                ` : ''}
                             </div>
-                            ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
-                            ${links ? `<div class="enemy-links">${links}</div>` : ''}
-                            
-                            ${complexSections || enemy.notes ? `
-                                <button class="expand-button" onclick="toggleEnemyDetails('${enemy.key}')">
-                                    <span class="expand-icon" id="icon-${enemy.key}">▼</span>
-                                    <span id="text-${enemy.key}">Show Details</span>
-                                </button>
-                            ` : ''}
                         </div>
                         
                         ${complexSections || enemy.notes ? `
