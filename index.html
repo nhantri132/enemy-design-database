@@ -452,29 +452,69 @@
 
         .enemy-list {
             background: transparent;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .enemy-list {
+                grid-template-columns: 1fr;
+            }
         }
 
         .enemy-card {
-            padding: 25px;
-            margin-bottom: 20px;
+            padding: 20px;
+            margin-bottom: 0;
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             border: 1px solid #e0e0e0;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enemy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: var(--bg-image);
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px) brightness(0.3);
+            z-index: 0;
+            transform: scale(1.1);
+        }
+
+        .enemy-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .enemy-card h3 {
+            color: white;
+        }
+
+        .enemy-game {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .enemy-actions {
+            position: relative;
+            z-index: 1;
+        }
+
+        .enemy-card.expanded {
+            grid-column: 1 / -1;
         }
 
         .enemy-card:hover {
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transform: translateY(-2px);
-        }
-
-        .enemy-card:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .enemy-card:last-child {
-            margin-bottom: 0;
         }
 
         .enemy-compact-info {
@@ -659,6 +699,30 @@
 
         .empty-state h3 {
             margin-bottom: 10px;
+        }
+
+        .pagination {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .pagination-info {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .stats {
@@ -1126,6 +1190,10 @@
         let enemies = {};
         let gameImages = {}; // Loaded from Firebase
         let editingKey = null;
+        
+        // Pagination
+        let currentPage = 1;
+        const itemsPerPage = 20;
 
         // Temporary storage for complex lists
         let offensiveActions = [];
@@ -1288,16 +1356,19 @@
         }
 
         function toggleEnemyDetails(key) {
+            const card = document.getElementById(`enemy-${key}`);
             const details = document.getElementById(`details-${key}`);
             const icon = document.getElementById(`icon-${key}`);
             const text = document.getElementById(`text-${key}`);
             
             if (details.classList.contains('expanded')) {
                 details.classList.remove('expanded');
+                card.classList.remove('expanded');
                 icon.classList.remove('expanded');
                 text.textContent = 'Show Details';
             } else {
                 details.classList.add('expanded');
+                card.classList.add('expanded');
                 icon.classList.add('expanded');
                 text.textContent = 'Hide Details';
             }
@@ -1462,6 +1533,7 @@
         }
 
         function applyFilters() {
+            currentPage = 1; // Reset to first page when filtering
             renderEnemies(document.getElementById('searchBox').value);
             updateActiveFilterTags();
         }
@@ -1486,6 +1558,7 @@
         }
         
         function applySorting() {
+            currentPage = 1; // Reset to first page when sorting
             renderEnemies(document.getElementById('searchBox').value);
         }
         
@@ -2322,7 +2395,19 @@
             // Apply sorting
             enemyArray = sortEnemies(enemyArray);
             
-            if (enemyArray.length === 0) {
+            // Pagination
+            const totalEnemies = enemyArray.length;
+            const totalPages = Math.ceil(totalEnemies / itemsPerPage);
+            
+            // Reset to page 1 if current page is out of bounds
+            if (currentPage > totalPages) currentPage = 1;
+            if (currentPage < 1) currentPage = 1;
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedEnemies = enemyArray.slice(startIndex, endIndex);
+            
+            if (totalEnemies === 0) {
                 listContainer.innerHTML = `
                     <div class="empty-state">
                         <h3>${searchTerm ? 'No enemies found' : 'No enemies yet'}</h3>
@@ -2332,7 +2417,7 @@
                 return;
             }
             
-            listContainer.innerHTML = enemyArray.map((enemy) => {
+            const enemyCardsHtml = paginatedEnemies.map((enemy) => {
                 let badges = '';
                 if (enemy.type) badges += `<span class="badge type">${enemy.type}</span>`;
                 if (enemy.size) badges += `<span class="badge size">${enemy.size}</span>`;
@@ -2507,8 +2592,10 @@
                     ? `<img src="${gameImage}" alt="${enemy.game}" class="game-thumbnail" onerror="this.style.display='none'">` 
                     : `<div class="game-thumbnail-placeholder">${enemy.game.charAt(0)}</div>`;
                 
+                const bgStyle = gameImage ? `style="--bg-image: url('${gameImage}')"` : '';
+                
                 return `
-                    <div class="enemy-card" id="enemy-${enemy.key}">
+                    <div class="enemy-card" id="enemy-${enemy.key}" ${bgStyle}>
                         <div class="enemy-compact-info">
                             ${thumbnailHtml}
                             <div class="enemy-content">
@@ -2541,6 +2628,23 @@
                     </div>
                 `;
             }).join('');
+            
+            // Pagination controls
+            const paginationHtml = totalPages > 1 ? `
+                <div class="pagination">
+                    <button class="btn btn-secondary" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        ← Previous
+                    </button>
+                    <span class="pagination-info">
+                        Page ${currentPage} of ${totalPages} (${totalEnemies} total enemies)
+                    </span>
+                    <button class="btn btn-secondary" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        Next →
+                    </button>
+                </div>
+            ` : '';
+            
+            listContainer.innerHTML = enemyCardsHtml + paginationHtml;
         }
 
         function scrollToEnemy(key) {
@@ -2552,6 +2656,12 @@
                     element.style.background = '';
                 }, 2000);
             }
+        }
+
+        function changePage(newPage) {
+            currentPage = newPage;
+            renderEnemies(document.getElementById('searchBox').value);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function copyShareLink(key, button) {
@@ -2674,6 +2784,7 @@
         document.getElementById('addNewBtn').addEventListener('click', () => showForm());
         document.getElementById('cancelBtn').addEventListener('click', hideForm);
         document.getElementById('searchBox').addEventListener('input', (e) => {
+            currentPage = 1; // Reset to first page when searching
             renderEnemies(e.target.value);
         });
     </script>
