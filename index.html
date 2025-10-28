@@ -84,36 +84,6 @@
             display: none;
         }
 
-        .user-details {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .sign-in-prompt {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .sign-in-prompt h2 {
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .sign-in-prompt p {
-            margin-bottom: 20px;
-            color: #7f8c8d;
-        }
-
         .controls {
             display: flex;
             justify-content: space-between;
@@ -890,8 +860,6 @@
     </div>
 
     <div class="container">
-        <div id="authSection"></div>
-
         <div id="migrationBanner" class="migration-banner hidden">
             <div>
                 <strong>Local data found!</strong> You have enemies saved locally. Migrate them to the cloud?
@@ -1223,36 +1191,23 @@
         });
 
         function renderAuthSection() {
-            const authSection = document.getElementById('authSection');
             const headerUser = document.getElementById('headerUser');
             
             if (currentUser) {
-                authSection.innerHTML = `
-                    <div class="user-info">
-                        <div class="user-details">
-                            <img src="${currentUser.photoURL}" alt="${currentUser.displayName}" class="user-avatar">
-                            <div>
-                                <strong>${currentUser.displayName}</strong>
-                                <div style="font-size: 12px; color: #7f8c8d;">${currentUser.email}</div>
-                            </div>
-                        </div>
-                        <button class="btn btn-secondary" onclick="signOut()">Sign Out</button>
-                    </div>
-                `;
                 headerUser.innerHTML = `
                     <img src="${currentUser.photoURL}" alt="${currentUser.displayName}" class="header-user-avatar">
                     <span>${currentUser.displayName.split(' ')[0]}</span>
+                    <button class="btn btn-small btn-secondary" onclick="signOut()" style="padding: 6px 12px; font-size: 13px; margin-left: 10px;">
+                        Sign out
+                    </button>
                 `;
                 document.getElementById('addNewBtn').disabled = false;
             } else {
-                authSection.innerHTML = `
-                    <div class="sign-in-prompt">
-                        <h2>Welcome to Enemy Design Database!</h2>
-                        <p>Currently, only Tri can add enemies but anyone can view the database.</p>
-                        <button class="btn" onclick="signIn()">Sign in with Google</button>
-                    </div>
+                headerUser.innerHTML = `
+                    <button class="btn btn-small" onclick="signIn()" style="padding: 6px 12px; font-size: 13px;">
+                        Sign in
+                    </button>
                 `;
-                headerUser.innerHTML = '';
                 document.getElementById('addNewBtn').disabled = true;
             }
         }
