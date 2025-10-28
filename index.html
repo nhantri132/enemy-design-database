@@ -942,8 +942,9 @@
 
                 <div class="form-group">
                     <label for="gameName">Game *</label>
-                    <input type="text" id="gameName" list="gameOptions" placeholder="What game are they from?" autocomplete="off" required>
-                    <datalist id="gameOptions"></datalist>
+                    <select id="gameName" required>
+                        <option value="">Select a game...</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -1215,7 +1216,30 @@
                 populateFilterOptions();  // ADD THIS
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('workspace').classList.remove('hidden');
+                
+                // Handle URL hash for direct enemy links
+                handleEnemyHash();
             });
+        }
+
+        function handleEnemyHash() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#enemy-')) {
+                const key = hash.replace('#enemy-', '');
+                // Small delay to ensure DOM is ready
+                setTimeout(() => {
+                    const element = document.getElementById(`enemy-${key}`);
+                    if (element) {
+                        // Expand details if they exist
+                        const details = document.getElementById(`details-${key}`);
+                        if (details && !details.classList.contains('expanded')) {
+                            toggleEnemyDetails(key);
+                        }
+                        // Scroll to the enemy
+                        scrollToEnemy(key);
+                    }
+                }, 100);
+            }
         }
 
         function updateCount() {
@@ -1252,14 +1276,19 @@
                 if (enemy.weapon) weapons.add(enemy.weapon);
             });
             
-            // Update Game datalist
-            const gameList = document.getElementById('gameOptions');
-            gameList.innerHTML = '';
+            // Update Game dropdown
+            const gameSelect = document.getElementById('gameName');
+            const currentValue = gameSelect.value; // Preserve selection if editing
+            gameSelect.innerHTML = '<option value="">Select a game...</option>';
             Array.from(games).sort().forEach(game => {
                 const option = document.createElement('option');
                 option.value = game;
-                gameList.appendChild(option);
+                option.textContent = game;
+                gameSelect.appendChild(option);
             });
+            if (currentValue && games.has(currentValue)) {
+                gameSelect.value = currentValue;
+            }
             
             // Update Faction datalist
             const factionList = document.getElementById('factionOptions');
@@ -2379,8 +2408,13 @@
                     <div class="enemy-actions">
                         <button class="btn btn-secondary" onclick="editEnemy('${enemy.key}')">Edit</button>
                         <button class="btn btn-danger" onclick="deleteEnemy('${enemy.key}')">Delete</button>
+                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}')">📋 Share</button>
                     </div>
-                ` : '';
+                ` : `
+                    <div class="enemy-actions">
+                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}')">📋 Share</button>
+                    </div>
+                `;
                 
                 return `
                     <div class="enemy-card" id="enemy-${enemy.key}">
@@ -2426,11 +2460,45 @@
             }
         }
 
+        function copyShareLink(key) {
+            const url = `${window.location.origin}${window.location.pathname}#enemy-${key}`;
+            navigator.clipboard.writeText(url).then(() => {
+                // Show temporary "Copied!" message
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ Copied!';
+                button.disabled = true;
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy link: ' + err);
+            });
+        }
+
         document.getElementById('enemyForm').addEventListener('submit', (e) => {
             e.preventDefault();
             
             if (!currentUser) {
                 alert('Please sign in to save enemies.');
+                return;
+            }
+            
+            // Get form values
+            const enemyName = document.getElementById('enemyName').value.trim();
+            const gameName = document.getElementById('gameName').value;
+            
+            // Check for duplicates (skip check if editing the same enemy)
+            const duplicate = Object.keys(enemies).find(key => {
+                if (editingKey && key === editingKey) return false; // Skip if editing same enemy
+                const enemy = enemies[key];
+                return enemy.name.toLowerCase() === enemyName.toLowerCase() && 
+                       enemy.game === gameName;
+            });
+            
+            if (duplicate) {
+                alert(`An enemy named "${enemyName}" already exists in ${gameName}. Please use a different name or select a different game.`);
                 return;
             }
             
@@ -2463,8 +2531,8 @@
                 });
             
             const enemy = {
-                name: document.getElementById('enemyName').value,
-                game: document.getElementById('gameName').value,
+                name: enemyName,
+                game: gameName,
                 type: document.getElementById('enemyType').value,
                 size: document.getElementById('enemySize').value,
                 faction: document.getElementById('enemyFaction').value,
