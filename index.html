@@ -2352,9 +2352,14 @@
                     )) return true;
                     
                     // Search special traits
-                    if (enemy.specialTraits?.some(t =>
-                        t.toLowerCase().includes(term)
-                    )) return true;
+                    if (enemy.specialTraits?.some(t => {
+                        if (typeof t === 'string') {
+                            return t.toLowerCase().includes(term);
+                        } else {
+                            return (t.category?.toLowerCase().includes(term) || 
+                                    t.text?.toLowerCase().includes(term));
+                        }
+                    })) return true;
                     
                     return false;
                 });
