@@ -2590,13 +2590,15 @@
                     </div>
                 `;
                 
-                // Get game thumbnail
+                // Get game box art for background
                 const gameImage = gameImages[enemy.game];
-                const thumbnailHtml = gameImage 
-                    ? `<img src="${gameImage}" alt="${enemy.game}" class="game-thumbnail" onerror="this.style.display='none'">` 
-                    : `<div class="game-thumbnail-placeholder">${enemy.game.charAt(0)}</div>`;
-                
                 const bgStyle = gameImage ? `style="--bg-image: url('${gameImage}')"` : '';
+                
+                // Get enemy-specific image for thumbnail (fallback to game box art if not available)
+                const enemyImageUrl = enemy.imageLink || gameImage;
+                const thumbnailHtml = enemyImageUrl
+                    ? `<img src="${enemyImageUrl}" alt="${enemy.name}" class="game-thumbnail" onerror="this.style.display='none'">` 
+                    : `<div class="game-thumbnail-placeholder">${enemy.name.charAt(0)}</div>`;
                 
                 return `
                     <div class="enemy-card" id="enemy-${enemy.key}" ${bgStyle}>
