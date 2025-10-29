@@ -585,6 +585,14 @@
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
 
+        .enemy-updated {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 8px;
+            font-style: italic;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
         .enemy-badges {
             display: flex;
             gap: 8px;
@@ -2253,6 +2261,28 @@
             specialTraits = [];
         }
 
+        function formatDate(timestamp) {
+            if (!timestamp) return null;
+            
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            // If less than 7 days, show relative time
+            if (diffDays === 0) {
+                return 'Updated today';
+            } else if (diffDays === 1) {
+                return 'Updated yesterday';
+            } else if (diffDays < 7) {
+                return `Updated ${diffDays} days ago`;
+            }
+            
+            // Otherwise show full date
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return `Updated ${date.toLocaleDateString('en-US', options)}`;
+        }
+
         function renderEnemies(searchTerm = '') {
             const listContainer = document.getElementById('enemyList');
             
@@ -2566,6 +2596,7 @@
                                     <div class="enemy-title">
                                         <h3>${enemy.name}</h3>
                                         <div class="enemy-game">${enemy.game}</div>
+                                        ${enemy.lastUpdated ? `<div class="enemy-updated">${formatDate(enemy.lastUpdated)}</div>` : ''}
                                     </div>
                                 </div>
                                 ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
@@ -2715,7 +2746,8 @@
                 locomotion: cleanLocomotion,
                 specialTraits: cleanTraits,
                 createdBy: currentUser.uid,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
+                createdAt: editingKey ? (enemies[editingKey].createdAt || firebase.database.ServerValue.TIMESTAMP) : firebase.database.ServerValue.TIMESTAMP,
+                lastUpdated: firebase.database.ServerValue.TIMESTAMP
             };
             
             const enemiesRef = database.ref('enemies');
