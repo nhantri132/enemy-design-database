@@ -593,6 +593,16 @@
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
 
+        .enemy-updated-inline {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+        }
+
         .enemy-badges {
             display: flex;
             gap: 8px;
@@ -2569,12 +2579,14 @@
                 
                 const actions = currentUser ? `
                     <div class="enemy-actions">
+                        ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
                         <button class="btn btn-secondary" onclick="editEnemy('${enemy.key}')">Edit</button>
                         <button class="btn btn-danger" onclick="deleteEnemy('${enemy.key}')">Delete</button>
                         <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
                     </div>
                 ` : `
                     <div class="enemy-actions">
+                        ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
                         <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
                     </div>
                 `;
@@ -2596,7 +2608,6 @@
                                     <div class="enemy-title">
                                         <h3>${enemy.name}</h3>
                                         <div class="enemy-game">${enemy.game}</div>
-                                        ${enemy.lastUpdated ? `<div class="enemy-updated">${formatDate(enemy.lastUpdated)}</div>` : ''}
                                     </div>
                                 </div>
                                 ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
