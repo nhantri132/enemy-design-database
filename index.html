@@ -1058,12 +1058,6 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="enemyFaction">Enemy Faction</label>
-                    <input type="text" id="enemyFaction" list="factionOptions" placeholder="e.g., Undead Legion, Crimson Fleet, etc." autocomplete="off">
-                    <datalist id="factionOptions"></datalist>
-                </div>
-
-                <div class="form-group">
                     <label for="enemyWeapon">Weapon Type</label>
                     <input type="text" id="enemyWeapon" list="weaponOptions" placeholder="Select or type custom weapon..." autocomplete="off">
                     <datalist id="weaponOptions"></datalist>
@@ -1357,12 +1351,10 @@
         function updateFormDatalists() {
             // Get unique values from database
             const games = new Set();
-            const factions = new Set();
             const weapons = new Set();
             
             Object.values(enemies).forEach(enemy => {
                 if (enemy.game) games.add(enemy.game);
-                if (enemy.faction) factions.add(enemy.faction);
                 if (enemy.weapon) weapons.add(enemy.weapon);
             });
             
@@ -1390,15 +1382,6 @@
             if (currentValue && currentValue !== 'ADD_NEW_GAME' && games.has(currentValue)) {
                 gameSelect.value = currentValue;
             }
-            
-            // Update Faction datalist
-            const factionList = document.getElementById('factionOptions');
-            factionList.innerHTML = '';
-            Array.from(factions).sort().forEach(faction => {
-                const option = document.createElement('option');
-                option.value = faction;
-                factionList.appendChild(option);
-            });
             
             // Update Weapon datalist
             const weaponList = document.getElementById('weaponOptions');
@@ -2199,7 +2182,6 @@
                 document.getElementById('gameName').value = enemy.game;
                 document.getElementById('enemyType').value = enemy.type || '';
                 document.getElementById('enemySize').value = enemy.size || '';
-                document.getElementById('enemyFaction').value = enemy.faction || '';
                 document.getElementById('enemyWeapon').value = enemy.weapon || '';
                 document.getElementById('referenceLink').value = enemy.referenceLink || '';
                 document.getElementById('videoLink').value = enemy.videoLink || '';
@@ -2309,7 +2291,6 @@
                     if (enemy.game?.toLowerCase().includes(term)) return true;
                     if (enemy.type?.toLowerCase().includes(term)) return true;
                     if (enemy.size?.toLowerCase().includes(term)) return true;
-                    if (enemy.faction?.toLowerCase().includes(term)) return true;
                     if (enemy.weapon?.toLowerCase().includes(term)) return true;
                     if (enemy.notes?.toLowerCase().includes(term)) return true;
                     if (enemy.referenceLink?.toLowerCase().includes(term)) return true;
@@ -2429,7 +2410,6 @@
                 let badges = '';
                 if (enemy.type) badges += `<span class="badge type">${enemy.type}</span>`;
                 if (enemy.size) badges += `<span class="badge size">${enemy.size}</span>`;
-                if (enemy.faction) badges += `<span class="badge">${enemy.faction}</span>`;
                 if (enemy.weapon) badges += `<span class="badge weapon">${enemy.weapon}</span>`;
                 
                 let links = '';
@@ -2750,7 +2730,6 @@
                 game: gameName,
                 type: document.getElementById('enemyType').value,
                 size: document.getElementById('enemySize').value,
-                faction: document.getElementById('enemyFaction').value,
                 weapon: document.getElementById('enemyWeapon').value,
                 referenceLink: document.getElementById('referenceLink').value,
                 videoLink: document.getElementById('videoLink').value,
