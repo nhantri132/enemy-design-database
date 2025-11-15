@@ -15,166 +15,6 @@
     </script>
     
     <style>
-        /* ========================================
-           CSS VARIABLES FOR THEMING
-           ======================================== */
-        :root {
-            /* Light theme (default) */
-            --bg-primary: #f5f5f5;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #d5dce0;
-            --bg-card: #ffffff;
-            --bg-input: #ffffff;
-            --bg-header: #2c3e50;
-            
-            --text-primary: #333;
-            --text-secondary: #555;
-            --text-tertiary: #7f8c8d;
-            --text-inverse: #ffffff;
-            
-            --border-color: #ddd;
-            --border-light: #e0e0e0;
-            --border-medium: #bdc3c7;
-            
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-            --shadow-md: 0 2px 8px rgba(0,0,0,0.1);
-            --shadow-lg: 0 4px 12px rgba(0,0,0,0.15);
-            
-            --accent-blue: #3498db;
-            --accent-blue-dark: #2980b9;
-            --accent-red: #e74c3c;
-            --accent-red-dark: #c0392b;
-            --accent-green: #27ae60;
-            --accent-purple: #9b59b6;
-            --accent-orange: #e67e22;
-            
-            --filter-bg: #f8f9fa;
-            --action-bg: #f8f9fa;
-        }
-
-        [data-theme="dark"] {
-            /* Dark theme */
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --bg-tertiary: #252525;
-            --bg-card: #2d2d2d;
-            --bg-input: #3a3a3a;
-            --bg-header: #1a1a1a;
-            
-            --text-primary: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --text-tertiary: #888;
-            --text-inverse: #ffffff;
-            
-            --border-color: #444;
-            --border-light: #3a3a3a;
-            --border-medium: #555;
-            
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
-            --shadow-md: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
-            
-            --accent-blue: #5dade2;
-            --accent-blue-dark: #3498db;
-            --accent-red: #e74c3c;
-            --accent-red-dark: #c0392b;
-            --accent-green: #2ecc71;
-            --accent-purple: #9b59b6;
-            --accent-orange: #e67e22;
-            
-            --filter-bg: #3a3a3a;
-            --action-bg: #3a3a3a;
-        }
-
-        /* ========================================
-           PRINT STYLES
-           ======================================== */
-        @media print {
-            /* Hide UI elements */
-            header,
-            .controls,
-            .filters,
-            #sortSection,
-            .workspace,
-            .enemy-actions,
-            .expand-button,
-            .pagination,
-            .form-section,
-            .migration-banner,
-            .about-link,
-            .theme-toggle,
-            .print-button {
-                display: none !important;
-            }
-            
-            /* Optimize layout for printing */
-            body {
-                background: white;
-                color: black;
-            }
-            
-            .container {
-                max-width: 100%;
-                padding: 10px;
-            }
-            
-            .content-section {
-                padding-top: 0;
-            }
-            
-            .enemy-list {
-                display: block;
-            }
-            
-            .enemy-card {
-                page-break-inside: avoid;
-                break-inside: avoid;
-                margin-bottom: 20px;
-                border: 1px solid #000;
-                background: white !important;
-                box-shadow: none;
-                padding: 15px;
-            }
-            
-            .enemy-card::before {
-                display: none;
-            }
-            
-            .enemy-card h3,
-            .enemy-game,
-            .enemy-section h4,
-            .enemy-notes,
-            .action-display {
-                color: black !important;
-                text-shadow: none !important;
-            }
-            
-            .enemy-detailed-info {
-                max-height: none !important;
-                display: block !important;
-            }
-            
-            .badge {
-                border: 1px solid black;
-                color: black;
-                background: white;
-            }
-            
-            a {
-                color: black;
-                text-decoration: underline;
-            }
-            
-            /* Show URLs for links */
-            a[href]:after {
-                content: " (" attr(href) ")";
-                font-size: 0.8em;
-            }
-        }
-
-        /* ========================================
-           BASE STYLES
-           ======================================== */
         * {
             margin: 0;
             padding: 0;
@@ -183,10 +23,9 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: #f5f5f5;
+            color: #333;
             line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -195,12 +34,9 @@
             padding: 20px;
         }
 
-        /* ========================================
-           HEADER STYLES
-           ======================================== */
         header {
-            background: var(--bg-header);
-            color: var(--text-inverse);
+            background: #2c3e50;
+            color: white;
             padding: 20px 0;
             margin-bottom: 0;
             position: relative;
@@ -219,8 +55,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-            flex-wrap: wrap;
-            gap: 10px;
         }
         
         .header-user {
@@ -248,60 +82,30 @@
         
         .header-stats strong {
             font-size: 24px;
-            color: var(--accent-blue);
+            color: #3498db;
         }
 
-        .header-controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        .auth-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: none;
+        }
+
+        .controls {
             display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
             gap: 10px;
-            align-items: center;
         }
-
-        .theme-toggle, .print-button, .keyboard-help-button {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
-            min-height: 44px; /* Mobile friendly */
-        }
-
-        .theme-toggle:hover, .print-button:hover, .keyboard-help-button:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .about-link {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-            min-height: 44px; /* Mobile friendly */
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .about-link:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        /* ========================================
-           WORKSPACE & CONTROLS
-           ======================================== */
+        
         .workspace {
-            background: var(--bg-tertiary);
+            background: #d5dce0;
             padding: 30px 0;
             margin-bottom: 0;
-            border-bottom: 3px solid var(--border-medium);
+            border-bottom: 3px solid #bdc3c7;
         }
         
         .workspace .container {
@@ -314,40 +118,12 @@
             padding-top: 40px;
         }
 
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .search-box {
-            flex: 1;
-            min-width: 200px;
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 16px;
-            background: var(--bg-input);
-            color: var(--text-primary);
-            min-height: 44px; /* Mobile friendly */
-        }
-
-        .search-box:focus {
-            border-color: var(--accent-blue);
-            outline: none;
-        }
-
-        /* ========================================
-           FILTERS
-           ======================================== */
         .filters {
-            background: var(--bg-secondary);
+            background: white;
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 15px;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .filters.hidden {
@@ -356,7 +132,7 @@
 
         .filters h3 {
             margin-bottom: 15px;
-            color: var(--text-primary);
+            color: #2c3e50;
             font-size: 16px;
         }
 
@@ -373,13 +149,13 @@
         }
 
         .filters-header:hover {
-            background: var(--filter-bg);
+            background: #f8f9fa;
         }
 
         .filter-toggle-icon {
             font-size: 14px;
             transition: transform 0.3s;
-            color: var(--text-tertiary);
+            color: #7f8c8d;
         }
 
         .filter-toggle-icon.expanded {
@@ -403,24 +179,22 @@
 
         .filter-item label {
             font-size: 12px;
-            color: var(--text-tertiary);
+            color: #7f8c8d;
             margin-bottom: 5px;
             font-weight: 500;
         }
 
         .filter-item select {
             padding: 8px;
-            border: 2px solid var(--border-color);
+            border: 2px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
-            background: var(--bg-input);
-            color: var(--text-primary);
+            background: white;
             cursor: pointer;
-            min-height: 44px; /* Mobile friendly */
         }
 
         .filter-item select:focus {
-            border-color: var(--accent-blue);
+            border-color: #3498db;
             outline: none;
         }
 
@@ -433,7 +207,7 @@
         }
 
         .filter-tag {
-            background: var(--accent-blue);
+            background: #3498db;
             color: white;
             padding: 5px 12px;
             border-radius: 15px;
@@ -450,25 +224,29 @@
 
         .clear-filters {
             padding: 6px 12px;
-            background: var(--accent-red);
+            background: #e74c3c;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 13px;
-            min-height: 36px; /* Mobile friendly */
         }
 
         .clear-filters:hover {
-            background: var(--accent-red-dark);
+            background: #c0392b;
+        }
+        
+        .search-box {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
         }
 
-        /* ========================================
-           BUTTONS
-           ======================================== */
         .btn {
             padding: 12px 24px;
-            background: var(--accent-blue);
+            background: #3498db;
             color: white;
             border: none;
             border-radius: 5px;
@@ -476,30 +254,28 @@
             font-size: 16px;
             font-weight: 500;
             transition: background 0.3s;
-            min-height: 44px; /* Mobile friendly */
         }
 
         .btn:hover {
-            background: var(--accent-blue-dark);
+            background: #2980b9;
         }
 
         .btn:disabled {
-            background: var(--border-medium);
+            background: #bdc3c7;
             cursor: not-allowed;
         }
 
         .btn-small {
             padding: 6px 12px;
             font-size: 14px;
-            min-height: 36px;
         }
 
         .btn-danger {
-            background: var(--accent-red);
+            background: #e74c3c;
         }
 
         .btn-danger:hover {
-            background: var(--accent-red-dark);
+            background: #c0392b;
         }
 
         .btn-secondary {
@@ -511,16 +287,149 @@
         }
 
         .btn-success {
-            background: var(--accent-green);
+            background: #27ae60;
         }
 
         .btn-success:hover {
             background: #229954;
         }
 
-        /* ========================================
-           ENEMY CARDS
-           ======================================== */
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .form-section.hidden {
+            display: none;
+        }
+
+        .form-section h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group select option:first-child {
+            color: #999;
+        }
+
+        .form-group select:invalid {
+            color: #999;
+        }
+
+        .form-group select:valid {
+            color: #333;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Complex sections */
+        .complex-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .complex-section h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .list-item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .field-inline {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-inline label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 3px;
+        }
+
+        .field-inline input,
+        .field-inline select {
+            padding: 6px;
+            font-size: 13px;
+        }
+
+        .trait-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .empty-list {
+            color: #95a5a6;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
         .enemy-list {
             background: transparent;
             display: grid;
@@ -528,13 +437,19 @@
             gap: 20px;
         }
 
+        @media (max-width: 768px) {
+            .enemy-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .enemy-card {
             padding: 20px;
             margin-bottom: 0;
-            background: var(--bg-card);
+            background: white;
             border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
@@ -570,18 +485,18 @@
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
 
+        .enemy-actions {
+            position: relative;
+            z-index: 1;
+        }
+
         .enemy-card.expanded {
             grid-column: 1 / -1;
         }
 
         .enemy-card:hover {
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transform: translateY(-2px);
-        }
-
-        .enemy-card.keyboard-focus {
-            outline: 3px solid var(--accent-blue);
-            outline-offset: 2px;
         }
 
         .enemy-compact-info {
@@ -595,7 +510,7 @@
             object-fit: cover;
             border-radius: 6px;
             flex-shrink: 0;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .game-thumbnail-placeholder {
@@ -632,22 +547,21 @@
         .expand-button {
             margin-top: 15px;
             padding: 8px 16px;
-            background: var(--action-bg);
-            border: 1px solid var(--border-medium);
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            color: var(--text-primary);
+            color: #2c3e50;
             display: flex;
             align-items: center;
             gap: 5px;
             transition: all 0.2s;
             width: fit-content;
-            min-height: 44px; /* Mobile friendly */
         }
 
         .expand-button:hover {
-            background: var(--border-medium);
+            background: #bdc3c7;
         }
 
         .expand-icon {
@@ -681,6 +595,14 @@
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
 
+        .enemy-updated {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 8px;
+            font-style: italic;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
         .enemy-updated-inline {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.8);
@@ -701,21 +623,21 @@
         .badge {
             display: inline-block;
             padding: 4px 12px;
-            background: var(--action-bg);
-            color: var(--text-secondary);
+            background: #ecf0f1;
+            color: #555;
             border-radius: 12px;
             font-size: 12px;
             font-weight: 500;
         }
 
-        .badge.type { background: var(--accent-blue); color: white; }
-        .badge.size { background: var(--accent-purple); color: white; }
-        .badge.weapon { background: var(--accent-orange); color: white; }
+        .badge.type { background: #3498db; color: white; }
+        .badge.size { background: #9b59b6; color: white; }
+        .badge.weapon { background: #e67e22; color: white; }
 
         .enemy-section {
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px solid var(--border-light);
+            border-top: 1px solid #eee;
         }
 
         .enemy-section h4 {
@@ -726,7 +648,7 @@
         }
 
         .action-display {
-            background: var(--action-bg);
+            background: #f8f9fa;
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 8px;
@@ -734,7 +656,7 @@
         }
 
         .action-display strong {
-            color: var(--text-primary);
+            color: #2c3e50;
         }
 
         .enemy-notes {
@@ -768,7 +690,6 @@
             display: flex;
             gap: 10px;
             margin-top: 15px;
-            flex-wrap: wrap;
         }
 
         .enemy-actions button {
@@ -776,124 +697,99 @@
             font-size: 14px;
         }
 
-        /* ========================================
-           FORMS
-           ======================================== */
-        .form-section {
-            background: var(--bg-secondary);
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-sm);
-            max-height: 80vh;
-            overflow-y: auto;
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
         }
 
-        .form-section.hidden {
+        .empty-state h3 {
+            margin-bottom: 10px;
+        }
+
+        .pagination {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .pagination-info {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats {
             display: none;
         }
 
-        .form-section h2 {
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: inherit;
-            background: var(--bg-input);
-            color: var(--text-primary);
-            min-height: 44px; /* Mobile friendly */
-        }
-
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .complex-section {
-            background: var(--filter-bg);
-            padding: 20px;
+        .migration-banner {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
-        }
-
-        .complex-section h3 {
-            margin-bottom: 15px;
-            color: var(--text-primary);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
         }
 
-        .list-item {
-            background: var(--bg-secondary);
-            padding: 15px;
+        .migration-banner.hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .variant-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #e8f4f8;
+            padding: 5px 10px;
             border-radius: 5px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--accent-blue);
-        }
-
-        .list-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .list-item-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .field-inline {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .field-inline label {
-            font-size: 12px;
-            color: var(--text-tertiary);
-            margin-bottom: 3px;
-        }
-
-        .field-inline input,
-        .field-inline select {
-            padding: 6px;
+            color: #2c3e50;
+            text-decoration: none;
             font-size: 13px;
         }
 
-        /* ========================================
-           MODALS
-           ======================================== */
+        .variant-link:hover {
+            background: #d4ebf2;
+        }
+
+        .about-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .about-link:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -912,19 +808,17 @@
         }
 
         .modal-content {
-            background: var(--bg-secondary);
+            background: white;
             padding: 30px;
             border-radius: 8px;
             max-width: 600px;
             max-height: 80vh;
             overflow-y: auto;
             position: relative;
-            margin: 20px;
-            color: var(--text-primary);
         }
 
         .modal-content a {
-            color: var(--accent-blue);
+            color: #3498db;
             text-decoration: none;
         }
 
@@ -938,282 +832,14 @@
             right: 15px;
             font-size: 28px;
             font-weight: bold;
-            color: var(--text-tertiary);
+            color: #aaa;
             cursor: pointer;
         }
 
         .modal-close:hover {
-            color: var(--text-primary);
+            color: #000;
         }
-
-        .keyboard-shortcuts {
-            margin-top: 20px;
-        }
-
-        .shortcut-group {
-            margin-bottom: 20px;
-        }
-
-        .shortcut-group h3 {
-            margin-bottom: 10px;
-            color: var(--text-primary);
-            font-size: 16px;
-        }
-
-        .shortcut-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .shortcut-key {
-            background: var(--filter-bg);
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            border: 1px solid var(--border-color);
-        }
-
-        /* ========================================
-           MISC
-           ======================================== */
-        .pagination {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-top: 40px;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
-            flex-wrap: wrap;
-        }
-
-        .pagination-info {
-            font-size: 14px;
-            color: var(--text-tertiary);
-            font-weight: 500;
-        }
-
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-tertiary);
-        }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-tertiary);
-        }
-
-        .variant-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #e8f4f8;
-            padding: 5px 10px;
-            border-radius: 5px;
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .variant-link:hover {
-            background: #d4ebf2;
-        }
-
-        [data-theme="dark"] .variant-link {
-            background: var(--filter-bg);
-        }
-
-        .migration-banner {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .migration-banner.hidden {
-            display: none;
-        }
-
-        .stats {
-            display: none;
-        }
-
-        .auth-section {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .user-info {
-            display: none;
-        }
-
-        .empty-list {
-            color: var(--text-tertiary);
-            font-style: italic;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .trait-item {
-            background: var(--bg-secondary);
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* ========================================
-           MOBILE RESPONSIVE STYLES
-           ======================================== */
-        @media (max-width: 768px) {
-            /* Header adjustments */
-            header h1 {
-                font-size: 1.5em;
-            }
-
-            .header-info {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .header-controls {
-                position: static;
-                margin-top: 15px;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
-            .header-stats {
-                justify-content: center;
-                font-size: 16px;
-            }
-
-            .header-stats strong {
-                font-size: 20px;
-            }
-
-            /* Controls */
-            .controls {
-                flex-direction: column;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            /* Filters - collapsed by default on mobile */
-            .filter-grid {
-                grid-template-columns: 1fr;
-            }
-
-            /* Enemy cards */
-            .enemy-list {
-                grid-template-columns: 1fr;
-            }
-
-            .enemy-compact-info {
-                flex-direction: column;
-            }
-
-            .game-thumbnail,
-            .game-thumbnail-placeholder {
-                width: 100%;
-                height: 150px;
-            }
-
-            .enemy-actions {
-                flex-direction: column;
-            }
-
-            .enemy-actions button {
-                width: 100%;
-            }
-
-            /* Form */
-            .list-item-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-actions {
-                flex-direction: column;
-            }
-
-            .form-actions button {
-                width: 100%;
-            }
-
-            /* Pagination */
-            .pagination {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .pagination button {
-                width: 100%;
-            }
-
-            /* Modal */
-            .modal-content {
-                max-width: 90%;
-                padding: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-
-            header h1 {
-                font-size: 1.2em;
-            }
-
-            .btn, .btn-small {
-                font-size: 14px;
-                padding: 10px 16px;
-            }
-
-            .enemy-card {
-                padding: 15px;
-            }
-
-            .shortcut-item {
-                flex-direction: column;
-                gap: 5px;
-            }
-        }
-
-        /* ========================================
-           UTILITY CLASSES
-           ======================================== */
-        .hidden {
-            display: none !important;
-        }
+        
     </style>
 </head>
 <body>
@@ -1226,16 +852,10 @@
                     <span id="headerEnemyCount">-</span> <span>enemies cataloged</span>
                 </div>
             </div>
-            <div class="header-controls">
-                <button class="keyboard-help-button" onclick="openKeyboardHelp()" title="Keyboard Shortcuts (Press ?)">⌨️</button>
-                <button class="print-button" onclick="openPrintView()" title="Print View">🖨️ Print</button>
-                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙 Dark</button>
-                <a class="about-link" onclick="openAbout()">ℹ️ About</a>
-            </div>
+            <a class="about-link" onclick="openAbout()">ℹ️ About</a>
         </div>
     </header>
 
-    <!-- About Modal -->
     <div id="aboutModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeAbout()">&times;</span>
@@ -1243,83 +863,26 @@
             <p style="margin-top: 15px; line-height: 1.8;">
                 This database is a reference tool for cataloging and analyzing enemy designs across (primarily) action-adventure video games.
             </p>
-            <h3 style="margin-top: 20px; color: var(--text-primary);">Notes</h3>
+            <h3 style="margin-top: 20px; color: #2c3e50;">Notes</h3>
             <p style="margin-top: 10px; line-height: 1.8;">
                 This is not comprehensive as there are enemy details and systems hidden to the player. Certain sections of the enemy's behaviors are more vague (like wind-up speeds and attack ranges) because what is slow or fast and close or far changes per game. This allows me to document things quickly according to that specific game without calculating specific ranges or framecounts on wind-ups. The videos are attached so you can also make that judgement yourself.
             </p>
-            <h3 style="margin-top: 20px; color: var(--text-primary);">How to Use</h3>
+            <h3 style="margin-top: 20px; color: #2c3e50;">How to Use</h3>
             <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
                 <li><strong>Anyone can view</strong> all enemy entries</li>
                 <li>Currently, <strong>only Tri</strong> can add, edit, or delete entries</li>
                 <li><strong>Search</strong> across all fields (name, game, damage types, actions, etc.)</li>
                 <li><strong>Click "Show Details"</strong> to expand enemy information</li>
-                <li><strong>Press '?'</strong> to see keyboard shortcuts</li>
             </ul>
-            <h3 style="margin-top: 20px; color: var(--text-primary);">Current Games Being Documented</h3>
+            <h3 style="margin-top: 20px; color: #2c3e50;">Current Games Being Documented</h3>
             <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
-                <li>Bloodborne</li>
                 <li>Star Wars Jedi: Survivor</li>
-                <li>Stellar Blade</li>
+                <li>God of War Ragnarok</li>
             </ul>
-            <h3 style="margin-top: 20px; color: var(--text-primary);">Contact</h3>
+            <h3 style="margin-top: 20px; color: #2c3e50;">Contact</h3>
             <p style="margin-top: 10px; line-height: 1.8;">
                 Created by Tri Nguyen. Check me out here: <a href="https://linktr.ee/trigrows" target="_blank">linktr.ee/trigrows</a>
             </p>
-        </div>
-    </div>
-
-    <!-- Keyboard Shortcuts Modal -->
-    <div id="keyboardModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeKeyboardHelp()">&times;</span>
-            <h2>⌨️ Keyboard Shortcuts</h2>
-            <div class="keyboard-shortcuts">
-                <div class="shortcut-group">
-                    <h3>Navigation</h3>
-                    <div class="shortcut-item">
-                        <span>Focus search box</span>
-                        <span class="shortcut-key">/</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Navigate up through enemies</span>
-                        <span class="shortcut-key">↑</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Navigate down through enemies</span>
-                        <span class="shortcut-key">↓</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Expand/collapse selected enemy</span>
-                        <span class="shortcut-key">Enter</span>
-                    </div>
-                </div>
-                <div class="shortcut-group">
-                    <h3>Controls</h3>
-                    <div class="shortcut-item">
-                        <span>Toggle filters panel</span>
-                        <span class="shortcut-key">F</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Toggle dark mode</span>
-                        <span class="shortcut-key">D</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Open print view</span>
-                        <span class="shortcut-key">P</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Clear search</span>
-                        <span class="shortcut-key">Esc</span>
-                    </div>
-                </div>
-                <div class="shortcut-group">
-                    <h3>Help</h3>
-                    <div class="shortcut-item">
-                        <span>Show this help</span>
-                        <span class="shortcut-key">?</span>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -1349,117 +912,118 @@
             </div>
 
             <div class="filters" id="filters">
-                <div class="filters-header" onclick="toggleFilters()">
-                    <h3>🔍 Filters</h3>
-                    <span class="filter-toggle-icon" id="filterToggleIcon">▼</span>
-                </div>
-                <div class="active-filters" id="activeFilters"></div>
-                <div class="filter-grid hidden" id="filterGrid">
-                    <div class="filter-item">
-                        <label>Game</label>
-                        <select id="filterGame" onchange="applyFilters()">
-                            <option value="">All Games</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Enemy Type</label>
-                        <select id="filterType" onchange="applyFilters()">
-                            <option value="">All Types</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Enemy Size</label>
-                        <select id="filterSize" onchange="applyFilters()">
-                            <option value="">All Sizes</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Off. Action Type</label>
-                        <select id="filterOffensiveType" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Off. Range</label>
-                        <select id="filterOffensiveRange" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Off. Combo Count</label>
-                        <select id="filterOffensiveCombo" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Off. Windup Time</label>
-                        <select id="filterOffensiveWindup" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Off. Damage Type</label>
-                        <select id="filterOffensiveDamage" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Off. Condition</label>
-                        <select id="filterOffensiveCondition" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Def. Action Type</label>
-                        <select id="filterDefensiveType" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Def. Reaction</label>
-                        <select id="filterDefensiveReaction" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Support Type</label>
-                        <select id="filterSupportType" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Reaction Type</label>
-                        <select id="filterReactionType" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>Locomotion</label>
-                        <select id="filterLocomotion" onchange="applyFilters()">
-                            <option value="">All</option>
-                        </select>
-                    </div>
-                </div>
+            <div class="filters-header" onclick="toggleFilters()">
+                <h3>🔍 Filters</h3>
+                <span class="filter-toggle-icon" id="filterToggleIcon">▼</span>
             </div>
-
-            <div class="filters" id="sortSection">
-                <h3 style="margin-bottom: 15px;">📊 Sort</h3>
+            <div class="active-filters" id="activeFilters"></div>
+            <div class="filter-grid hidden" id="filterGrid">
                 <div class="filter-item">
-                    <label>Sort By</label>
-                    <select id="sortField" onchange="applySorting()">
-                        <option value="dateDesc">Date Added (Newest First)</option>
-                        <option value="dateAsc">Date Added (Oldest First)</option>
-                        <option value="nameAZ">Enemy Name (A-Z)</option>
-                        <option value="nameZA">Enemy Name (Z-A)</option>
-                        <option value="gameAZ">Game (A-Z)</option>
-                        <option value="gameZA">Game (Z-A)</option>
-                        <option value="sizeSmallLarge">Size (Small → Large)</option>
-                        <option value="sizeLargeSmall">Size (Large → Small)</option>
-                        <option value="typeWeakStrong">Type (Regular → Boss)</option>
-                        <option value="typeStrongWeak">Type (Boss → Regular)</option>
+                    <label>Game</label>
+                    <select id="filterGame" onchange="applyFilters()">
+                        <option value="">All Games</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Enemy Type</label>
+                    <select id="filterType" onchange="applyFilters()">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Enemy Size</label>
+                    <select id="filterSize" onchange="applyFilters()">
+                        <option value="">All Sizes</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Action Type</label>
+                    <select id="filterOffensiveType" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Range</label>
+                    <select id="filterOffensiveRange" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Combo Count</label>
+                    <select id="filterOffensiveCombo" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Windup Time</label>
+                    <select id="filterOffensiveWindup" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Damage Type</label>
+                    <select id="filterOffensiveDamage" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Off. Condition</label>
+                    <select id="filterOffensiveCondition" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Def. Action Type</label>
+                    <select id="filterDefensiveType" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Def. Reaction</label>
+                    <select id="filterDefensiveReaction" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Support Type</label>
+                    <select id="filterSupportType" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Reaction Type</label>
+                    <select id="filterReactionType" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Locomotion</label>
+                    <select id="filterLocomotion" onchange="applyFilters()">
+                        <option value="">All</option>
                     </select>
                 </div>
             </div>
+            <div class="active-filters" id="activeFilters"></div>
+        </div>
+
+        <div class="filters" id="sortSection">
+            <h3 style="margin-bottom: 15px;">📊 Sort</h3>
+            <div class="filter-item">
+                <label>Sort By</label>
+                <select id="sortField" onchange="applySorting()">
+                    <option value="dateDesc">Date Added (Newest First)</option>
+                    <option value="dateAsc">Date Added (Oldest First)</option>
+                    <option value="nameAZ">Enemy Name (A-Z)</option>
+                    <option value="nameZA">Enemy Name (Z-A)</option>
+                    <option value="gameAZ">Game (A-Z)</option>
+                    <option value="gameZA">Game (Z-A)</option>
+                    <option value="sizeSmallLarge">Size (Small → Large)</option>
+                    <option value="sizeLargeSmall">Size (Large → Small)</option>
+                    <option value="typeWeakStrong">Type (Regular → Boss)</option>
+                    <option value="typeStrongWeak">Type (Boss → Regular)</option>
+                </select>
+            </div>
+        </div>
         </div>
     </div>
 
@@ -1503,7 +1067,6 @@
                         <option value="Gargantuan">Gargantuan</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="enemyWeapon">Weapon Type</label>
                     <input type="text" id="enemyWeapon" list="weaponOptions" placeholder="Select or type custom weapon..." autocomplete="off">
@@ -1606,9 +1169,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        // ========================================
-        // FIREBASE CONFIGURATION
-        // ========================================
         const firebaseConfig = {
             apiKey: "AIzaSyAyBO6IwnOdqFbC7Hf65sifksRDaKnjZmM",
             authDomain: "enemy-design-database.firebaseapp.com",
@@ -1621,14 +1181,11 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const database = firebase.ref();
+        const database = firebase.database();
 
-        // ========================================
-        // GLOBAL STATE
-        // ========================================
         let currentUser = null;
         let enemies = {};
-        let gameImages = {};
+        let gameImages = {}; // Loaded from Firebase
         let editingKey = null;
         
         // Pagination
@@ -1643,207 +1200,11 @@
         let locomotion = [];
         let specialTraits = [];
 
-        // Keyboard navigation
-        let currentFocusedEnemyIndex = -1;
-        let enemyKeys = [];
-
-        // ========================================
-        // THEME MANAGEMENT
-        // ========================================
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            updateThemeButton(savedTheme);
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeButton(newTheme);
-        }
-
-        function updateThemeButton(theme) {
-            const button = document.getElementById('themeToggle');
-            if (theme === 'dark') {
-                button.innerHTML = '☀️ Light';
-            } else {
-                button.innerHTML = '🌙 Dark';
-            }
-        }
-
-        // ========================================
-        // PRINT FUNCTIONALITY
-        // ========================================
-        function openPrintView() {
-            // Expand all enemy details before printing
-            const allDetails = document.querySelectorAll('.enemy-detailed-info');
-            allDetails.forEach(detail => {
-                if (!detail.classList.contains('expanded')) {
-                    detail.classList.add('expanded');
-                }
-            });
-
-            // Wait a moment for animations to complete, then print
-            setTimeout(() => {
-                window.print();
-            }, 300);
-        }
-
-        // ========================================
-        // KEYBOARD SHORTCUTS
-        // ========================================
-        function setupKeyboardShortcuts() {
-            document.addEventListener('keydown', (e) => {
-                // Ignore if user is typing in an input
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
-                    // Allow Escape to clear search even when focused
-                    if (e.key === 'Escape' && e.target.id === 'searchBox') {
-                        e.target.value = '';
-                        currentPage = 1;
-                        renderEnemies('');
-                        e.target.blur();
-                    }
-                    return;
-                }
-
-                // Prevent default for keys we're handling
-                const handledKeys = ['/', 'f', 'F', 'd', 'D', 'p', 'P', '?', 'Escape', 'ArrowUp', 'ArrowDown', 'Enter'];
-                if (handledKeys.includes(e.key)) {
-                    e.preventDefault();
-                }
-
-                switch(e.key) {
-                    case '/':
-                        // Focus search box
-                        document.getElementById('searchBox').focus();
-                        break;
-                    
-                    case 'f':
-                    case 'F':
-                        // Toggle filters
-                        toggleFilters();
-                        break;
-                    
-                    case 'd':
-                    case 'D':
-                        // Toggle dark mode
-                        toggleTheme();
-                        break;
-                    
-                    case 'p':
-                    case 'P':
-                        // Open print view
-                        openPrintView();
-                        break;
-                    
-                    case '?':
-                        // Show keyboard shortcuts
-                        openKeyboardHelp();
-                        break;
-                    
-                    case 'Escape':
-                        // Close modals or clear search
-                        if (document.getElementById('aboutModal').classList.contains('active')) {
-                            closeAbout();
-                        } else if (document.getElementById('keyboardModal').classList.contains('active')) {
-                            closeKeyboardHelp();
-                        } else {
-                            const searchBox = document.getElementById('searchBox');
-                            searchBox.value = '';
-                            currentPage = 1;
-                            renderEnemies('');
-                        }
-                        break;
-                    
-                    case 'ArrowUp':
-                        // Navigate to previous enemy
-                        navigateEnemies('up');
-                        break;
-                    
-                    case 'ArrowDown':
-                        // Navigate to next enemy
-                        navigateEnemies('down');
-                        break;
-                    
-                    case 'Enter':
-                        // Expand/collapse focused enemy
-                        if (currentFocusedEnemyIndex >= 0 && currentFocusedEnemyIndex < enemyKeys.length) {
-                            toggleEnemyDetails(enemyKeys[currentFocusedEnemyIndex]);
-                        }
-                        break;
-                }
-            });
-        }
-
-        function navigateEnemies(direction) {
-            const enemyElements = document.querySelectorAll('.enemy-card');
-            enemyKeys = Array.from(enemyElements).map(el => el.id.replace('enemy-', ''));
-
-            if (enemyKeys.length === 0) return;
-
-            // Remove previous focus
-            if (currentFocusedEnemyIndex >= 0 && currentFocusedEnemyIndex < enemyKeys.length) {
-                const prevElement = document.getElementById(`enemy-${enemyKeys[currentFocusedEnemyIndex]}`);
-                if (prevElement) prevElement.classList.remove('keyboard-focus');
-            }
-
-            // Update index
-            if (direction === 'down') {
-                currentFocusedEnemyIndex = Math.min(currentFocusedEnemyIndex + 1, enemyKeys.length - 1);
-            } else {
-                currentFocusedEnemyIndex = Math.max(currentFocusedEnemyIndex - 1, 0);
-            }
-
-            // Add new focus
-            const currentElement = document.getElementById(`enemy-${enemyKeys[currentFocusedEnemyIndex]}`);
-            if (currentElement) {
-                currentElement.classList.add('keyboard-focus');
-                currentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        function openKeyboardHelp() {
-            document.getElementById('keyboardModal').classList.add('active');
-        }
-
-        function closeKeyboardHelp() {
-            document.getElementById('keyboardModal').classList.remove('active');
-        }
-
-        // ========================================
-        // MODAL FUNCTIONS
-        // ========================================
-        function openAbout() {
-            document.getElementById('aboutModal').classList.add('active');
-        }
-
-        function closeAbout() {
-            document.getElementById('aboutModal').classList.remove('active');
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const aboutModal = document.getElementById('aboutModal');
-            const keyboardModal = document.getElementById('keyboardModal');
-            
-            if (event.target === aboutModal) {
-                closeAbout();
-            }
-            if (event.target === keyboardModal) {
-                closeKeyboardHelp();
-            }
-        }
-
-        // ========================================
-        // FIREBASE AUTH
-        // ========================================
         auth.onAuthStateChanged((user) => {
             currentUser = user;
             renderAuthSection();
-            loadGameImages();
-            loadEnemies();
+            loadGameImages();  // Load game images first
+            loadEnemies();  // Load enemies regardless of auth state
             
             if (user) {
                 checkForLocalData();
@@ -1883,34 +1244,6 @@
             auth.signOut();
         }
 
-        // ========================================
-        // DATA LOADING
-        // ========================================
-        function loadEnemies() {
-            const enemiesRef = database.ref('enemies');
-            
-            enemiesRef.on('value', (snapshot) => {
-                enemies = snapshot.val() || {};
-                renderEnemies();
-                updateCount();
-                updateVariantDropdown();
-                updateFormDatalists();
-                populateFilterOptions();
-                document.getElementById('mainContent').style.display = 'none';
-                document.getElementById('workspace').classList.remove('hidden');
-                
-                // Handle URL hash for direct enemy links
-                handleEnemyHash();
-            });
-        }
-
-        function loadGameImages() {
-            const gameImagesRef = database.ref('gameImages');
-            gameImagesRef.on('value', (snapshot) => {
-                gameImages = snapshot.val() || {};
-            });
-        }
-
         function checkForLocalData() {
             const localData = localStorage.getItem('enemyDatabase');
             if (localData) {
@@ -1939,17 +1272,61 @@
             alert(`Successfully migrated ${migrated} enemies to the cloud!`);
         }
 
+        function openAbout() {
+            document.getElementById('aboutModal').classList.add('active');
+        }
+
+        function closeAbout() {
+            document.getElementById('aboutModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('aboutModal');
+            if (event.target === modal) {
+                closeAbout();
+            }
+        }
+
+        function loadEnemies() {
+            const enemiesRef = database.ref('enemies');
+            
+            enemiesRef.on('value', (snapshot) => {
+                enemies = snapshot.val() || {};
+                renderEnemies();
+                updateCount();
+                updateVariantDropdown();
+                updateFormDatalists();
+                populateFilterOptions();  // ADD THIS
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('workspace').classList.remove('hidden');
+                
+                // Handle URL hash for direct enemy links
+                handleEnemyHash();
+            });
+        }
+
+        function loadGameImages() {
+            const gameImagesRef = database.ref('gameImages');
+            gameImagesRef.on('value', (snapshot) => {
+                gameImages = snapshot.val() || {};
+            });
+        }
+
         function handleEnemyHash() {
             const hash = window.location.hash;
             if (hash.startsWith('#enemy-')) {
                 const key = hash.replace('#enemy-', '');
+                // Small delay to ensure DOM is ready
                 setTimeout(() => {
                     const element = document.getElementById(`enemy-${key}`);
                     if (element) {
+                        // Expand details if they exist
                         const details = document.getElementById(`details-${key}`);
                         if (details && !details.classList.contains('expanded')) {
                             toggleEnemyDetails(key);
                         }
+                        // Scroll to the enemy
                         scrollToEnemy(key);
                     }
                 }, 100);
@@ -1962,9 +1339,104 @@
             document.getElementById('headerEnemyCount').textContent = count;
         }
 
-        // ========================================
-        // FILTER & SORT FUNCTIONS
-        // ========================================
+        function toggleEnemyDetails(key) {
+            const card = document.getElementById(`enemy-${key}`);
+            const details = document.getElementById(`details-${key}`);
+            const icon = document.getElementById(`icon-${key}`);
+            const text = document.getElementById(`text-${key}`);
+            
+            if (details.classList.contains('expanded')) {
+                details.classList.remove('expanded');
+                card.classList.remove('expanded');
+                icon.classList.remove('expanded');
+                text.textContent = 'Show Details';
+            } else {
+                details.classList.add('expanded');
+                card.classList.add('expanded');
+                icon.classList.add('expanded');
+                text.textContent = 'Hide Details';
+            }
+        }
+
+        function updateFormDatalists() {
+            // Get unique values from database
+            const games = new Set();
+            const weapons = new Set();
+            
+            Object.values(enemies).forEach(enemy => {
+                if (enemy.game) games.add(enemy.game);
+                if (enemy.weapon) weapons.add(enemy.weapon);
+            });
+            
+            // Update Game dropdown
+            const gameSelect = document.getElementById('gameName');
+            const currentValue = gameSelect.value; // Preserve selection if editing
+            gameSelect.innerHTML = '<option value="">Select a game...</option>';
+            Array.from(games).sort().forEach(game => {
+                const option = document.createElement('option');
+                option.value = game;
+                option.textContent = game;
+                gameSelect.appendChild(option);
+            });
+            
+            // Add "New Game" option only if user is signed in
+            if (currentUser) {
+                const addNewOption = document.createElement('option');
+                addNewOption.value = 'ADD_NEW_GAME';
+                addNewOption.textContent = '➕ Add New Game...';
+                addNewOption.style.color = '#3498db';
+                addNewOption.style.fontWeight = 'bold';
+                gameSelect.appendChild(addNewOption);
+            }
+            
+            if (currentValue && currentValue !== 'ADD_NEW_GAME' && games.has(currentValue)) {
+                gameSelect.value = currentValue;
+            }
+            
+            // Update Weapon datalist
+            const weaponList = document.getElementById('weaponOptions');
+            weaponList.innerHTML = '';
+            Array.from(weapons).sort().forEach(weapon => {
+                const option = document.createElement('option');
+                option.value = weapon;
+                weaponList.appendChild(option);
+            });
+        }
+
+        function handleGameSelection() {
+            const gameSelect = document.getElementById('gameName');
+            if (gameSelect.value === 'ADD_NEW_GAME') {
+                const newGame = prompt('Enter new game name:');
+                if (newGame && newGame.trim() !== '') {
+                    const trimmedGame = newGame.trim();
+                    // Check if game already exists (case-insensitive)
+                    const existingGames = Object.values(enemies).map(e => e.game?.toLowerCase());
+                    if (existingGames.includes(trimmedGame.toLowerCase())) {
+                        alert('This game already exists in the database.');
+                        gameSelect.value = trimmedGame; // Select the existing one
+                    } else {
+                        // Ask for cover art URL (optional)
+                        const imageUrl = prompt('Enter cover art URL (optional - you can skip this):\n\nTip: Upload to imgur.com and paste the direct image link');
+                        
+                        // Save image URL to Firebase if provided
+                        if (imageUrl && imageUrl.trim() !== '') {
+                            database.ref('gameImages').child(trimmedGame).set(imageUrl.trim());
+                        }
+                        
+                        // Add new option before the "Add New Game" option
+                        const newOption = document.createElement('option');
+                        newOption.value = trimmedGame;
+                        newOption.textContent = trimmedGame;
+                        // Insert before the last option (which is "Add New Game")
+                        gameSelect.insertBefore(newOption, gameSelect.lastElementChild);
+                        gameSelect.value = trimmedGame;
+                    }
+                } else {
+                    gameSelect.value = ''; // Reset to default if cancelled or empty
+                }
+            }
+        }
+
         function populateFilterOptions() {
             const filters = {
                 game: new Set(),
@@ -2014,6 +1486,7 @@
                     if (l.type) filters.locomotion.add(l.type);
                 });
             });
+
             
             // Populate dropdowns
             populateSelect('filterGame', filters.game);
@@ -2032,32 +1505,8 @@
             populateSelect('filterLocomotion', filters.locomotion);
         }
 
-        function populateSelect(id, values) {
-            const select = document.getElementById(id);
-            const currentValue = select.value;
-            const firstOption = select.options[0].text;
-            
-            select.innerHTML = `<option value="">${firstOption}</option>`;
-            Array.from(values).sort().forEach(value => {
-                const option = document.createElement('option');
-                option.value = value;
-                option.textContent = value;
-                select.appendChild(option);
-            });
-            
-            select.value = currentValue;
-        }
-
-        function toggleFilters() {
-            const filterGrid = document.getElementById('filterGrid');
-            const icon = document.getElementById('filterToggleIcon');
-            
-            filterGrid.classList.toggle('hidden');
-            icon.classList.toggle('expanded');
-        }
-
         function applyFilters() {
-            currentPage = 1;
+            currentPage = 1; // Reset to first page when filtering
             renderEnemies(document.getElementById('searchBox').value);
             updateActiveFilterTags();
         }
@@ -2082,14 +1531,14 @@
         }
         
         function applySorting() {
-            currentPage = 1;
+            currentPage = 1; // Reset to first page when sorting
             renderEnemies(document.getElementById('searchBox').value);
         }
         
         function sortEnemies(enemyArray) {
             const sortField = document.getElementById('sortField').value;
             
-            const sizeOrder = { 'Tiny': 1, 'Small': 2, 'Medium': 3, 'Large': 4, 'Huge': 5, 'Gargantuan': 6 };
+            const sizeOrder = { 'Tiny': 1, 'Small': 2, 'Medium': 3, 'Large': 4, 'Huge': 5 };
             const typeOrder = { 'Regular': 1, 'Elite': 2, 'Mini-Boss': 3, 'Boss': 4 };
             
             const sorted = [...enemyArray].sort((a, b) => {
@@ -2097,32 +1546,45 @@
                 
                 switch(sortField) {
                     case 'dateDesc':
-                        comparison = (b.createdAt || 0) - (a.createdAt || 0);
+                        const aTime = a.createdAt || 0;
+                        const bTime = b.createdAt || 0;
+                        comparison = bTime - aTime;
                         break;
+                        
                     case 'dateAsc':
-                        comparison = (a.createdAt || 0) - (b.createdAt || 0);
+                        const aTimeAsc = a.createdAt || 0;
+                        const bTimeAsc = b.createdAt || 0;
+                        comparison = aTimeAsc - bTimeAsc;
                         break;
+                        
                     case 'nameAZ':
                         comparison = (a.name || '').localeCompare(b.name || '');
                         break;
+                        
                     case 'nameZA':
                         comparison = (b.name || '').localeCompare(a.name || '');
                         break;
+                        
                     case 'gameAZ':
                         comparison = (a.game || '').localeCompare(b.game || '');
                         break;
+                        
                     case 'gameZA':
                         comparison = (b.game || '').localeCompare(a.game || '');
                         break;
+                        
                     case 'sizeSmallLarge':
                         comparison = (sizeOrder[a.size] || 3) - (sizeOrder[b.size] || 3);
                         break;
+                        
                     case 'sizeLargeSmall':
                         comparison = (sizeOrder[b.size] || 3) - (sizeOrder[a.size] || 3);
                         break;
+                        
                     case 'typeWeakStrong':
                         comparison = (typeOrder[a.type] || 1) - (typeOrder[b.type] || 1);
                         break;
+                        
                     case 'typeStrongWeak':
                         comparison = (typeOrder[b.type] || 1) - (typeOrder[a.type] || 1);
                         break;
@@ -2182,515 +1644,35 @@
             applyFilters();
         }
 
-        // ========================================
-        // RENDER ENEMIES
-        // ========================================
-        function formatDate(timestamp) {
-            if (!timestamp) return null;
+        function toggleFilters() {
+            const filterGrid = document.getElementById('filterGrid');
+            const icon = document.getElementById('filterToggleIcon');
             
-            const date = new Date(timestamp);
-            const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays === 0) {
-                return 'Updated today';
-            } else if (diffDays === 1) {
-                return 'Updated yesterday';
-            } else if (diffDays < 7) {
-                return `Updated ${diffDays} days ago`;
-            }
-            
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return `Updated ${date.toLocaleDateString('en-US', options)}`;
+            filterGrid.classList.toggle('hidden');
+            icon.classList.toggle('expanded');
         }
-
-        function getYouTubeVideoId(url) {
-            if (!url) return null;
+        
+        function populateSelect(id, values) {
+            const select = document.getElementById(id);
+            const currentValue = select.value;
+            const firstOption = select.options[0].text;
             
-            const watchMatch = url.match(/[?&]v=([^&]+)/);
-            if (watchMatch) return watchMatch[1];
-            
-            const shortMatch = url.match(/youtu\.be\/([^?]+)/);
-            if (shortMatch) return shortMatch[1];
-            
-            const embedMatch = url.match(/youtube\.com\/embed\/([^?]+)/);
-            if (embedMatch) return embedMatch[1];
-            
-            return null;
-        }
-
-        function renderEnemies(searchTerm = '') {
-            const listContainer = document.getElementById('enemyList');
-            
-            let enemyArray = Object.keys(enemies).map(key => ({
-                key: key,
-                ...enemies[key]
-            }));
-            
-            // Apply search
-            if (searchTerm) {
-                const term = searchTerm.toLowerCase();
-                enemyArray = enemyArray.filter(enemy => {
-                    if (enemy.name?.toLowerCase().includes(term)) return true;
-                    if (enemy.game?.toLowerCase().includes(term)) return true;
-                    if (enemy.type?.toLowerCase().includes(term)) return true;
-                    if (enemy.size?.toLowerCase().includes(term)) return true;
-                    if (enemy.weapon?.toLowerCase().includes(term)) return true;
-                    if (enemy.notes?.toLowerCase().includes(term)) return true;
-                    
-                    if (enemy.offensiveActions?.some(a => 
-                        a.name?.toLowerCase().includes(term) ||
-                        a.type?.toLowerCase().includes(term) ||
-                        a.range?.toLowerCase().includes(term) ||
-                        a.damageType?.toLowerCase().includes(term) ||
-                        a.details?.toLowerCase().includes(term)
-                    )) return true;
-                    
-                    if (enemy.defensiveActions?.some(a =>
-                        a.type?.toLowerCase().includes(term) ||
-                        a.details?.toLowerCase().includes(term)
-                    )) return true;
-                    
-                    if (enemy.reactions?.some(r =>
-                        r.type?.toLowerCase().includes(term) ||
-                        r.details?.toLowerCase().includes(term)
-                    )) return true;
-                    
-                    return false;
-                });
-            }
-
-            // Apply filters
-            const filters = getActiveFilters();
-            if (Object.values(filters).some(v => v !== '')) {
-                enemyArray = enemyArray.filter(enemy => {
-                    if (filters.game && enemy.game !== filters.game) return false;
-                    if (filters.type && enemy.type !== filters.type) return false;
-                    if (filters.size && enemy.size !== filters.size) return false;
-                    
-                    if (filters.offensiveType && !enemy.offensiveActions?.some(a => a.type === filters.offensiveType)) return false;
-                    if (filters.offensiveRange && !enemy.offensiveActions?.some(a => a.range === filters.offensiveRange)) return false;
-                    if (filters.offensiveCombo && !enemy.offensiveActions?.some(a => a.comboCount == filters.offensiveCombo)) return false;
-                    if (filters.offensiveWindup && !enemy.offensiveActions?.some(a => a.windupTime === filters.offensiveWindup)) return false;
-                    if (filters.offensiveDamage && !enemy.offensiveActions?.some(a => a.damageType === filters.offensiveDamage)) return false;
-                    if (filters.offensiveCondition && !enemy.offensiveActions?.some(a => a.condition === filters.offensiveCondition)) return false;
-                    
-                    if (filters.defensiveType && !enemy.defensiveActions?.some(a => a.type === filters.defensiveType)) return false;
-                    if (filters.defensiveReaction && !enemy.defensiveActions?.some(a => a.defensiveReaction === filters.defensiveReaction)) return false;
-                    
-                    if (filters.supportType && !enemy.supportActions?.some(a => a.type === filters.supportType)) return false;
-                    if (filters.reactionType && !enemy.reactions?.some(r => r.type === filters.reactionType)) return false;
-                    if (filters.locomotion && !enemy.locomotion?.some(l => l.type === filters.locomotion)) return false;
-                    
-                    return true;
-                });
-            }
-            
-            // Apply sorting
-            enemyArray = sortEnemies(enemyArray);
-            
-            // Pagination
-            const totalEnemies = enemyArray.length;
-            const totalPages = Math.ceil(totalEnemies / itemsPerPage);
-            
-            if (currentPage > totalPages) currentPage = 1;
-            if (currentPage < 1) currentPage = 1;
-            
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const paginatedEnemies = enemyArray.slice(startIndex, endIndex);
-            
-            if (totalEnemies === 0) {
-                listContainer.innerHTML = `
-                    <div class="empty-state">
-                        <h3>${searchTerm ? 'No enemies found' : 'No enemies yet'}</h3>
-                        <p>${searchTerm ? 'Try a different search term' : currentUser ? 'Click "Add New Enemy" to get started' : 'Sign in to add enemies'}</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const enemyCardsHtml = paginatedEnemies.map((enemy) => {
-                let badges = '';
-                if (enemy.type) badges += `<span class="badge type">${enemy.type}</span>`;
-                if (enemy.size) badges += `<span class="badge size">${enemy.size}</span>`;
-                if (enemy.weapon) badges += `<span class="badge weapon">${enemy.weapon}</span>`;
-                
-                let links = '';
-                let complexSections = '';
-                
-                if (enemy.referenceLink) links += `<a href="${enemy.referenceLink}" target="_blank">📚 Wiki</a>`;
-                if (enemy.videoLink) {
-                    const videoId = getYouTubeVideoId(enemy.videoLink);
-                    if (videoId) {
-                        complexSections += `
-                            <div class="enemy-section">
-                                <h4>🎥 Video Reference</h4>
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; margin-top: 10px;">
-                                    <iframe 
-                                        loading="lazy"
-                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                                        src="https://www.youtube.com/embed/${videoId}"
-                                        frameborder="0"
-                                        allowfullscreen>
-                                    </iframe>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        links += `<a href="${enemy.videoLink}" target="_blank">🎥 Video</a>`;
-                    }
-                }
-                if (enemy.imageLink) links += `<a href="${enemy.imageLink}" target="_blank">🖼️ Image</a>`;
-                
-                // Build complex sections (actions, reactions, etc.)
-                if (enemy.offensiveActions && enemy.offensiveActions.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>⚔️ Offensive Actions (${enemy.offensiveActions.length})</h4>
-                            ${enemy.offensiveActions.map(a => `
-                                <div class="action-display">
-                                    <strong>${a.name || a.type || 'Action'}:</strong> 
-                                    ${a.range ? `Range: ${a.range}` : ''} 
-                                    ${a.comboCount ? `| Combo: ${a.comboCount}` : ''} 
-                                    ${a.windupTime ? `| Windup: ${a.windupTime}` : ''}
-                                    ${a.damageType ? `| Damage: ${a.damageType}` : ''}
-                                    ${a.condition ? `| Condition: ${a.condition}` : ''}
-                                    ${a.details ? `<br>${a.details}` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                if (enemy.defensiveActions && enemy.defensiveActions.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>🛡️ Defensive Actions (${enemy.defensiveActions.length})</h4>
-                            ${enemy.defensiveActions.map(a => `
-                                <div class="action-display">
-                                    <strong>${a.type || 'Defense'}:</strong> 
-                                    ${a.defensiveReaction ? `Reaction: ${a.defensiveReaction}` : ''}
-                                    ${a.details ? `<br>${a.details}` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                if (enemy.supportActions && enemy.supportActions.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>✨ Support Actions (${enemy.supportActions.length})</h4>
-                            ${enemy.supportActions.map(a => `
-                                <div class="action-display">
-                                    <strong>${a.type || 'Support'}:</strong> 
-                                    ${a.details || ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                if (enemy.reactions && enemy.reactions.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>⚡ Reactions (${enemy.reactions.length})</h4>
-                            ${enemy.reactions.map(r => {
-                                const typeDisplay = r.type ? r.type.charAt(0).toUpperCase() + r.type.slice(1) : 'Reaction';
-                                return `
-                                    <div class="action-display">
-                                        <strong>${typeDisplay}:</strong> 
-                                        ${r.details || ''}
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `;
-                }
-                
-                if (enemy.locomotion && enemy.locomotion.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>🦶 Locomotion</h4>
-                            ${enemy.locomotion.map(l => `<span class="badge">${l.type}</span>`).join(' ')}
-                        </div>
-                    `;
-                }
-                
-                if (enemy.specialTraits && enemy.specialTraits.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>⭐ Special Traits</h4>
-                            ${enemy.specialTraits.map(t => {
-                                if (typeof t === 'string') {
-                                    return `<div class="action-display">${t}</div>`;
-                                } else {
-                                    const category = t.category ? `<strong>${t.category}:</strong> ` : '';
-                                    return `<div class="action-display">${category}${t.text || ''}</div>`;
-                                }
-                            }).join('')}
-                        </div>
-                    `;
-                }
-                
-                const allVariants = findAllVariants(enemy.key);
-                if (allVariants.length > 0) {
-                    const variantLinks = allVariants
-                        .filter(key => enemies[key])
-                        .map(key => {
-                            const variantEnemy = enemies[key];
-                            return `
-                                <a href="#" class="variant-link" onclick="event.preventDefault(); scrollToEnemy('${key}')" style="margin-right: 8px; margin-bottom: 8px; display: inline-block;">
-                                    → ${variantEnemy.name} (${variantEnemy.game})
-                                </a>
-                            `;
-                        })
-                        .join('');
-                    
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>🔗 Variants (${allVariants.length})</h4>
-                            <div style="display: flex; flex-wrap: wrap;">
-                                ${variantLinks}
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                const actions = currentUser ? `
-                    <div class="enemy-actions">
-                        ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
-                        <button class="btn btn-secondary" onclick="editEnemy('${enemy.key}')">Edit</button>
-                        <button class="btn btn-danger" onclick="deleteEnemy('${enemy.key}')">Delete</button>
-                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
-                    </div>
-                ` : `
-                    <div class="enemy-actions">
-                        ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
-                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
-                    </div>
-                `;
-                
-                const gameImage = gameImages[enemy.game];
-                const enemyImageUrl = enemy.imageLink || gameImage;
-                const thumbnailHtml = enemyImageUrl
-                    ? `<img src="${enemyImageUrl}" alt="${enemy.name}" class="game-thumbnail" onerror="this.style.display='none'">` 
-                    : `<div class="game-thumbnail-placeholder">${enemy.name.charAt(0)}</div>`;
-                
-                const bgStyle = gameImage ? `style="--bg-image: url('${gameImage}')"` : '';
-                
-                return `
-                    <div class="enemy-card" id="enemy-${enemy.key}" ${bgStyle}>
-                        <div class="enemy-compact-info">
-                            ${thumbnailHtml}
-                            <div class="enemy-content">
-                                <div class="enemy-header">
-                                    <div class="enemy-title">
-                                        <h3>${enemy.name}</h3>
-                                        <div class="enemy-game">${enemy.game}</div>
-                                    </div>
-                                </div>
-                                ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
-                                ${links ? `<div class="enemy-links">${links}</div>` : ''}
-                                
-                                ${complexSections || enemy.notes ? `
-                                    <button class="expand-button" onclick="toggleEnemyDetails('${enemy.key}')">
-                                        <span class="expand-icon" id="icon-${enemy.key}">▼</span>
-                                        <span id="text-${enemy.key}">Show Details</span>
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-                        
-                        ${complexSections || enemy.notes ? `
-                            <div class="enemy-detailed-info" id="details-${enemy.key}">
-                                ${enemy.notes ? `<div class="enemy-notes" style="margin-top: 15px;">${enemy.notes}</div>` : ''}
-                                ${complexSections}
-                            </div>
-                        ` : ''}
-                        
-                        ${actions}
-                    </div>
-                `;
-            }).join('');
-            
-            const paginationHtml = totalPages > 1 ? `
-                <div class="pagination">
-                    <button class="btn btn-secondary" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                        ← Previous
-                    </button>
-                    <span class="pagination-info">
-                        Page ${currentPage} of ${totalPages} (${totalEnemies} total enemies)
-                    </span>
-                    <button class="btn btn-secondary" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                        Next →
-                    </button>
-                </div>
-            ` : '';
-            
-            listContainer.innerHTML = enemyCardsHtml + paginationHtml;
-            
-            // Reset keyboard focus
-            currentFocusedEnemyIndex = -1;
-        }
-
-        function toggleEnemyDetails(key) {
-            const card = document.getElementById(`enemy-${key}`);
-            const details = document.getElementById(`details-${key}`);
-            const icon = document.getElementById(`icon-${key}`);
-            const text = document.getElementById(`text-${key}`);
-            
-            if (details.classList.contains('expanded')) {
-                details.classList.remove('expanded');
-                card.classList.remove('expanded');
-                icon.classList.remove('expanded');
-                text.textContent = 'Show Details';
-            } else {
-                details.classList.add('expanded');
-                card.classList.add('expanded');
-                icon.classList.add('expanded');
-                text.textContent = 'Hide Details';
-            }
-        }
-
-        function scrollToEnemy(key) {
-            const element = document.getElementById(`enemy-${key}`);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                element.style.background = '#fff3cd';
-                setTimeout(() => {
-                    element.style.background = '';
-                }, 2000);
-            }
-        }
-
-        function changePage(newPage) {
-            currentPage = newPage;
-            renderEnemies(document.getElementById('searchBox').value);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function copyShareLink(key, button) {
-            const url = `${window.location.origin}${window.location.pathname}#enemy-${key}`;
-            navigator.clipboard.writeText(url).then(() => {
-                const originalText = button.innerHTML;
-                button.innerHTML = '✅ Copied!';
-                button.disabled = true;
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                }, 2000);
-            }).catch(err => {
-                alert('Failed to copy link: ' + err);
-            });
-        }
-
-        function findAllVariants(enemyKey) {
-            const variantNetwork = new Set();
-            const visited = new Set();
-            
-            function explore(key) {
-                if (visited.has(key) || !enemies[key]) return;
-                visited.add(key);
-                
-                if (enemies[key].variant && enemies[key].variant !== '') {
-                    variantNetwork.add(enemies[key].variant);
-                    explore(enemies[key].variant);
-                }
-                
-                Object.keys(enemies).forEach(otherKey => {
-                    if (enemies[otherKey].variant === key) {
-                        variantNetwork.add(otherKey);
-                        explore(otherKey);
-                    }
-                });
-            }
-            
-            explore(enemyKey);
-            variantNetwork.delete(enemyKey);
-            
-            return Array.from(variantNetwork);
-        }
-
-        // ========================================
-        // FORM FUNCTIONS
-        // ========================================
-        function updateFormDatalists() {
-            const games = new Set();
-            const weapons = new Set();
-            
-            Object.values(enemies).forEach(enemy => {
-                if (enemy.game) games.add(enemy.game);
-                if (enemy.weapon) weapons.add(enemy.weapon);
-            });
-            
-            const gameSelect = document.getElementById('gameName');
-            const currentValue = gameSelect.value;
-            gameSelect.innerHTML = '<option value="">Select a game...</option>';
-            Array.from(games).sort().forEach(game => {
+            select.innerHTML = `<option value="">${firstOption}</option>`;
+            Array.from(values).sort().forEach(value => {
                 const option = document.createElement('option');
-                option.value = game;
-                option.textContent = game;
-                gameSelect.appendChild(option);
+                option.value = value;
+                option.textContent = value;
+                select.appendChild(option);
             });
             
-            if (currentUser) {
-                const addNewOption = document.createElement('option');
-                addNewOption.value = 'ADD_NEW_GAME';
-                addNewOption.textContent = '➕ Add New Game...';
-                addNewOption.style.color = '#3498db';
-                addNewOption.style.fontWeight = 'bold';
-                gameSelect.appendChild(addNewOption);
-            }
-            
-            if (currentValue && currentValue !== 'ADD_NEW_GAME' && games.has(currentValue)) {
-                gameSelect.value = currentValue;
-            }
-            
-            const weaponList = document.getElementById('weaponOptions');
-            weaponList.innerHTML = '';
-            Array.from(weapons).sort().forEach(weapon => {
-                const option = document.createElement('option');
-                option.value = weapon;
-                weaponList.appendChild(option);
-            });
+            select.value = currentValue;
         }
-
-        function handleGameSelection() {
-            const gameSelect = document.getElementById('gameName');
-            if (gameSelect.value === 'ADD_NEW_GAME') {
-                const newGame = prompt('Enter new game name:');
-                if (newGame && newGame.trim() !== '') {
-                    const trimmedGame = newGame.trim();
-                    const existingGames = Object.values(enemies).map(e => e.game?.toLowerCase());
-                    if (existingGames.includes(trimmedGame.toLowerCase())) {
-                        alert('This game already exists in the database.');
-                        gameSelect.value = trimmedGame;
-                    } else {
-                        const imageUrl = prompt('Enter cover art URL (optional - you can skip this):\n\nTip: Upload to imgur.com and paste the direct image link');
-                        
-                        if (imageUrl && imageUrl.trim() !== '') {
-                            database.ref('gameImages').child(trimmedGame).set(imageUrl.trim());
-                        }
-                        
-                        const newOption = document.createElement('option');
-                        newOption.value = trimmedGame;
-                        newOption.textContent = trimmedGame;
-                        gameSelect.insertBefore(newOption, gameSelect.lastElementChild);
-                        gameSelect.value = trimmedGame;
-                    }
-                } else {
-                    gameSelect.value = '';
-                }
-            }
-        }
-
+        
         function updateVariantDropdown() {
             const datalist = document.getElementById('variantOptions');
             const input = document.getElementById('variantEnemy');
             
+            // If we have a key stored, convert it to display name
             let currentDisplay = '';
             if (input.dataset.variantKey && enemies[input.dataset.variantKey]) {
                 const enemy = enemies[input.dataset.variantKey];
@@ -2714,133 +1696,35 @@
             input.value = currentDisplay;
         }
 
-        function getVariantKey(displayValue) {
-            if (!displayValue) return '';
+        function findAllVariants(enemyKey) {
+            const variantNetwork = new Set();
+            const visited = new Set();
             
-            const input = document.getElementById('variantEnemy');
-            if (input.dataset.variantKey) return input.dataset.variantKey;
-            
-            for (let key in enemies) {
-                const enemy = enemies[key];
-                if (`${enemy.name} (${enemy.game})` === displayValue) {
-                    return key;
-                }
-            }
-            return '';
-        }
-
-        function showForm(isEdit = false, key = null) {
-            if (!currentUser) {
-                alert('Please sign in to add or edit enemies.');
-                return;
-            }
-
-            const formSection = document.getElementById('formSection');
-            const formTitle = document.getElementById('formTitle');
-            const form = document.getElementById('enemyForm');
-            
-            formSection.classList.remove('hidden');
-            formTitle.textContent = isEdit ? 'Edit Enemy' : 'Add New Enemy';
-            
-            offensiveActions = [];
-            defensiveActions = [];
-            supportActions = [];
-            reactions = [];
-            locomotion = [];
-            specialTraits = [];
-            
-            if (isEdit && key) {
-                editingKey = key;
-                const enemy = enemies[key];
+            function explore(key) {
+                if (visited.has(key) || !enemies[key]) return;
+                visited.add(key);
                 
-                document.getElementById('enemyName').value = enemy.name;
-                document.getElementById('gameName').value = enemy.game;
-                document.getElementById('enemyType').value = enemy.type || '';
-                document.getElementById('enemySize').value = enemy.size || '';
-                document.getElementById('enemyWeapon').value = enemy.weapon || '';
-                document.getElementById('referenceLink').value = enemy.referenceLink || '';
-                document.getElementById('videoLink').value = enemy.videoLink || '';
-                document.getElementById('imageLink').value = enemy.imageLink || '';
-                document.getElementById('notes').value = enemy.notes || '';
-                
-                const variantInput = document.getElementById('variantEnemy');
-                if (enemy.variant && enemies[enemy.variant]) {
-                    const variantEnemy = enemies[enemy.variant];
-                    variantInput.value = `${variantEnemy.name} (${variantEnemy.game})`;
-                    variantInput.dataset.variantKey = enemy.variant;
-                } else {
-                    variantInput.value = '';
-                    variantInput.dataset.variantKey = '';
+                // Check if this enemy links to others
+                if (enemies[key].variant && enemies[key].variant !== '') {
+                    variantNetwork.add(enemies[key].variant);
+                    explore(enemies[key].variant);
                 }
                 
-                if (enemy.offensiveActions) {
-                    offensiveActions = enemy.offensiveActions.map(a => ({...a, id: Date.now() + Math.random()}));
-                }
-                if (enemy.defensiveActions) {
-                    defensiveActions = enemy.defensiveActions.map(a => ({...a, id: Date.now() + Math.random()}));
-                }
-                if (enemy.supportActions) {
-                    supportActions = enemy.supportActions.map(a => ({...a, id: Date.now() + Math.random()}));
-                }
-                if (enemy.reactions) {
-                    reactions = enemy.reactions.map(r => ({...r, id: Date.now() + Math.random()}));
-                }
-                if (enemy.locomotion) {
-                    locomotion = enemy.locomotion.map(l => ({...l, id: Date.now() + Math.random()}));
-                }
-                if (enemy.specialTraits) {
-                    specialTraits = enemy.specialTraits.map(t => {
-                        if (typeof t === 'string') {
-                            return {id: Date.now() + Math.random(), category: '', text: t};
-                        } else {
-                            return {...t, id: Date.now() + Math.random()};
-                        }
-                    });
-                }
-            } else {
-                editingKey = null;
-                form.reset();
+                // Find enemies that link to this one (reverse lookup)
+                Object.keys(enemies).forEach(otherKey => {
+                    if (enemies[otherKey].variant === key) {
+                        variantNetwork.add(otherKey);
+                        explore(otherKey);
+                    }
+                });
             }
             
-            renderOffensiveActions();
-            renderDefensiveActions();
-            renderSupportActions();
-            renderReactions();
-            renderLocomotion();
-            renderSpecialTraits();
-            updateVariantDropdown();
-            updateFormDatalists();
+            explore(enemyKey);
+            variantNetwork.delete(enemyKey); // Remove self
             
-            formSection.scrollIntoView({ behavior: 'smooth' });
+            return Array.from(variantNetwork);
         }
-
-        function hideForm() {
-            document.getElementById('formSection').classList.add('hidden');
-            document.getElementById('enemyForm').reset();
-            editingKey = null;
-            offensiveActions = [];
-            defensiveActions = [];
-            supportActions = [];
-            reactions = [];
-            locomotion = [];
-            specialTraits = [];
-        }
-
-        function editEnemy(key) {
-            showForm(true, key);
-        }
-
-        function deleteEnemy(key) {
-            if (!currentUser) {
-                alert('Please sign in to delete enemies.');
-                return;
-            }
-            
-            if (confirm('Are you sure you want to delete this enemy?')) {
-                database.ref('enemies/' + key).remove();
-            }
-        }
-
+        
         // Offensive Actions
         function addOffensiveAction() {
             const action = {
@@ -2938,6 +1822,7 @@
                                 <option value="grappled" ${action.condition === 'grappled' ? 'selected' : ''}>Grappled</option>
                                 <option value="paralyze" ${action.condition === 'paralyze' ? 'selected' : ''}>Paralyze</option>
                                 <option value="poisoned" ${action.condition === 'poisoned' ? 'selected' : ''}>Poisoned</option>
+                                <option value="vulnerable" ${action.condition === 'vulnerable' ? 'selected' : ''}>Vulnerable</option>
                             </select>
                         </div>
                     </div>
@@ -3216,7 +2101,7 @@
                     </div>
                     <div class="field-inline" style="margin-bottom: 10px;">
                         <label>Category</label>
-                        <select onchange="updateSpecialTrait(${trait.id}, 'category', this.value)" style="flex: 1; border: 1px solid var(--border-color); padding: 5px; border-radius: 3px;">
+                        <select onchange="updateSpecialTrait(${trait.id}, 'category', this.value)" style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
                             <option value="">Select...</option>
                             <option value="equipment" ${trait.category === 'equipment' ? 'selected' : ''}>Equipment</option>
                             <option value="passive debuff" ${trait.category === 'passive debuff' ? 'selected' : ''}>Passive Debuff</option>
@@ -3230,7 +2115,7 @@
                     </div>
                     <div class="field-inline">
                         <label>Description</label>
-                        <input type="text" value="${trait.text}" onchange="updateSpecialTrait(${trait.id}, 'text', this.value)" placeholder="Describe the trait..." style="flex: 1; border: 1px solid var(--border-color); padding: 5px; border-radius: 3px;">
+                        <input type="text" value="${trait.text}" onchange="updateSpecialTrait(${trait.id}, 'text', this.value)" placeholder="Describe the trait..." style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
                     </div>
                 </div>
             `).join('');
@@ -3241,7 +2126,562 @@
             if (trait) trait[field] = value;
         }
 
-        // Form submission
+        function getVariantKey(displayValue) {
+            if (!displayValue) return '';
+            
+            // Check if we have the key stored
+            const input = document.getElementById('variantEnemy');
+            if (input.dataset.variantKey) return input.dataset.variantKey;
+            
+            // Otherwise search for matching enemy
+            for (let key in enemies) {
+                const enemy = enemies[key];
+                if (`${enemy.name} (${enemy.game})` === displayValue) {
+                    return key;
+                }
+            }
+            return '';
+        }
+        
+        // Helper function to extract YouTube video ID from URL
+        function getYouTubeVideoId(url) {
+            if (!url) return null;
+            
+            // Handle youtube.com/watch?v=
+            const watchMatch = url.match(/[?&]v=([^&]+)/);
+            if (watchMatch) return watchMatch[1];
+            
+            // Handle youtu.be/
+            const shortMatch = url.match(/youtu\.be\/([^?]+)/);
+            if (shortMatch) return shortMatch[1];
+            
+            // Handle youtube.com/embed/
+            const embedMatch = url.match(/youtube\.com\/embed\/([^?]+)/);
+            if (embedMatch) return embedMatch[1];
+            
+            return null;
+        }
+        
+        function showForm(isEdit = false, key = null) {
+            if (!currentUser) {
+                alert('Please sign in to add or edit enemies.');
+                return;
+            }
+
+            const formSection = document.getElementById('formSection');
+            const formTitle = document.getElementById('formTitle');
+            const form = document.getElementById('enemyForm');
+            
+            formSection.classList.remove('hidden');
+            formTitle.textContent = isEdit ? 'Edit Enemy' : 'Add New Enemy';
+            
+            // Clear complex lists
+            offensiveActions = [];
+            defensiveActions = [];
+            supportActions = [];
+            reactions = [];
+            locomotion = [];
+            specialTraits = [];
+            
+            if (isEdit && key) {
+                editingKey = key;
+                const enemy = enemies[key];
+                
+                // Basic fields
+                document.getElementById('enemyName').value = enemy.name;
+                document.getElementById('gameName').value = enemy.game;
+                document.getElementById('enemyType').value = enemy.type || '';
+                document.getElementById('enemySize').value = enemy.size || '';
+                document.getElementById('enemyWeapon').value = enemy.weapon || '';
+                document.getElementById('referenceLink').value = enemy.referenceLink || '';
+                document.getElementById('videoLink').value = enemy.videoLink || '';
+                document.getElementById('imageLink').value = enemy.imageLink || '';
+                document.getElementById('notes').value = enemy.notes || '';
+                
+                const variantInput = document.getElementById('variantEnemy');
+                if (enemy.variant && enemies[enemy.variant]) {
+                    const variantEnemy = enemies[enemy.variant];
+                    variantInput.value = `${variantEnemy.name} (${variantEnemy.game})`;
+                    variantInput.dataset.variantKey = enemy.variant;
+                } else {
+                    variantInput.value = '';
+                    variantInput.dataset.variantKey = '';
+                }
+                
+                // Complex fields
+                if (enemy.offensiveActions) {
+                    offensiveActions = enemy.offensiveActions.map(a => ({...a, id: Date.now() + Math.random()}));
+                }
+                if (enemy.defensiveActions) {
+                    defensiveActions = enemy.defensiveActions.map(a => ({...a, id: Date.now() + Math.random()}));
+                }
+                if (enemy.supportActions) {
+                    supportActions = enemy.supportActions.map(a => ({...a, id: Date.now() + Math.random()}));
+                }
+                if (enemy.reactions) {
+                    reactions = enemy.reactions.map(r => ({...r, id: Date.now() + Math.random()}));
+                }
+                if (enemy.locomotion) {
+                    locomotion = enemy.locomotion.map(l => ({...l, id: Date.now() + Math.random()}));
+                }
+                if (enemy.specialTraits) {
+                    specialTraits = enemy.specialTraits.map(t => {
+                        // Handle both old format (string) and new format (object with category)
+                        if (typeof t === 'string') {
+                            return {id: Date.now() + Math.random(), category: '', text: t};
+                        } else {
+                            return {...t, id: Date.now() + Math.random()};
+                        }
+                    });
+                }
+            } else {
+                editingKey = null;
+                form.reset();
+            }
+            
+            renderOffensiveActions();
+            renderDefensiveActions();
+            renderSupportActions();
+            renderReactions();
+            renderLocomotion();
+            renderSpecialTraits();
+            updateVariantDropdown();
+            updateFormDatalists();
+            
+            formSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideForm() {
+            document.getElementById('formSection').classList.add('hidden');
+            document.getElementById('enemyForm').reset();
+            editingKey = null;
+            offensiveActions = [];
+            defensiveActions = [];
+            supportActions = [];
+            reactions = [];
+            locomotion = [];
+            specialTraits = [];
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return null;
+            
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            // If less than 7 days, show relative time
+            if (diffDays === 0) {
+                return 'Updated today';
+            } else if (diffDays === 1) {
+                return 'Updated yesterday';
+            } else if (diffDays < 7) {
+                return `Updated ${diffDays} days ago`;
+            }
+            
+            // Otherwise show full date
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return `Updated ${date.toLocaleDateString('en-US', options)}`;
+        }
+
+        function renderEnemies(searchTerm = '') {
+            const listContainer = document.getElementById('enemyList');
+            
+            let enemyArray = Object.keys(enemies).map(key => ({
+                key: key,
+                ...enemies[key]
+            }));
+            
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                enemyArray = enemyArray.filter(enemy => {
+                    // Search basic fields
+                    if (enemy.name?.toLowerCase().includes(term)) return true;
+                    if (enemy.game?.toLowerCase().includes(term)) return true;
+                    if (enemy.type?.toLowerCase().includes(term)) return true;
+                    if (enemy.size?.toLowerCase().includes(term)) return true;
+                    if (enemy.weapon?.toLowerCase().includes(term)) return true;
+                    if (enemy.notes?.toLowerCase().includes(term)) return true;
+                    if (enemy.referenceLink?.toLowerCase().includes(term)) return true;
+                    if (enemy.videoLink?.toLowerCase().includes(term)) return true;
+                    if (enemy.imageLink?.toLowerCase().includes(term)) return true;
+                    
+                    // Search offensive actions - ALL FIELDS
+                    if (enemy.offensiveActions?.some(a => 
+                        a.name?.toLowerCase().includes(term) ||
+                        a.type?.toLowerCase().includes(term) ||
+                        a.range?.toLowerCase().includes(term) ||
+                        a.comboCount?.toString().toLowerCase().includes(term) ||
+                        a.windupTime?.toLowerCase().includes(term) ||
+                        a.damageType?.toLowerCase().includes(term) ||
+                        a.condition?.toLowerCase().includes(term) ||
+                        a.details?.toLowerCase().includes(term)
+                    )) return true;
+                    
+                    // Search defensive actions - ALL FIELDS
+                    if (enemy.defensiveActions?.some(a =>
+                        a.type?.toLowerCase().includes(term) ||
+                        a.defensiveReaction?.toLowerCase().includes(term) ||
+                        a.details?.toLowerCase().includes(term)
+                    )) return true;
+                    
+                    // Search support actions - ALL FIELDS
+                    if (enemy.supportActions?.some(a =>
+                        a.type?.toLowerCase().includes(term) ||
+                        a.details?.toLowerCase().includes(term)
+                    )) return true;
+                    
+                    // Search reactions - ALL FIELDS
+                    if (enemy.reactions?.some(r =>
+                        r.type?.toLowerCase().includes(term) ||
+                        r.details?.toLowerCase().includes(term)
+                    )) return true;
+                    
+                    // Search locomotion
+                    if (enemy.locomotion?.some(l =>
+                        l.type?.toLowerCase().includes(term)
+                    )) return true;
+                    
+                    // Search special traits
+                    if (enemy.specialTraits?.some(t => {
+                        if (typeof t === 'string') {
+                            return t.toLowerCase().includes(term);
+                        } else {
+                            return (t.category?.toLowerCase().includes(term) || 
+                                    t.text?.toLowerCase().includes(term));
+                        }
+                    })) return true;
+                    
+                    return false;
+                });
+            }
+
+            // Apply filters
+            const filters = getActiveFilters();
+            if (Object.values(filters).some(v => v !== '')) {
+                enemyArray = enemyArray.filter(enemy => {
+                    // Basic field filters
+                    if (filters.game && enemy.game !== filters.game) return false;
+                    if (filters.type && enemy.type !== filters.type) return false;
+                    if (filters.size && enemy.size !== filters.size) return false;
+                    
+                    // Offensive action filters
+                    if (filters.offensiveType && !enemy.offensiveActions?.some(a => a.type === filters.offensiveType)) return false;
+                    if (filters.offensiveRange && !enemy.offensiveActions?.some(a => a.range === filters.offensiveRange)) return false;
+                    if (filters.offensiveCombo && !enemy.offensiveActions?.some(a => a.comboCount == filters.offensiveCombo)) return false;
+                    if (filters.offensiveWindup && !enemy.offensiveActions?.some(a => a.windupTime === filters.offensiveWindup)) return false;
+                    if (filters.offensiveDamage && !enemy.offensiveActions?.some(a => a.damageType === filters.offensiveDamage)) return false;
+                    if (filters.offensiveCondition && !enemy.offensiveActions?.some(a => a.condition === filters.offensiveCondition)) return false;
+                    
+                    // Defensive action filters
+                    if (filters.defensiveType && !enemy.defensiveActions?.some(a => a.type === filters.defensiveType)) return false;
+                    if (filters.defensiveReaction && !enemy.defensiveActions?.some(a => a.defensiveReaction === filters.defensiveReaction)) return false;
+                    
+                    // Support action filters
+                    if (filters.supportType && !enemy.supportActions?.some(a => a.type === filters.supportType)) return false;
+                    
+                    // Reaction filters
+                    if (filters.reactionType && !enemy.reactions?.some(r => r.type === filters.reactionType)) return false;
+                    
+                    // Locomotion filters
+                    if (filters.locomotion && !enemy.locomotion?.some(l => l.type === filters.locomotion)) return false;
+                    
+                    return true;
+                });
+            }
+            
+            // Apply sorting
+            enemyArray = sortEnemies(enemyArray);
+            
+            // Pagination
+            const totalEnemies = enemyArray.length;
+            const totalPages = Math.ceil(totalEnemies / itemsPerPage);
+            
+            // Reset to page 1 if current page is out of bounds
+            if (currentPage > totalPages) currentPage = 1;
+            if (currentPage < 1) currentPage = 1;
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedEnemies = enemyArray.slice(startIndex, endIndex);
+            
+            if (totalEnemies === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <h3>${searchTerm ? 'No enemies found' : 'No enemies yet'}</h3>
+                        <p>${searchTerm ? 'Try a different search term' : currentUser ? 'Click "Add New Enemy" to get started' : 'Sign in to add enemies'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const enemyCardsHtml = paginatedEnemies.map((enemy) => {
+                let badges = '';
+                if (enemy.type) badges += `<span class="badge type">${enemy.type}</span>`;
+                if (enemy.size) badges += `<span class="badge size">${enemy.size}</span>`;
+                if (enemy.weapon) badges += `<span class="badge weapon">${enemy.weapon}</span>`;
+                
+                let links = '';
+                let complexSections = '';
+                
+                if (enemy.referenceLink) links += `<a href="${enemy.referenceLink}" target="_blank">📚 Wiki</a>`;
+                if (enemy.videoLink) {
+                    const videoId = getYouTubeVideoId(enemy.videoLink);
+                    if (videoId) {
+                        complexSections += `
+                            <div class="enemy-section">
+                                <h4>🎥 Video Reference</h4>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; margin-top: 10px;">
+                                    <iframe 
+                                        loading="lazy"
+                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                                        src="https://www.youtube.com/embed/${videoId}"
+                                        frameborder="0"
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Fallback to link if URL format not recognized
+                        links += `<a href="${enemy.videoLink}" target="_blank">🎥 Video</a>`;
+                    }
+                }
+                if (enemy.imageLink) links += `<a href="${enemy.imageLink}" target="_blank">🖼️ Image</a>`;
+                
+                // Offensive Actions
+                if (enemy.offensiveActions && enemy.offensiveActions.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>⚔️ Offensive Actions (${enemy.offensiveActions.length})</h4>
+                            ${enemy.offensiveActions.map(a => `
+                                <div class="action-display">
+                                    <strong>${a.name || a.type || 'Action'}:</strong> 
+                                    ${a.range ? `Range: ${a.range}` : ''} 
+                                    ${a.comboCount ? `| Combo: ${a.comboCount}` : ''} 
+                                    ${a.windupTime ? `| Windup: ${a.windupTime}` : ''}
+                                    ${a.damageType ? `| Damage: ${a.damageType}` : ''}
+                                    ${a.condition ? `| Condition: ${a.condition}` : ''}
+                                    ${a.details ? `<br>${a.details}` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Defensive Actions
+                if (enemy.defensiveActions && enemy.defensiveActions.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>🛡️ Defensive Actions (${enemy.defensiveActions.length})</h4>
+                            ${enemy.defensiveActions.map(a => `
+                                <div class="action-display">
+                                    <strong>${a.type || 'Defense'}:</strong> 
+                                    ${a.defensiveReaction ? `Reaction: ${a.defensiveReaction}` : ''}
+                                    ${a.details ? `<br>${a.details}` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Support Actions
+                if (enemy.supportActions && enemy.supportActions.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>✨ Support Actions (${enemy.supportActions.length})</h4>
+                            ${enemy.supportActions.map(a => `
+                                <div class="action-display">
+                                    <strong>${a.type || 'Support'}:</strong> 
+                                    ${a.details || ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Reactions
+                if (enemy.reactions && enemy.reactions.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>⚡ Reactions (${enemy.reactions.length})</h4>
+                            ${enemy.reactions.map(r => {
+                                const typeDisplay = r.type ? r.type.charAt(0).toUpperCase() + r.type.slice(1) : 'Reaction';
+                                return `
+                                    <div class="action-display">
+                                        <strong>${typeDisplay}:</strong> 
+                                        ${r.details || ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Locomotion
+                if (enemy.locomotion && enemy.locomotion.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>🦶 Locomotion</h4>
+                            ${enemy.locomotion.map(l => `<span class="badge">${l.type}</span>`).join(' ')}
+                        </div>
+                    `;
+                }
+                
+                // Special Traits
+                if (enemy.specialTraits && enemy.specialTraits.length > 0) {
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>⭐ Special Traits</h4>
+                            ${enemy.specialTraits.map(t => {
+                                // Handle both old format (string) and new format (object)
+                                if (typeof t === 'string') {
+                                    return `<div class="action-display">${t}</div>`;
+                                } else {
+                                    const category = t.category ? `<strong>${t.category}:</strong> ` : '';
+                                    return `<div class="action-display">${category}${t.text || ''}</div>`;
+                                }
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Variants - show entire network
+                const allVariants = findAllVariants(enemy.key);
+                if (allVariants.length > 0) {
+                    const variantLinks = allVariants
+                        .filter(key => enemies[key]) // Make sure enemy still exists
+                        .map(key => {
+                            const variantEnemy = enemies[key];
+                            return `
+                                <a href="#" class="variant-link" onclick="event.preventDefault(); scrollToEnemy('${key}')" style="margin-right: 8px; margin-bottom: 8px; display: inline-block;">
+                                    → ${variantEnemy.name} (${variantEnemy.game})
+                                </a>
+                            `;
+                        })
+                        .join('');
+                    
+                    complexSections += `
+                        <div class="enemy-section">
+                            <h4>🔗 Variants (${allVariants.length})</h4>
+                            <div style="display: flex; flex-wrap: wrap;">
+                                ${variantLinks}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                const actions = currentUser ? `
+                    <div class="enemy-actions">
+                        ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
+                        <button class="btn btn-secondary" onclick="editEnemy('${enemy.key}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteEnemy('${enemy.key}')">Delete</button>
+                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
+                    </div>
+                ` : `
+                    <div class="enemy-actions">
+                        ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
+                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
+                    </div>
+                `;
+                
+                // Get game box art for background
+                const gameImage = gameImages[enemy.game];
+                const bgStyle = gameImage ? `style="--bg-image: url('${gameImage}')"` : '';
+                
+                // Get enemy-specific image for thumbnail (fallback to game box art if not available)
+                const enemyImageUrl = enemy.imageLink || gameImage;
+                const thumbnailHtml = enemyImageUrl
+                    ? `<img src="${enemyImageUrl}" alt="${enemy.name}" class="game-thumbnail" onerror="this.style.display='none'">` 
+                    : `<div class="game-thumbnail-placeholder">${enemy.name.charAt(0)}</div>`;
+                
+                return `
+                    <div class="enemy-card" id="enemy-${enemy.key}" ${bgStyle}>
+                        <div class="enemy-compact-info">
+                            ${thumbnailHtml}
+                            <div class="enemy-content">
+                                <div class="enemy-header">
+                                    <div class="enemy-title">
+                                        <h3>${enemy.name}</h3>
+                                        <div class="enemy-game">${enemy.game}</div>
+                                    </div>
+                                </div>
+                                ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
+                                ${links ? `<div class="enemy-links">${links}</div>` : ''}
+                                
+                                ${complexSections || enemy.notes ? `
+                                    <button class="expand-button" onclick="toggleEnemyDetails('${enemy.key}')">
+                                        <span class="expand-icon" id="icon-${enemy.key}">▼</span>
+                                        <span id="text-${enemy.key}">Show Details</span>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        ${complexSections || enemy.notes ? `
+                            <div class="enemy-detailed-info" id="details-${enemy.key}">
+                                ${enemy.notes ? `<div class="enemy-notes" style="margin-top: 15px;">${enemy.notes}</div>` : ''}
+                                ${complexSections}
+                            </div>
+                        ` : ''}
+                        
+                        ${actions}
+                    </div>
+                `;
+            }).join('');
+            
+            // Pagination controls
+            const paginationHtml = totalPages > 1 ? `
+                <div class="pagination">
+                    <button class="btn btn-secondary" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        ← Previous
+                    </button>
+                    <span class="pagination-info">
+                        Page ${currentPage} of ${totalPages} (${totalEnemies} total enemies)
+                    </span>
+                    <button class="btn btn-secondary" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        Next →
+                    </button>
+                </div>
+            ` : '';
+            
+            listContainer.innerHTML = enemyCardsHtml + paginationHtml;
+        }
+
+        function scrollToEnemy(key) {
+            const element = document.getElementById(`enemy-${key}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.style.background = '#fff3cd';
+                setTimeout(() => {
+                    element.style.background = '';
+                }, 2000);
+            }
+        }
+
+        function changePage(newPage) {
+            currentPage = newPage;
+            renderEnemies(document.getElementById('searchBox').value);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function copyShareLink(key, button) {
+            const url = `${window.location.origin}${window.location.pathname}#enemy-${key}`;
+            navigator.clipboard.writeText(url).then(() => {
+                // Show temporary "Copied!" message
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ Copied!';
+                button.disabled = true;
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy link: ' + err);
+            });
+        }
+
         document.getElementById('enemyForm').addEventListener('submit', (e) => {
             e.preventDefault();
             
@@ -3250,11 +2690,13 @@
                 return;
             }
             
+            // Get form values
             const enemyName = document.getElementById('enemyName').value.trim();
             const gameName = document.getElementById('gameName').value;
             
+            // Check for duplicates (skip check if editing the same enemy)
             const duplicate = Object.keys(enemies).find(key => {
-                if (editingKey && key === editingKey) return false;
+                if (editingKey && key === editingKey) return false; // Skip if editing same enemy
                 const enemy = enemies[key];
                 return enemy.name.toLowerCase() === enemyName.toLowerCase() && 
                        enemy.game === gameName;
@@ -3265,6 +2707,7 @@
                 return;
             }
             
+            // Clean up actions (remove temp IDs)
             const cleanOffensive = offensiveActions.map(a => {
                 const {id, ...rest} = a;
                 return rest;
@@ -3325,19 +2768,27 @@
             hideForm();
         });
 
-        // Event listeners
+        function editEnemy(key) {
+            showForm(true, key);
+        }
+
+        function deleteEnemy(key) {
+            if (!currentUser) {
+                alert('Please sign in to delete enemies.');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to delete this enemy?')) {
+                database.ref('enemies/' + key).remove();
+            }
+        }
+
         document.getElementById('addNewBtn').addEventListener('click', () => showForm());
         document.getElementById('cancelBtn').addEventListener('click', hideForm);
         document.getElementById('searchBox').addEventListener('input', (e) => {
-            currentPage = 1;
+            currentPage = 1; // Reset to first page when searching
             renderEnemies(e.target.value);
         });
-
-        // ========================================
-        // INITIALIZATION
-        // ========================================
-        initializeTheme();
-        setupKeyboardShortcuts();
     </script>
 </body>
 </html>
