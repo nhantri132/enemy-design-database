@@ -2694,6 +2694,7 @@
                 const actions = currentUser ? `
                     <div class="enemy-actions">
                         ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
+                        <button class="btn btn-success" onclick="cloneEnemy('${enemy.key}')">👯 Clone</button>
                         <button class="btn btn-secondary" onclick="editEnemy('${enemy.key}')">Edit</button>
                         <button class="btn btn-danger" onclick="deleteEnemy('${enemy.key}')">Delete</button>
                         <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
@@ -2889,6 +2890,24 @@
 
         function editEnemy(key) {
             showForm(true, key);
+        }
+
+        function cloneEnemy(key) {
+            // 1. Use the existing edit logic to fill the form with the enemy's data
+            showForm(true, key);
+        
+            // 2. IMPORTANT: Set editingKey to null so that when you hit "Save", 
+            // it creates a NEW entry (push) instead of overwriting the old one (update)
+            editingKey = null;
+        
+            // 3. Update the UI to show you are in "Clone" mode
+            document.getElementById('formTitle').textContent = 'Add New (Cloned from ' + enemies[key].name + ')';
+            
+            // 4. Slightly modify the name so you don't accidentally trigger a duplicate warning
+            document.getElementById('enemyName').value += " (Copy)";
+        
+            // 5. Scroll smoothly to the form
+            document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
         }
 
         function deleteEnemy(key) {
