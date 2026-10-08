@@ -1254,11 +1254,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="referenceLink">Reference Link</label>
-                    <input type="url" id="referenceLink" placeholder="https://wiki.example.com/enemy" autocomplete="off">
-                </div>
-
-                <div class="form-group">
                     <label for="videoLink">Video Reference</label>
                     <input type="url" id="videoLink" placeholder="https://youtube.com/..." autocomplete="off">
                 </div>
@@ -1363,7 +1358,12 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
+        // Only this Google account can add, edit or delete. Must match the uid in the database rules.
+        const OWNER_UID = 'pL77ajK3JETceyR9bwq7mfSdA2B3';
         let currentUser = null;
+        function isOwner() {
+            return !!currentUser && currentUser.uid === OWNER_UID;
+        }
         let enemies = {};
         let gameImages = {}; // Loaded from Firebase
         let editingKey = null;
@@ -1386,7 +1386,7 @@
             loadGameImages();  // Load game images first
             loadEnemies();  // Load enemies regardless of auth state
             
-            if (user) {
+            if (isOwner()) {
                 checkForLocalData();
             }
         });
@@ -1397,13 +1397,13 @@
             if (currentUser) {
                 headerUser.innerHTML = `
                     <img src="${currentUser.photoURL}" alt="${currentUser.displayName}" class="header-user-avatar">
-                    <span>${currentUser.displayName.split(' ')[0]}</span>
+                    <span>${currentUser.displayName.split(' ')[0]}${isOwner() ? '' : ' (view only)'}</span>
                     <button class="btn btn-small btn-secondary" onclick="signOut()" style="padding: 6px 12px; font-size: 13px; margin-left: 10px;">
                         Sign out
                     </button>
                 `;
-                document.getElementById('addNewBtn').disabled = false;
-                document.getElementById('importBtn').disabled = false;
+                document.getElementById('addNewBtn').disabled = !isOwner();
+                document.getElementById('importBtn').disabled = !isOwner();
             } else {
                 document.getElementById('importBtn').disabled = true;
                 headerUser.innerHTML = `
@@ -1564,8 +1564,8 @@
                 gameSelect.appendChild(option);
             });
             
-            // Add "New Game" option only if user is signed in
-            if (currentUser) {
+            // Add "New Game" option only for the owner
+            if (isOwner()) {
                 const addNewOption = document.createElement('option');
                 addNewOption.value = 'ADD_NEW_GAME';
                 addNewOption.textContent = '➕ Add New Game...';
@@ -1605,7 +1605,8 @@
                         
                         // Save image URL to Firebase if provided
                         if (imageUrl && imageUrl.trim() !== '') {
-                            database.ref('gameImages').child(trimmedGame).set(imageUrl.trim());
+                            database.ref('gameImages').child(trimmedGame).set(imageUrl.trim())
+                                .catch((error) => alert('Saving cover art failed: ' + error.message));
                         }
                         
                         // Add new option before the "Add New Game" option
@@ -2348,8 +2349,8 @@
         }
         
         function showForm(isEdit = false, key = null) {
-            if (!currentUser) {
-                alert('Please sign in to add or edit enemies.');
+            if (!isOwner()) {
+                alert('Only the site owner can change entries.');
                 return;
             }
 
@@ -2379,7 +2380,6 @@
                 document.getElementById('enemyType').value = enemy.type || '';
                 document.getElementById('enemySize').value = enemy.size || '';
                 document.getElementById('enemyWeapon').value = enemy.weapon || '';
-                document.getElementById('referenceLink').value = enemy.referenceLink || '';
                 document.getElementById('videoLink').value = enemy.videoLink || '';
                 document.getElementById('imageLink').value = enemy.imageLink || '';
                 document.getElementById('notes').value = enemy.notes || '';
@@ -2464,7 +2464,6 @@
             type: IMPORT_ENUMS.type.join(' | '),
             size: IMPORT_ENUMS.size.join(' | '),
             weapon: 'free text, e.g. Sword',
-            referenceLink: '',
             videoLink: 'https://youtube.com/watch?v=...',
             imageLink: '',
             notes: 'Design observations',
@@ -2495,8 +2494,8 @@
         let importTotal = 0;
 
         function openImport() {
-            if (!currentUser) {
-                alert('Please sign in to import enemies.');
+            if (!isOwner()) {
+                alert('Only the site owner can change entries.');
                 return;
             }
             document.getElementById('importError').textContent = '';
@@ -2592,7 +2591,6 @@
             document.getElementById('enemyType').value = matchEnum(data.type, IMPORT_ENUMS.type, 'Enemy Type', warnings);
             document.getElementById('enemySize').value = matchEnum(data.size, IMPORT_ENUMS.size, 'Enemy Size', warnings);
             document.getElementById('enemyWeapon').value = data.weapon || '';
-            document.getElementById('referenceLink').value = data.referenceLink || '';
             document.getElementById('videoLink').value = data.videoLink || '';
             document.getElementById('imageLink').value = data.imageLink || '';
             document.getElementById('notes').value = data.notes || '';
@@ -2753,7 +2751,6 @@
                     if (enemy.size?.toLowerCase().includes(term)) return true;
                     if (enemy.weapon?.toLowerCase().includes(term)) return true;
                     if (enemy.notes?.toLowerCase().includes(term)) return true;
-                    if (enemy.referenceLink?.toLowerCase().includes(term)) return true;
                     if (enemy.videoLink?.toLowerCase().includes(term)) return true;
                     if (enemy.imageLink?.toLowerCase().includes(term)) return true;
                     
@@ -2860,7 +2857,7 @@
                 listContainer.innerHTML = `
                     <div class="empty-state">
                         <h3>${searchTerm ? 'No enemies found' : 'No enemies yet'}</h3>
-                        <p>${searchTerm ? 'Try a different search term' : currentUser ? 'Click "Add New Enemy" to get started' : 'Sign in to add enemies'}</p>
+                        <p>${searchTerm ? 'Try a different search term' : isOwner() ? 'Click "Add New Enemy" to get started' : 'Check back soon'}</p>
                     </div>
                 `;
                 return;
@@ -2875,7 +2872,6 @@
                 let links = '';
                 let complexSections = '';
                 
-                if (enemy.referenceLink) links += `<a href="${enemy.referenceLink}" target="_blank">📚 Wiki</a>`;
                 if (enemy.videoLink) {
                     const videoId = getYouTubeVideoId(enemy.videoLink);
                     if (videoId) {
@@ -3022,7 +3018,7 @@
                     `;
                 }
                 
-                const actions = currentUser ? `
+                const actions = isOwner() ? `
                     <div class="enemy-actions">
                         ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
                         <button class="btn btn-success" onclick="cloneEnemy('${enemy.key}')">👯 Clone</button>
@@ -3136,8 +3132,8 @@
         document.getElementById('enemyForm').addEventListener('submit', (e) => {
             e.preventDefault();
             
-            if (!currentUser) {
-                alert('Please sign in to save enemies.');
+            if (!isOwner()) {
+                alert('Only the site owner can change entries.');
                 return;
             }
             
@@ -3192,7 +3188,7 @@
                 type: document.getElementById('enemyType').value,
                 size: document.getElementById('enemySize').value,
                 weapon: document.getElementById('enemyWeapon').value,
-                referenceLink: document.getElementById('referenceLink').value,
+                referenceLink: null, // field retired; clears old values when an entry is edited
                 videoLink: document.getElementById('videoLink').value,
                 imageLink: document.getElementById('imageLink').value,
                 notes: document.getElementById('notes').value,
@@ -3210,11 +3206,8 @@
             
             const enemiesRef = database.ref('enemies');
             
-            if (editingKey) {
-                enemiesRef.child(editingKey).update(enemy);
-            } else {
-                enemiesRef.push(enemy);
-            }
+            const write = editingKey ? enemiesRef.child(editingKey).update(enemy) : enemiesRef.push(enemy);
+            write.catch((error) => alert('Save failed: ' + error.message));
             
             hideForm();
         });
@@ -3242,13 +3235,14 @@
         }
 
         function deleteEnemy(key) {
-            if (!currentUser) {
-                alert('Please sign in to delete enemies.');
+            if (!isOwner()) {
+                alert('Only the site owner can change entries.');
                 return;
             }
             
             if (confirm('Are you sure you want to delete this enemy?')) {
-                database.ref('enemies/' + key).remove();
+                database.ref('enemies/' + key).remove()
+                    .catch((error) => alert('Delete failed: ' + error.message));
             }
         }
 
