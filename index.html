@@ -955,7 +955,49 @@
         .modal-close:hover {
             color: #000;
         }
-        
+
+        /* JSON import */
+        .import-modal-content {
+            max-width: 760px;
+            width: calc(100% - 32px);
+        }
+
+        .import-modal-content textarea {
+            width: 100%;
+            min-height: 280px;
+            margin-top: 12px;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .import-error {
+            color: var(--accent-red);
+            font-size: 14px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+
+        .import-banner {
+            background: var(--highlight-bg);
+            border: 2px solid var(--accent-yellow);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .import-banner.hidden {
+            display: none;
+        }
+
+        .import-banner ul {
+            margin: 8px 0 0 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -1005,6 +1047,23 @@
         </div>
     </div>
 
+    <div id="importModal" class="modal">
+        <div class="modal-content import-modal-content">
+            <span class="modal-close" onclick="closeImport()">&times;</span>
+            <h2>Import Enemy JSON</h2>
+            <p style="margin-top: 10px; font-size: 14px; color: var(--text-secondary);">
+                Paste one enemy object, or an array of several. Each one opens in the form for review &mdash; nothing is saved until you click Save Enemy.
+            </p>
+            <textarea id="importText" placeholder='{ "name": "...", "game": "...", "offensiveActions": [ ... ] }'></textarea>
+            <div class="import-error" id="importError"></div>
+            <div class="form-actions">
+                <button class="btn" onclick="runImport()">Fill Form</button>
+                <button class="btn btn-secondary" onclick="copyImportTemplate(this)">📋 Copy Template</button>
+                <button class="btn btn-secondary" onclick="closeImport()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div id="migrationBanner" class="migration-banner hidden">
             <div>
@@ -1028,6 +1087,7 @@
             <div class="controls" id="controls">
                 <input type="text" id="searchBox" class="search-box" placeholder="Search by typing any part of the enemy description...">
                 <button class="btn" id="addNewBtn" disabled>+ Add New Enemy</button>
+                <button class="btn btn-secondary" id="importBtn" disabled onclick="openImport()">📥 Import JSON</button>
             </div>
 
             <div class="filters" id="filters">
@@ -1149,6 +1209,7 @@
     <div class="container content-section">
         <div class="form-section hidden" id="formSection">
             <h2 id="formTitle">Add New Enemy</h2>
+            <div class="import-banner hidden" id="importBanner"></div>
             <form id="enemyForm">
                 <!-- Basic Info -->
                 <div class="form-group">
@@ -1342,7 +1403,9 @@
                     </button>
                 `;
                 document.getElementById('addNewBtn').disabled = false;
+                document.getElementById('importBtn').disabled = false;
             } else {
+                document.getElementById('importBtn').disabled = true;
                 headerUser.innerHTML = `
                     <button class="btn btn-small" onclick="signIn()" style="padding: 6px 12px; font-size: 13px;">
                         Sign in
@@ -1404,6 +1467,9 @@
             const modal = document.getElementById('aboutModal');
             if (event.target === modal) {
                 closeAbout();
+            }
+            if (event.target === document.getElementById('importModal')) {
+                closeImport();
             }
         }
 
@@ -2293,6 +2359,7 @@
             
             formSection.classList.remove('hidden');
             formTitle.textContent = isEdit ? 'Edit Enemy' : 'Add New Enemy';
+            document.getElementById('importBanner').classList.add('hidden');
             
             // Clear complex lists
             offensiveActions = [];
@@ -2370,7 +2437,271 @@
             formSection.scrollIntoView({ behavior: 'smooth' });
         }
 
+        // ===== JSON Import (drafts reviewed in the form before saving) =====
+        const IMPORT_ENUMS = {
+            type: ['Regular', 'Elite', 'Mini-Boss', 'Boss'],
+            size: ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'],
+            offensive: {
+                type: ['melee', 'ranged', 'grab', 'aoe'],
+                range: ['close', 'medium', 'far'],
+                windupTime: ['slow', 'medium', 'fast'],
+                damageType: ['physical', 'fire', 'ice', 'poison', 'force', 'lightning', 'psychic', 'radiant', 'necrotic'],
+                condition: ['blind', 'deaf', 'grappled', 'paralyze', 'poisoned', 'vulnerable']
+            },
+            defensive: {
+                type: ['block', 'evade', 'deflect', 'none'],
+                defensiveReaction: ['block followup', 'evade followup', 'deflect followup', 'none']
+            },
+            support: { type: ['heal self', 'heal other', 'buff self', 'buff other', 'summon', 'resurrect'] },
+            reaction: { type: ['reduced', 'increased', 'hyper armor', 'defensive', 'offensive', 'death'] },
+            locomotion: { type: ['grounded', 'hovering', 'flying', 'swimming'] },
+            trait: { category: ['equipment', 'passive debuff', 'passive buff', 'aura', 'environmental interaction', 'visibility', 'dismemberment', 'transformation'] }
+        };
+
+        const IMPORT_TEMPLATE = {
+            name: 'Enemy name',
+            game: 'Game title (must match an existing game exactly, or it is added as new)',
+            type: IMPORT_ENUMS.type.join(' | '),
+            size: IMPORT_ENUMS.size.join(' | '),
+            weapon: 'free text, e.g. Sword',
+            referenceLink: '',
+            videoLink: 'https://youtube.com/watch?v=...',
+            imageLink: '',
+            notes: 'Design observations',
+            variant: 'Other Enemy Name (Game) — optional',
+            offensiveActions: [{
+                name: 'Overhead Slam',
+                type: IMPORT_ENUMS.offensive.type.join(' | '),
+                range: IMPORT_ENUMS.offensive.range.join(' | '),
+                comboCount: 1,
+                windupTime: IMPORT_ENUMS.offensive.windupTime.join(' | '),
+                damageType: IMPORT_ENUMS.offensive.damageType.join(' | '),
+                condition: IMPORT_ENUMS.offensive.condition.join(' | ') + ' | (blank)',
+                details: ''
+            }],
+            defensiveActions: [{
+                type: IMPORT_ENUMS.defensive.type.join(' | '),
+                defensiveReaction: IMPORT_ENUMS.defensive.defensiveReaction.join(' | '),
+                details: ''
+            }],
+            supportActions: [{ type: IMPORT_ENUMS.support.type.join(' | '), details: '' }],
+            reactions: [{ type: IMPORT_ENUMS.reaction.type.join(' | '), details: '' }],
+            locomotion: [{ type: IMPORT_ENUMS.locomotion.type.join(' | ') }],
+            specialTraits: [{ category: IMPORT_ENUMS.trait.category.join(' | '), text: '' }],
+            reviewNotes: ['Optional: things to double-check. Shown in the form, never saved.']
+        };
+
+        let importQueue = [];
+        let importTotal = 0;
+
+        function openImport() {
+            if (!currentUser) {
+                alert('Please sign in to import enemies.');
+                return;
+            }
+            document.getElementById('importError').textContent = '';
+            document.getElementById('importModal').classList.add('active');
+            document.getElementById('importText').focus();
+        }
+
+        function closeImport() {
+            document.getElementById('importModal').classList.remove('active');
+        }
+
+        function copyImportTemplate(button) {
+            navigator.clipboard.writeText(JSON.stringify(IMPORT_TEMPLATE, null, 2)).then(() => {
+                const original = button.innerHTML;
+                button.innerHTML = '✅ Copied!';
+                setTimeout(() => { button.innerHTML = original; }, 2000);
+            });
+        }
+
+        function runImport() {
+            const errorEl = document.getElementById('importError');
+            let raw = document.getElementById('importText').value.trim();
+            // Tolerate a pasted ```json code fence
+            raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch (err) {
+                errorEl.textContent = 'That isn\'t valid JSON: ' + err.message;
+                return;
+            }
+
+            const list = Array.isArray(data) ? data : [data];
+            const bad = list.findIndex(e => !e || typeof e !== 'object' || !e.name || !e.game);
+            if (list.length === 0 || bad !== -1) {
+                errorEl.textContent = list.length === 0
+                    ? 'No enemies found in the JSON.'
+                    : `Enemy ${bad + 1} needs at least a "name" and a "game".`;
+                return;
+            }
+
+            importQueue = list.slice();
+            importTotal = list.length;
+            document.getElementById('importText').value = '';
+            closeImport();
+            loadNextImport();
+        }
+
+        function discardImportQueue() {
+            importQueue = [];
+            importTotal = 0;
+            loadNextImportBannerRefresh();
+        }
+
+        function loadNextImportBannerRefresh() {
+            const banner = document.getElementById('importBanner');
+            const link = banner.querySelector('a');
+            if (link) link.outerHTML = '<em>(remaining drafts discarded)</em>';
+        }
+
+        function normalizeEnumText(v) {
+            return String(v).toLowerCase().replace(/[\s_-]+/g, ' ').trim();
+        }
+
+        function matchEnum(value, allowed, label, warnings) {
+            if (value === undefined || value === null || String(value).trim() === '') return '';
+            const target = normalizeEnumText(value);
+            const hit = allowed.find(opt => normalizeEnumText(opt) === target);
+            if (hit) return hit;
+            warnings.push(`${label}: "${value}" isn't one of the options, so it was left blank.`);
+            return '';
+        }
+
+        function importList(items, label, mapper) {
+            if (!Array.isArray(items)) return [];
+            return items.map((item, i) => ({
+                ...mapper(item || {}, `${label} ${i + 1}`),
+                id: Date.now() + Math.random()
+            }));
+        }
+
+        function loadNextImport() {
+            if (importQueue.length === 0) return;
+            const data = importQueue.shift();
+            const position = importTotal - importQueue.length;
+            const warnings = [];
+
+            showForm(false);
+
+            // Basic fields
+            document.getElementById('enemyName').value = String(data.name || '').trim();
+            document.getElementById('enemyType').value = matchEnum(data.type, IMPORT_ENUMS.type, 'Enemy Type', warnings);
+            document.getElementById('enemySize').value = matchEnum(data.size, IMPORT_ENUMS.size, 'Enemy Size', warnings);
+            document.getElementById('enemyWeapon').value = data.weapon || '';
+            document.getElementById('referenceLink').value = data.referenceLink || '';
+            document.getElementById('videoLink').value = data.videoLink || '';
+            document.getElementById('imageLink').value = data.imageLink || '';
+            document.getElementById('notes').value = data.notes || '';
+
+            // Game: match an existing game (case-insensitive), otherwise add it as a new option
+            const gameSelect = document.getElementById('gameName');
+            const gameName = String(data.game || '').trim();
+            const existingGame = Array.from(gameSelect.options)
+                .map(o => o.value)
+                .find(v => v && v !== 'ADD_NEW_GAME' && v.toLowerCase() === gameName.toLowerCase());
+            if (existingGame) {
+                gameSelect.value = existingGame;
+            } else {
+                const opt = document.createElement('option');
+                opt.value = gameName;
+                opt.textContent = gameName;
+                const addNew = gameSelect.querySelector('option[value="ADD_NEW_GAME"]');
+                gameSelect.insertBefore(opt, addNew);
+                gameSelect.value = gameName;
+                warnings.push(`"${gameName}" is a new game. Check the spelling. Cover art isn't set on import.`);
+            }
+
+            // Duplicate check (the save will be blocked if this already exists)
+            const finalGame = gameSelect.value;
+            const dupKey = Object.keys(enemies).find(k =>
+                enemies[k].name?.toLowerCase() === String(data.name).trim().toLowerCase() && enemies[k].game === finalGame);
+            if (dupKey) {
+                warnings.push(`"${data.name}" already exists in ${finalGame}. Rename this one, or cancel and edit the existing entry.`);
+            }
+
+            // Variant: accept "Name (Game)" or just "Name"
+            const variantInput = document.getElementById('variantEnemy');
+            variantInput.value = '';
+            variantInput.dataset.variantKey = '';
+            if (data.variant) {
+                const wanted = String(data.variant).trim().toLowerCase();
+                const vKey = Object.keys(enemies).find(k => `${enemies[k].name} (${enemies[k].game})`.toLowerCase() === wanted)
+                    || Object.keys(enemies).find(k => enemies[k].name?.toLowerCase() === wanted);
+                if (vKey) {
+                    variantInput.value = `${enemies[vKey].name} (${enemies[vKey].game})`;
+                    variantInput.dataset.variantKey = vKey;
+                } else {
+                    warnings.push(`Variant "${data.variant}" wasn't found in the database, so it was left blank.`);
+                }
+            }
+
+            // Complex lists
+            const E = IMPORT_ENUMS;
+            offensiveActions = importList(data.offensiveActions, 'Offensive action', (a, l) => ({
+                name: a.name || '',
+                type: matchEnum(a.type, E.offensive.type, `${l} type`, warnings),
+                range: matchEnum(a.range, E.offensive.range, `${l} range`, warnings),
+                comboCount: (a.comboCount === undefined || a.comboCount === null) ? '' : String(a.comboCount),
+                windupTime: matchEnum(a.windupTime, E.offensive.windupTime, `${l} windup`, warnings),
+                damageType: matchEnum(a.damageType, E.offensive.damageType, `${l} damage type`, warnings),
+                condition: matchEnum(a.condition, E.offensive.condition, `${l} condition`, warnings),
+                details: a.details || ''
+            }));
+            defensiveActions = importList(data.defensiveActions, 'Defensive action', (a, l) => ({
+                type: matchEnum(a.type, E.defensive.type, `${l} type`, warnings),
+                defensiveReaction: matchEnum(a.defensiveReaction, E.defensive.defensiveReaction, `${l} reaction`, warnings),
+                details: a.details || ''
+            }));
+            supportActions = importList(data.supportActions, 'Support action', (a, l) => ({
+                type: matchEnum(a.type, E.support.type, `${l} type`, warnings),
+                details: a.details || ''
+            }));
+            reactions = importList(data.reactions, 'Reaction', (r, l) => ({
+                type: matchEnum(r.type, E.reaction.type, `${l} type`, warnings),
+                details: r.details || ''
+            }));
+            locomotion = importList(
+                (data.locomotion || []).map(l => typeof l === 'string' ? { type: l } : l),
+                'Locomotion', (lo, l) => ({
+                    type: matchEnum(lo.type, E.locomotion.type, `${l} type`, warnings)
+                }));
+            specialTraits = importList(
+                (data.specialTraits || []).map(t => typeof t === 'string' ? { text: t } : t),
+                'Trait', (t, l) => ({
+                    category: matchEnum(t.category, E.trait.category, `${l} category`, warnings),
+                    text: t.text || ''
+                }));
+
+            renderOffensiveActions();
+            renderDefensiveActions();
+            renderSupportActions();
+            renderReactions();
+            renderLocomotion();
+            renderSpecialTraits();
+
+            // Review banner
+            const notes = Array.isArray(data.reviewNotes) ? data.reviewNotes : (data.reviewNotes ? [data.reviewNotes] : []);
+            const escape = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            const banner = document.getElementById('importBanner');
+            let html = `<strong>📥 Imported draft${importTotal > 1 ? ` ${position} of ${importTotal}` : ''}</strong>. Review everything, then click Save Enemy.`;
+            if (importQueue.length > 0) html += ` Saving or cancelling opens the next draft. <a href="#" onclick="event.preventDefault(); discardImportQueue();">Discard the remaining ${importQueue.length}</a>`;
+            if (warnings.length) html += `<ul>${warnings.map(w => `<li>⚠️ ${escape(w)}</li>`).join('')}</ul>`;
+            if (notes.length) html += `<div style="margin-top:8px;"><strong>Things to double-check:</strong><ul>${notes.map(n => `<li>${escape(n)}</li>`).join('')}</ul></div>`;
+            banner.innerHTML = html;
+            banner.classList.remove('hidden');
+
+            document.getElementById('formTitle').textContent = 'Add New Enemy (Imported)';
+        }
+
         function hideForm() {
+            document.getElementById('importBanner').classList.add('hidden');
+            if (importQueue.length > 0) {
+                setTimeout(loadNextImport, 0);
+            }
             document.getElementById('formSection').classList.add('hidden');
             document.getElementById('enemyForm').reset();
             editingKey = null;
