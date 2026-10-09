@@ -1478,6 +1478,7 @@
             
             enemiesRef.on('value', (snapshot) => {
                 enemies = snapshot.val() || {};
+                Object.values(enemies).forEach(normalizeLegacyReactions);
                 renderEnemies();
                 updateCount();
                 updateVariantDropdown();
@@ -1489,6 +1490,25 @@
                 // Handle URL hash for direct enemy links
                 handleEnemyHash();
             });
+        }
+
+        // "Hyper armor" was retired: it now counts as Reduced Reactions.
+        // Old entries are converted when loaded; saving an entry stores the cleaned version.
+        function normalizeLegacyReactions(enemy) {
+            if (!Array.isArray(enemy.reactions)) return;
+            const merged = [];
+            enemy.reactions.forEach(r => {
+                if (!r) return;
+                const type = r.type === 'hyper armor' ? 'reduced' : r.type;
+                const existing = type === 'reduced' ? merged.find(m => m.type === 'reduced') : null;
+                if (existing) {
+                    const parts = [existing.details, r.details].filter(d => d && d.trim());
+                    existing.details = parts.join('. ');
+                } else {
+                    merged.push({ ...r, type });
+                }
+            });
+            enemy.reactions = merged;
         }
 
         function loadGameImages() {
@@ -1998,6 +2018,7 @@
                                 <option value="radiant" ${action.damageType === 'radiant' ? 'selected' : ''}>Radiant</option>
                                 <option value="necrotic" ${action.damageType === 'necrotic' ? 'selected' : ''}>Necrotic</option>
                                 <option value="water" ${action.damageType === 'water' ? 'selected' : ''}>Water</option>
+                                <option value="magic" ${action.damageType === 'magic' ? 'selected' : ''}>Magic</option>
                             </select>
                         </div>
                         <div class="field-inline">
@@ -2186,7 +2207,6 @@
                                 <option value="">Select...</option>
                                 <option value="reduced" ${reaction.type === 'reduced' ? 'selected' : ''}>Reduced Reactions</option>
                                 <option value="increased" ${reaction.type === 'increased' ? 'selected' : ''}>Increased Reactions</option>
-                                <option value="hyper armor" ${reaction.type === 'hyper armor' ? 'selected' : ''}>Hyper Armor/Poise</option>
                                 <option value="defensive" ${reaction.type === 'defensive' ? 'selected' : ''}>Defensive Reactions</option>
                                 <option value="offensive" ${reaction.type === 'offensive' ? 'selected' : ''}>Offensive Reactions</option>
                                 <option value="death" ${reaction.type === 'death' ? 'selected' : ''}>Death Reactions</option>
@@ -2446,7 +2466,7 @@
                 type: ['melee', 'ranged', 'grab', 'aoe'],
                 range: ['close', 'medium', 'far'],
                 windupTime: ['slow', 'medium', 'fast'],
-                damageType: ['physical', 'fire', 'ice', 'poison', 'force', 'lightning', 'psychic', 'radiant', 'necrotic', 'water'],
+                damageType: ['physical', 'fire', 'ice', 'poison', 'force', 'lightning', 'psychic', 'radiant', 'necrotic', 'water', 'magic'],
                 condition: ['blind', 'deaf', 'grappled', 'paralyze', 'poisoned', 'vulnerable']
             },
             defensive: {
@@ -2454,7 +2474,7 @@
                 defensiveReaction: ['block followup', 'evade followup', 'deflect followup', 'none']
             },
             support: { type: ['heal self', 'heal other', 'buff self', 'buff other', 'summon', 'resurrect'] },
-            reaction: { type: ['reduced', 'increased', 'hyper armor', 'defensive', 'offensive', 'death'] },
+            reaction: { type: ['reduced', 'increased', 'defensive', 'offensive', 'death'] },
             locomotion: { type: ['grounded', 'hovering', 'flying', 'swimming'] },
             trait: { category: ['equipment', 'passive debuff', 'passive buff', 'aura', 'environmental interaction', 'visibility', 'dismemberment', 'transformation'] }
         };
@@ -2660,7 +2680,7 @@
                 details: a.details || ''
             }));
             reactions = importList(data.reactions, 'Reaction', (r, l) => ({
-                type: matchEnum(r.type, E.reaction.type, `${l} type`, warnings),
+                type: matchEnum(normalizeEnumText(r.type || '') === 'hyper armor' ? 'reduced' : r.type, E.reaction.type, `${l} type`, warnings),
                 details: r.details || ''
             }));
             locomotion = importList(
