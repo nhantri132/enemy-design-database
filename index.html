@@ -1997,6 +1997,7 @@
                                 <option value="psychic" ${action.damageType === 'psychic' ? 'selected' : ''}>Psychic</option>
                                 <option value="radiant" ${action.damageType === 'radiant' ? 'selected' : ''}>Radiant</option>
                                 <option value="necrotic" ${action.damageType === 'necrotic' ? 'selected' : ''}>Necrotic</option>
+                                <option value="water" ${action.damageType === 'water' ? 'selected' : ''}>Water</option>
                             </select>
                         </div>
                         <div class="field-inline">
@@ -2445,7 +2446,7 @@
                 type: ['melee', 'ranged', 'grab', 'aoe'],
                 range: ['close', 'medium', 'far'],
                 windupTime: ['slow', 'medium', 'fast'],
-                damageType: ['physical', 'fire', 'ice', 'poison', 'force', 'lightning', 'psychic', 'radiant', 'necrotic'],
+                damageType: ['physical', 'fire', 'ice', 'poison', 'force', 'lightning', 'psychic', 'radiant', 'necrotic', 'water'],
                 condition: ['blind', 'deaf', 'grappled', 'paralyze', 'poisoned', 'vulnerable']
             },
             defensive: {
