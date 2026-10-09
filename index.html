@@ -460,7 +460,7 @@
         }
 
         .form-group select:valid {
-            color: #333;
+            color: var(--text-primary);
         }
         
         .form-group textarea {
@@ -953,7 +953,7 @@
         }
 
         .modal-close:hover {
-            color: #000;
+            color: var(--text-primary);
         }
 
         /* JSON import */
@@ -1034,11 +1034,6 @@
                 <li>Currently, <strong>only Tri</strong> can add, edit, or delete entries</li>
                 <li><strong>Search</strong> across all fields (name, game, damage types, actions, etc.)</li>
                 <li><strong>Click "Show Details"</strong> to expand enemy information</li>
-            </ul>
-            <h3 style="margin-top: 20px; color: var(--text-primary);">Current Games Being Documented</h3>
-            <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
-                <li>Star Wars Jedi: Survivor</li>
-                <li>God of War Ragnarok</li>
             </ul>
             <h3 style="margin-top: 20px; color: var(--text-primary);">Contact</h3>
             <p style="margin-top: 10px; line-height: 1.8;">
@@ -1182,7 +1177,6 @@
                     </select>
                 </div>
             </div>
-            <div class="active-filters" id="activeFilters"></div>
         </div>
 
         <div class="filters" id="sortSection">
@@ -1361,6 +1355,10 @@
         // Only this Google account can add, edit or delete. Must match the uid in the database rules.
         const OWNER_UID = 'pL77ajK3JETceyR9bwq7mfSdA2B3';
         let currentUser = null;
+        // Escapes text placed inside HTML (attribute values, textarea contents) so quotes and < don't cut it off.
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
         function isOwner() {
             return !!currentUser && currentUser.uid === OWNER_UID;
         }
@@ -1744,7 +1742,7 @@
         function sortEnemies(enemyArray) {
             const sortField = document.getElementById('sortField').value;
             
-            const sizeOrder = { 'Tiny': 1, 'Small': 2, 'Medium': 3, 'Large': 4, 'Huge': 5 };
+            const sizeOrder = { 'Tiny': 1, 'Small': 2, 'Medium': 3, 'Large': 4, 'Huge': 5, 'Gargantuan': 6 };
             const typeOrder = { 'Regular': 1, 'Elite': 2, 'Mini-Boss': 3, 'Boss': 4 };
             
             const sorted = [...enemyArray].sort((a, b) => {
@@ -1969,7 +1967,7 @@
                     </div>
                     <div class="field-inline" style="margin-bottom: 10px;">
                         <label>Action Name</label>
-                        <input type="text" value="${action.name}" onchange="updateOffensiveAction(${action.id}, 'name', this.value)" placeholder="e.g., Slash, Fireball, Charge">
+                        <input type="text" value="${escapeHtml(action.name)}" onchange="updateOffensiveAction(${action.id}, 'name', this.value)" placeholder="e.g., Slash, Fireball, Charge">
                     </div>
                     <div class="list-item-grid">
                         <div class="field-inline">
@@ -1993,7 +1991,7 @@
                         </div>
                         <div class="field-inline">
                             <label>Combo Count</label>
-                            <input type="number" value="${action.comboCount}" onchange="updateOffensiveAction(${action.id}, 'comboCount', this.value)" min="0">
+                            <input type="number" value="${escapeHtml(action.comboCount)}" onchange="updateOffensiveAction(${action.id}, 'comboCount', this.value)" min="0">
                         </div>
                         <div class="field-inline">
                             <label>Windup Time</label>
@@ -2010,15 +2008,15 @@
                                 <option value="">Select...</option>
                                 <option value="physical" ${action.damageType === 'physical' ? 'selected' : ''}>Physical</option>
                                 <option value="fire" ${action.damageType === 'fire' ? 'selected' : ''}>Fire</option>
-                                <option value="ice" ${action.damageType === 'ice' ? 'selected' : ''}>Ice</option>
+                                <option value="ice" ${action.damageType === 'ice' ? 'selected' : ''}>Ice (frost, cold)</option>
                                 <option value="poison" ${action.damageType === 'poison' ? 'selected' : ''}>Poison</option>
-                                <option value="force" ${action.damageType === 'force' ? 'selected' : ''}>Force</option>
+                                <option value="force" ${action.damageType === 'force' ? 'selected' : ''}>Force (wind, kinetic)</option>
                                 <option value="lightning" ${action.damageType === 'lightning' ? 'selected' : ''}>Lightning</option>
-                                <option value="psychic" ${action.damageType === 'psychic' ? 'selected' : ''}>Psychic</option>
-                                <option value="radiant" ${action.damageType === 'radiant' ? 'selected' : ''}>Radiant</option>
-                                <option value="necrotic" ${action.damageType === 'necrotic' ? 'selected' : ''}>Necrotic</option>
+                                <option value="psychic" ${action.damageType === 'psychic' ? 'selected' : ''}>Psychic (madness, mind)</option>
+                                <option value="radiant" ${action.damageType === 'radiant' ? 'selected' : ''}>Radiant (holy, light)</option>
+                                <option value="necrotic" ${action.damageType === 'necrotic' ? 'selected' : ''}>Necrotic (death, blight, decay)</option>
                                 <option value="water" ${action.damageType === 'water' ? 'selected' : ''}>Water</option>
-                                <option value="magic" ${action.damageType === 'magic' ? 'selected' : ''}>Magic</option>
+                                <option value="magic" ${action.damageType === 'magic' ? 'selected' : ''}>Magic (arcane, sorcery)</option>
                             </select>
                         </div>
                         <div class="field-inline">
@@ -2036,7 +2034,7 @@
                     </div>
                     <div class="field-inline">
                         <label>Details</label>
-                        <textarea onchange="updateOffensiveAction(${action.id}, 'details', this.value)">${action.details}</textarea>
+                        <textarea onchange="updateOffensiveAction(${action.id}, 'details', this.value)">${escapeHtml(action.details)}</textarea>
                     </div>
                 </div>
             `).join('');
@@ -2102,7 +2100,7 @@
                     </div>
                     <div class="field-inline">
                         <label>Details</label>
-                        <textarea onchange="updateDefensiveAction(${action.id}, 'details', this.value)">${action.details}</textarea>
+                        <textarea onchange="updateDefensiveAction(${action.id}, 'details', this.value)">${escapeHtml(action.details)}</textarea>
                     </div>
                 </div>
             `).join('');
@@ -2159,7 +2157,7 @@
                     </div>
                     <div class="field-inline">
                         <label>Details</label>
-                        <textarea onchange="updateSupportAction(${action.id}, 'details', this.value)">${action.details}</textarea>
+                        <textarea onchange="updateSupportAction(${action.id}, 'details', this.value)">${escapeHtml(action.details)}</textarea>
                     </div>
                 </div>
             `).join('');
@@ -2215,7 +2213,7 @@
                     </div>
                     <div class="field-inline">
                         <label>Details</label>
-                        <textarea onchange="updateReaction(${reaction.id}, 'details', this.value)">${reaction.details}</textarea>
+                        <textarea onchange="updateReaction(${reaction.id}, 'details', this.value)">${escapeHtml(reaction.details)}</textarea>
                     </div>
                 </div>
             `).join('');
@@ -2322,7 +2320,7 @@
                     </div>
                     <div class="field-inline">
                         <label>Description</label>
-                        <input type="text" value="${trait.text}" onchange="updateSpecialTrait(${trait.id}, 'text', this.value)" placeholder="Describe the trait..." style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
+                        <input type="text" value="${escapeHtml(trait.text)}" onchange="updateSpecialTrait(${trait.id}, 'text', this.value)" placeholder="Describe the trait..." style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
                     </div>
                 </div>
             `).join('');
@@ -2508,7 +2506,8 @@
             reactions: [{ type: IMPORT_ENUMS.reaction.type.join(' | '), details: '' }],
             locomotion: [{ type: IMPORT_ENUMS.locomotion.type.join(' | ') }],
             specialTraits: [{ category: IMPORT_ENUMS.trait.category.join(' | '), text: '' }],
-            reviewNotes: ['Optional: things to double-check. Shown in the form, never saved.']
+            reviewNotes: ['Optional: things to double-check. Shown in the form, never saved.'],
+            damageTypeGuide: 'Use the general category, not the game\'s own term: holy/light -> radiant; frost/cold -> ice; madness/mind -> psychic; death/blight/rot -> necrotic; arcane/sorcery -> magic; wind/kinetic -> force; bleed/slash -> physical. This key is ignored on import.'
         };
 
         let importQueue = [];
