@@ -14,1247 +14,740 @@
         gtag('config', 'G-V5N3XLTNXR');
     </script>
     
+    <script>
+        // Apply the saved theme before the page paints (avoids a dark flash for light-mode visitors)
+        try { if (localStorage.getItem('darkMode') === 'disabled') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ===== Design tokens (dark is the default theme) ===== */
         :root {
-            --bg-primary: #f5f5f5;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #d5dce0;
-            --bg-header: #2c3e50;
-            --text-primary: #333;
-            --text-secondary: #7f8c8d;
-            --text-tertiary: #555;
-            --text-inverse: #ffffff;
-            --border-color: #ddd;
-            --border-light: #eee;
-            --border-dark: #bdc3c7;
-            --shadow: rgba(0,0,0,0.1);
-            --hover-bg: #f8f9fa;
-            --highlight-bg: #fff3cd;
-            --accent-blue: #3498db;
-            --accent-blue-hover: #2980b9;
-            --accent-red: #e74c3c;
-            --accent-red-hover: #c0392b;
-            --accent-green: #27ae60;
-            --accent-green-hover: #229954;
-            --accent-yellow: #f39c12;
-            --accent-purple: #9b59b6;
-            --accent-orange: #e67e22;
-            --secondary-gray: #95a5a6;
-            --secondary-gray-hover: #7f8c8d;
-            --light-gray: #ecf0f1;
-            --light-blue: #e8f4f8;
-            --light-blue-hover: #d4ebf2;
+            --bg: #0f1115;
+            --bg-raised: #171a21;
+            --bg-overlay: #1c2029;
+            --bg-input: #12151b;
+            --bg-hover: #222733;
+            --border: #2a2f3b;
+            --border-strong: #3a4150;
+            --text: #e8e9ec;
+            --text-muted: #9aa1ad;
+            --text-faint: #6b7280;
+            --accent: #d9a54a;
+            --accent-hover: #e8b862;
+            --accent-text: #17130a;
+            --danger: #e5534b;
+            --success: #3fb27f;
+            --warn-bg: #2b2414;
+            --warn-border: #6b5520;
+            --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.25);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-display: 'Barlow Condensed', 'Inter', sans-serif;
+            --backdrop: rgba(5,6,9,.72);
+
+            /* Tag colors */
+            --t-regular: #8b93a1;
+            --t-elite: #c48a3a;
+            --t-miniboss: #c4583a;
+            --t-boss: #d9433f;
+            --t-size: #7a86b8;
+
+            /* Damage type colors */
+            --d-physical: #9aa1ad;
+            --d-fire: #f0803c;
+            --d-ice: #6cc6e8;
+            --d-poison: #6fbf4a;
+            --d-force: #8fb3a8;
+            --d-lightning: #e6c84a;
+            --d-psychic: #d77bd0;
+            --d-radiant: #f2c94c;
+            --d-necrotic: #a184c9;
+            --d-water: #4f8fe0;
+            --d-magic: #8a7cf0;
+            color-scheme: dark;
         }
 
-        body.dark-mode {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --bg-tertiary: #3a3a3a;
-            --bg-header: #1e1e1e;
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0a0;
-            --text-tertiary: #b0b0b0;
-            --text-inverse: #e0e0e0;
-            --border-color: #4a4a4a;
-            --border-light: #3f3f3f;
-            --border-dark: #555555;
-            --shadow: rgba(0,0,0,0.3);
-            --hover-bg: #3a3a3a;
-            --highlight-bg: #4a4a2a;
-            --accent-blue: #4fa8e8;
-            --accent-blue-hover: #3d8ac7;
-            --accent-red: #ff6b6b;
-            --accent-red-hover: #ee5a52;
-            --accent-green: #51cf66;
-            --accent-green-hover: #40c057;
-            --accent-yellow: #ffd43b;
-            --accent-purple: #b197fc;
-            --accent-orange: #ff922b;
-            --secondary-gray: #868e96;
-            --secondary-gray-hover: #6c757d;
-            --light-gray: #3a3a3a;
-            --light-blue: #2a3a42;
-            --light-blue-hover: #324651;
+        html[data-theme="light"] {
+            --bg: #f4f2ee;
+            --bg-raised: #ffffff;
+            --bg-overlay: #ffffff;
+            --bg-input: #ffffff;
+            --bg-hover: #efece6;
+            --border: #e2ded6;
+            --border-strong: #cbc5ba;
+            --text: #1d1f24;
+            --text-muted: #5d636e;
+            --text-faint: #8a909a;
+            --accent: #a8721c;
+            --accent-hover: #8f6017;
+            --accent-text: #ffffff;
+            --warn-bg: #fff6df;
+            --warn-border: #e8c766;
+            --shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
+            --backdrop: rgba(20,20,25,.45);
+            --d-physical: #6b7280;
+            --d-fire: #d0621f;
+            --d-ice: #1f8fb8;
+            --d-poison: #3f8f22;
+            --d-force: #4f7d70;
+            --d-lightning: #a8870f;
+            --d-psychic: #b4479f;
+            --d-radiant: #b8860b;
+            --d-necrotic: #7656a6;
+            --d-water: #2b6cc4;
+            --d-magic: #5b4bd0;
+            color-scheme: light;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background: var(--bg-header);
-            color: var(--text-inverse);
-            padding: 20px 0;
-            margin-bottom: 0;
-            position: relative;
-        }
-
-        header h1 {
-            text-align: center;
-            font-size: 2em;
-            margin-bottom: 15px;
-        }
-        
-        .header-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .header-user {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.1);
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        .header-user-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-        }
-        
-        .header-stats {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 18px;
-        }
-        
-        .header-stats strong {
-            font-size: 24px;
-            color: var(--accent-blue);
-        }
-
-        .dark-mode-toggle {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
-            color: var(--text-inverse);
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            z-index: 10;
-        }
-
-        .dark-mode-toggle:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.05);
-        }
-
-        .dark-mode-toggle:active {
-            transform: scale(0.95);
-        }
-
-        .auth-section {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .user-info {
-            display: none;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-        
-        .workspace {
-            background: var(--bg-tertiary);
-            padding: 30px 0;
-            margin-bottom: 0;
-            border-bottom: 3px solid var(--border-dark);
-        }
-        
-        .workspace .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .content-section {
-            padding-top: 40px;
-        }
-
-        .filters {
-            background: var(--bg-secondary);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px var(--shadow);
-        }
-
-        .filters.hidden {
-            display: none;
-        }
-
-        .filters h3 {
-            margin-bottom: 15px;
-            color: var(--text-primary);
-            font-size: 16px;
-        }
-
-        .filters-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            margin-bottom: 15px;
-            padding: 5px;
-            border-radius: 5px;
-            transition: background 0.2s;
-        }
-
-        .filters-header:hover {
-            background: var(--hover-bg);
-        }
-
-        .filter-toggle-icon {
-            font-size: 14px;
-            transition: transform 0.3s;
-            color: var(--text-secondary);
-        }
-
-        .filter-toggle-icon.expanded {
-            transform: rotate(180deg);
-        }
-
-        .filter-grid.hidden {
-            display: none;
-        }
-        
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .filter-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .filter-item label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .filter-item select {
-            padding: 8px;
-            border: 2px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 14px;
-            background: var(--bg-secondary);
-            cursor: pointer;
-        }
-
-        .filter-item select:focus {
-            border-color: var(--accent-blue);
-            outline: none;
-        }
-
-        .active-filters {
-            margin-bottom: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            min-height: 0;
-        }
-
-        .filter-tag {
-            background: var(--accent-blue);
-            color: var(--text-inverse);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .filter-tag-close {
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .clear-filters {
-            padding: 6px 12px;
-            background: var(--accent-red);
-            color: var(--text-inverse);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .clear-filters:hover {
-            background: var(--accent-red-hover);
-        }
-        
-        .search-box {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 16px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .search-box:focus {
-            border-color: var(--accent-blue);
-            outline: none;
-        }
-
-        /* Ensure all inputs, selects, and textareas work in dark mode */
-        input, select, textarea {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border-color: var(--border-color);
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--accent-blue);
-        }
-
-        /* Ensure select option elements work in dark mode */
-        select option {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        .btn {
-            padding: 12px 24px;
-            background: var(--accent-blue);
-            color: var(--text-inverse);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background: var(--accent-blue-hover);
-        }
-
-        .btn:disabled {
-            background: var(--border-dark);
-            cursor: not-allowed;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 14px;
-        }
-
-        .btn-danger {
-            background: var(--accent-red);
-        }
-
-        .btn-danger:hover {
-            background: var(--accent-red-hover);
-        }
-
-        .btn-secondary {
-            background: var(--secondary-gray);
-        }
-
-        .btn-secondary:hover {
-            background: var(--secondary-gray-hover);
-        }
-
-        .btn-success {
-            background: var(--accent-green);
-        }
-
-        .btn-success:hover {
-            background: var(--accent-green-hover);
-        }
-
-        .form-section {
-            background: var(--bg-secondary);
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px var(--shadow);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .form-section.hidden {
-            display: none;
-        }
-
-        .form-section h2 {
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: var(--text-tertiary);
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        .form-group select option:first-child {
-            color: #999;
-        }
-
-        .form-group select:invalid {
-            color: #999;
-        }
-
-        .form-group select:valid {
-            color: var(--text-primary);
-        }
-        
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        /* Complex sections */
-        .complex-section {
-            background: var(--hover-bg);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .complex-section h3 {
-            margin-bottom: 15px;
-            color: var(--text-primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .list-item {
-            background: var(--bg-secondary);
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            border-left: 4px solid #3498db;
-        }
-
-        .list-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .list-item-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .field-inline {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .field-inline label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 3px;
-        }
-
-        .field-inline input,
-        .field-inline select {
-            padding: 6px;
-            font-size: 13px;
-        }
-
-        .trait-item {
-            background: var(--bg-secondary);
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .empty-list {
-            color: #95a5a6;
-            font-style: italic;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .enemy-list {
-            background: transparent;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .enemy-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .enemy-card {
-            padding: 20px;
-            margin-bottom: 0;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .enemy-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: var(--bg-image);
-            background-size: cover;
-            background-position: center;
-            filter: blur(20px) brightness(0.3);
-            z-index: 0;
-            transform: scale(1.1);
-        }
-
-        .enemy-card > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        .enemy-card h3 {
-            color: var(--text-inverse);
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        .enemy-game {
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-        }
-
-        .enemy-actions {
-            position: relative;
-            z-index: 1;
-        }
-
-        .enemy-card.expanded {
-            grid-column: 1 / -1;
-        }
-
-        .enemy-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
-        }
-
-        .enemy-compact-info {
-            display: flex;
-            gap: 15px;
-        }
-
-        .game-thumbnail {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 6px;
-            flex-shrink: 0;
-            box-shadow: 0 2px 4px var(--shadow);
-        }
-
-        .game-thumbnail-placeholder {
-            width: 80px;
-            height: 80px;
-            border-radius: 6px;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--text-inverse);
-            text-transform: uppercase;
-        }
-
-        .enemy-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .enemy-detailed-info {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .enemy-detailed-info.expanded {
-            max-height: 5000px;
-            transition: max-height 0.5s ease-in;
-        }
-
-        .expand-button {
-            margin-top: 15px;
-            padding: 8px 16px;
-            background: var(--hover-bg);
-            border: 1px solid var(--border-dark);
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
-            width: fit-content;
-        }
-
-        .expand-button:hover {
-            background: var(--border-dark);
-        }
-
-        .expand-icon {
-            transition: transform 0.3s;
-        }
-
-        .expand-icon.expanded {
-            transform: rotate(180deg);
-        }
-        
-        .enemy-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 10px;
-        }
-
-        .enemy-title {
-            flex: 1;
-        }
-
-        .enemy-title h3 {
-            color: var(--text-inverse);
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        .enemy-game {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-        }
-
-        .enemy-updated {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 8px;
-            font-style: italic;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-        }
-
-        .enemy-updated-inline {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
-            font-style: italic;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-            margin-right: auto;
-            display: flex;
-            align-items: center;
-        }
-
-        .enemy-badges {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--light-gray);
-            color: var(--text-tertiary);
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .badge.type { background: var(--accent-blue); color: var(--text-inverse); }
-        .badge.size { background: var(--accent-purple); color: var(--text-inverse); }
-        .badge.weapon { background: var(--accent-orange); color: var(--text-inverse); }
-
-        .enemy-section {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .enemy-section h4 {
-            color: var(--text-inverse);
-            margin-bottom: 10px;
-            font-size: 14px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        .action-display {
-            background: var(--hover-bg);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-
-        .action-display strong {
-            color: var(--text-primary);
-        }
-
-        .enemy-notes {
-            margin-top: 10px;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.5;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            font-size: 15px;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
+        body.no-scroll { overflow: hidden; }
+        a { color: var(--accent); }
+        button { font-family: inherit; }
+        .hidden { display: none !important; }
+        .container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+        svg.icon { width: 18px; height: 18px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-        .enemy-links {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        /* ===== Top bar ===== */
+        .topbar {
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
         }
+        .topbar-inner { display: flex; align-items: center; gap: 12px; height: 60px; }
+        .brand { display: flex; align-items: center; gap: 10px; min-width: 0; margin-right: auto; }
+        .brand-mark {
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+            background: linear-gradient(140deg, var(--accent), #7a4b12);
+            display: grid; place-items: center; color: #17130a;
+        }
+        .brand-mark svg.icon { width: 18px; height: 18px; stroke-width: 2.4; }
+        .brand-title {
+            font-family: var(--font-display); font-weight: 700; font-size: 22px;
+            letter-spacing: .02em; text-transform: uppercase; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        }
+        .brand-count {
+            font-size: 12px; color: var(--text-muted); border: 1px solid var(--border);
+            padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+        }
+        .icon-btn {
+            width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border);
+            background: var(--bg-raised); color: var(--text); display: grid; place-items: center;
+            cursor: pointer; flex-shrink: 0; transition: background .15s, border-color .15s;
+        }
+        .icon-btn:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+        .header-user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+        .header-user-avatar { width: 30px; height: 30px; border-radius: 50%; }
+        .header-user .user-name { white-space: nowrap; }
 
-        .enemy-links a {
-            color: #5dade2;
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid transparent;
+            background: var(--accent); color: var(--accent-text); font-size: 14px; font-weight: 600;
+            cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, opacity .15s;
             text-decoration: none;
-            font-size: 14px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
+        .btn:hover { background: var(--accent-hover); }
+        .btn:disabled { opacity: .45; cursor: not-allowed; }
+        .btn-secondary { background: var(--bg-raised); color: var(--text); border-color: var(--border); }
+        .btn-secondary:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+        .btn-ghost { background: transparent; color: var(--text-muted); border-color: transparent; }
+        .btn-ghost:hover { background: var(--bg-hover); color: var(--text); }
+        .btn-danger { background: transparent; color: var(--danger); border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
+        .btn-danger:hover { background: color-mix(in srgb, var(--danger) 14%, transparent); }
+        .btn-success { background: var(--bg-raised); color: var(--text); border-color: var(--border); }
+        .btn-success:hover { background: var(--bg-hover); }
+        .btn-small { height: 32px; padding: 0 12px; font-size: 13px; border-radius: 8px; }
 
-        .enemy-links a:hover {
-            text-decoration: underline;
-            color: #85c1e9;
+        /* ===== Toolbar (search, filter, sort) ===== */
+        .toolbar {
+            position: sticky; top: 0; z-index: 50;
+            background: color-mix(in srgb, var(--bg) 88%, transparent);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
         }
-
-        .enemy-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
+        .toolbar-row { display: flex; gap: 8px; align-items: center; }
+        .search-wrap { position: relative; flex: 1; min-width: 0; }
+        .search-wrap svg.icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-faint); pointer-events: none; }
+        .search-box {
+            width: 100%; height: 40px; padding: 0 12px 0 38px; border-radius: 10px;
+            border: 1px solid var(--border); background: var(--bg-input); color: var(--text);
+            font-size: 16px; font-family: inherit; outline: none; transition: border-color .15s;
         }
-
-        .enemy-actions button {
-            padding: 6px 12px;
-            font-size: 14px;
+        .search-box:focus { border-color: var(--accent); }
+        .search-box::placeholder { color: var(--text-faint); }
+        .filter-count {
+            min-width: 18px; height: 18px; border-radius: 9px; padding: 0 5px; font-size: 11px; font-weight: 700;
+            background: var(--accent); color: var(--accent-text); display: inline-grid; place-items: center;
         }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #95a5a6;
+        .sort-select {
+            height: 40px; padding: 0 30px 0 12px; border-radius: 10px; border: 1px solid var(--border);
+            background-color: var(--bg-raised); color: var(--text); font-size: 14px; font-family: inherit;
+            appearance: none; -webkit-appearance: none; cursor: pointer; max-width: 210px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa1ad' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 10px center;
         }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
+        .owner-tools { display: flex; gap: 8px; }
+        .results-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; color: var(--text-muted); }
+        .results-meta:empty { display: none; }
+        .active-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+        .active-filters:empty { display: none; }
+        .filter-tag {
+            display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 6px 0 10px;
+            border-radius: 999px; background: color-mix(in srgb, var(--accent) 16%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+            color: var(--text); font-size: 12px; font-weight: 500;
         }
-
-        .pagination {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-top: 40px;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px var(--shadow);
+        .filter-tag-close {
+            width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+            color: var(--text-muted); font-size: 14px; line-height: 1;
         }
+        .filter-tag-close:hover { background: var(--bg-hover); color: var(--text); }
+        .clear-filters { background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; text-decoration: underline; }
+        .clear-filters:hover { color: var(--text); }
 
-        .pagination-info {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 500;
+        /* ===== Enemy grid ===== */
+        main.container { padding-top: 20px; padding-bottom: 48px; }
+        .result-count { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+        .enemy-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+        .enemy-card {
+            background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+            overflow: hidden; cursor: pointer; display: flex; flex-direction: column; text-align: left;
+            transition: transform .15s, border-color .15s, box-shadow .15s; color: inherit; font: inherit; padding: 0;
         }
-
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .enemy-card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: var(--shadow); }
+        .enemy-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .card-media { position: relative; aspect-ratio: 1 / 1; background: var(--bg-overlay); overflow: hidden; }
+        .card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .card-type {
+            position: absolute; top: 8px; left: 8px; font-size: 11px; font-weight: 700; letter-spacing: .04em;
+            text-transform: uppercase; padding: 3px 8px; border-radius: 6px; color: #fff;
+            background: rgba(10,11,14,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            border-left: 3px solid var(--t-regular);
         }
-
-        .stats {
-            display: none;
+        .card-type.t-elite { border-left-color: var(--t-elite); }
+        .card-type.t-mini-boss { border-left-color: var(--t-miniboss); }
+        .card-type.t-boss { border-left-color: var(--t-boss); }
+        .monogram {
+            width: 100%; height: 100%; display: grid; place-items: center;
+            font-family: var(--font-display); font-weight: 700; font-size: 64px; color: var(--text-faint);
+            background: radial-gradient(circle at 30% 20%, var(--bg-hover), var(--bg-overlay));
         }
+        .card-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        .card-name { font-weight: 650; font-size: 15px; line-height: 1.3; }
+        .card-game { font-size: 12px; color: var(--text-muted); }
+        .card-meta { font-size: 12px; color: var(--text-faint); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .migration-banner {
-            background: var(--highlight-bg);
-            border: 2px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 64px 20px; color: var(--text-muted); }
+        .empty-state h3 { color: var(--text); margin-bottom: 6px; font-size: 18px; }
+        .loading { text-align: center; padding: 64px 20px; color: var(--text-muted); }
+        .spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); margin: 0 auto 12px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .pagination { grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px; }
+        .pagination-info { font-size: 13px; color: var(--text-muted); }
+
+        /* ===== Tags ===== */
+        .tag {
+            display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 6px;
+            font-size: 12px; font-weight: 500; background: var(--bg-hover); color: var(--text-muted);
+            border: 1px solid var(--border); white-space: nowrap;
         }
+        .tag strong { color: var(--text); font-weight: 600; }
+        .tag.type { color: var(--text); border-left: 3px solid var(--t-regular); }
+        .tag.type.t-elite { border-left-color: var(--t-elite); }
+        .tag.type.t-mini-boss { border-left-color: var(--t-miniboss); }
+        .tag.type.t-boss { border-left-color: var(--t-boss); }
+        .tag.dmg { color: var(--dmg, var(--text-muted)); border-color: color-mix(in srgb, var(--dmg, var(--border)) 45%, transparent); background: color-mix(in srgb, var(--dmg, transparent) 10%, transparent); }
+        .tag.dmg::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        .tag.cond { color: var(--text); border-style: dashed; }
+        .dmg-physical { --dmg: var(--d-physical); } .dmg-fire { --dmg: var(--d-fire); } .dmg-ice { --dmg: var(--d-ice); }
+        .dmg-poison { --dmg: var(--d-poison); } .dmg-force { --dmg: var(--d-force); } .dmg-lightning { --dmg: var(--d-lightning); }
+        .dmg-psychic { --dmg: var(--d-psychic); } .dmg-radiant { --dmg: var(--d-radiant); } .dmg-necrotic { --dmg: var(--d-necrotic); }
+        .dmg-water { --dmg: var(--d-water); } .dmg-magic { --dmg: var(--d-magic); }
 
-        .migration-banner.hidden {
-            display: none;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-secondary);
-        }
-
-        .variant-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: var(--light-blue);
-            padding: 5px 10px;
-            border-radius: 5px;
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .variant-link:hover {
-            background: var(--light-blue-hover);
-        }
-
-        .about-link {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: var(--text-inverse);
-            text-decoration: none;
-            font-size: 14px;
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .about-link:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
+        /* ===== Overlays (modals, sheets) ===== */
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
+            display: none; position: fixed; inset: 0; z-index: 1000; background: var(--backdrop);
+            padding: 24px; overflow-y: auto; overscroll-behavior: contain;
         }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .modal.active { display: flex; align-items: flex-start; justify-content: center; }
         .modal-content {
-            background: var(--bg-secondary);
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
+            position: relative; width: 100%; max-width: 640px; margin: auto; background: var(--bg-overlay);
+            border: 1px solid var(--border); border-radius: 16px; padding: 28px; box-shadow: var(--shadow);
         }
-
-        .modal-content a {
-            color: var(--accent-blue);
-            text-decoration: none;
-        }
-
-        .modal-content a:hover {
-            text-decoration: underline;
-        }
-        
+        .modal-content h2 { font-family: var(--font-display); font-size: 26px; letter-spacing: .01em; margin-bottom: 4px; padding-right: 40px; }
+        .modal-content h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin: 20px 0 8px; }
+        .modal-content p, .modal-content li { color: var(--text); line-height: 1.7; }
+        .modal-content ul { padding-left: 20px; }
         .modal-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #aaa;
-            cursor: pointer;
+            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 10px;
+            display: grid; place-items: center; cursor: pointer; color: var(--text-muted);
+            background: transparent; border: 1px solid var(--border);
         }
+        .modal-close:hover { background: var(--bg-hover); color: var(--text); }
 
-        .modal-close:hover {
-            color: var(--text-primary);
-        }
+        /* Filter panel */
+        .filter-panel { max-width: 720px; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+        .filter-group-title { grid-column: 1 / -1; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); margin-top: 8px; }
+        .filter-item { display: flex; flex-direction: column; gap: 6px; }
+        .filter-item label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .panel-actions { display: flex; gap: 8px; justify-content: flex-end; margin: 24px -28px -28px; padding: 14px 28px; position: sticky; bottom: -28px; background: var(--bg-overlay); border-top: 1px solid var(--border); }
 
-        /* JSON import */
-        .import-modal-content {
-            max-width: 760px;
-            width: calc(100% - 32px);
+        select, input[type="text"], input[type="url"], input[type="number"], textarea {
+            font-family: inherit; font-size: 15px; color: var(--text); background-color: var(--bg-input);
+            border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 11px; outline: none;
+            transition: border-color .15s; width: 100%;
         }
+        select:focus, input:focus, textarea:focus { border-color: var(--accent); }
+        select option { background: var(--bg-overlay); color: var(--text); }
+        textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+
+        /* ===== Enemy detail ===== */
+        .detail-panel { max-width: 1080px; padding: 0; overflow: hidden; }
+        .detail-hero { display: flex; gap: 20px; padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+        .detail-image { width: 148px; height: 148px; border-radius: var(--radius); overflow: hidden; flex-shrink: 0; background: var(--bg-hover); border: 1px solid var(--border); }
+        .detail-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .detail-image .monogram { font-size: 56px; }
+        .detail-head { min-width: 0; flex: 1; padding-right: 40px; }
+        .detail-head h2 { font-family: var(--font-display); font-size: 32px; line-height: 1.05; letter-spacing: .01em; }
+        .detail-game { color: var(--text-muted); font-size: 14px; margin: 4px 0 12px; }
+        .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+        .detail-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
+        .detail-updated { font-size: 12px; color: var(--text-faint); margin-left: auto; }
+        .detail-body { padding: 8px 24px 28px; display: grid; grid-template-columns: minmax(0, 1fr); }
+        @media (min-width: 900px) {
+            .detail-body { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); column-gap: 28px; align-items: start; }
+            .detail-side { grid-column: 2; grid-row: 1; position: sticky; top: 0; }
+            .detail-main { grid-column: 1; grid-row: 1; }
+        }
+        .detail-section { padding-top: 20px; }
+        .detail-section h4 {
+            display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .08em; color: var(--text-muted); margin-bottom: 10px;
+        }
+        .detail-section h4 .count { color: var(--text-faint); font-weight: 600; }
+        .detail-notes { color: var(--text); font-size: 15px; line-height: 1.6; }
+        .move-list { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .move { padding: 12px 14px; background: var(--bg-raised); }
+        .move + .move { border-top: 1px solid var(--border); }
+        .move-name { font-weight: 600; font-size: 14.5px; margin-bottom: 6px; }
+        .move-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+        .move-details { font-size: 13.5px; color: var(--text-muted); margin-top: 7px; line-height: 1.5; }
+        .variant-link {
+            display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 8px;
+            background: var(--bg-raised); border: 1px solid var(--border); color: var(--text); font-size: 13px; text-decoration: none; cursor: pointer;
+        }
+        .variant-link:hover { border-color: var(--border-strong); background: var(--bg-hover); }
+
+        .video-frame { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); }
+        .video-frame iframe, .video-frame img { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
+        .video-play { position: absolute; inset: 0; display: grid; place-items: center; border: 0; cursor: pointer; background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.1)); }
+        .video-play span {
+            width: 64px; height: 64px; border-radius: 50%; background: rgba(15,17,21,.85); display: grid; place-items: center;
+            color: #fff; border: 1px solid rgba(255,255,255,.2); transition: transform .15s;
+        }
+        .video-play:hover span { transform: scale(1.06); }
+        .video-play svg.icon { width: 26px; height: 26px; fill: #fff; stroke: none; margin-left: 4px; }
+
+        /* ===== Editor form (owner only) ===== */
+        .form-section {
+            position: fixed; inset: 0; z-index: 1100; background: var(--backdrop);
+            overflow-y: auto; padding: 24px; overscroll-behavior: contain;
+        }
+        .form-inner { max-width: 860px; margin: 0 auto; background: var(--bg-overlay); border: 1px solid var(--border); border-radius: 16px; padding: 28px; box-shadow: var(--shadow); }
+        .form-section h2 { font-family: var(--font-display); font-size: 28px; margin-bottom: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 16px; }
+        .form-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .form-section .form-actions.sticky { position: sticky; bottom: -28px; background: var(--bg-overlay); padding: 14px 0; margin-bottom: -14px; border-top: 1px solid var(--border); }
+        .complex-section { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; background: var(--bg-raised); }
+        .complex-section h3 { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 15px; margin-bottom: 12px; }
+        .list-item { background: var(--bg-overlay); border: 1px solid var(--border); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 10px; }
+        .list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; color: var(--text-muted); }
+        .list-item-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        .field-inline { display: flex; flex-direction: column; gap: 4px; }
+        .field-inline label { font-size: 12px; color: var(--text-muted); }
+        .field-inline input, .field-inline select, .field-inline textarea { font-size: 14px; padding: 8px 10px; }
+        .empty-list { color: var(--text-faint); font-style: italic; text-align: center; padding: 10px; font-size: 13px; }
 
         .import-modal-content textarea {
-            width: 100%;
-            min-height: 280px;
-            margin-top: 12px;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 5px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-            font-size: 13px;
-            resize: vertical;
+            min-height: 260px; margin-top: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px;
         }
-
-        .import-error {
-            color: var(--accent-red);
-            font-size: 14px;
-            margin-top: 10px;
-            white-space: pre-wrap;
+        .import-error { color: var(--danger); font-size: 14px; margin-top: 10px; white-space: pre-wrap; }
+        .import-banner { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px; font-size: 14px; }
+        .import-banner ul { margin: 8px 0 0 20px; }
+        .migration-banner {
+            background: var(--warn-bg); border: 1px solid var(--warn-border); padding: 12px 16px; border-radius: var(--radius);
+            margin-top: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
         }
+        .stats { display: none; }
 
-        .import-banner {
-            background: var(--highlight-bg);
-            border: 2px solid var(--accent-yellow);
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            font-size: 14px;
+        /* ===== Phones ===== */
+        @media (max-width: 720px) {
+            .container { padding: 0 16px; }
+            .brand-title { font-size: 17px; white-space: normal; line-height: 1.05; }
+            .brand-count { display: none; }
+            .header-user .user-name { display: none; }
+            .toolbar-row { flex-wrap: wrap; }
+            .search-wrap { flex: 1 1 100%; }
+            .toolbar-row .btn, .sort-select { flex: 1 1 0; min-width: 0; }
+            .sort-select { max-width: none; }
+            .owner-tools { flex: 1 1 100%; }
+            .owner-tools .btn { flex: 1; }
+            .enemy-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+            .card-body { padding: 10px 11px 12px; }
+            .card-name { font-size: 14px; }
+            .monogram { font-size: 48px; }
+
+            .modal { padding: 0; }
+            .modal.active { align-items: flex-end; }
+            .modal-content { border-radius: 18px 18px 0 0; margin: 0; max-height: 92vh; overflow-y: auto; padding: 22px 16px 28px; }
+            .detail-panel { max-height: 100vh; height: 100%; border-radius: 0; padding: 0; overflow-y: auto; }
+            .modal.active.detail-modal { align-items: stretch; }
+            .detail-hero { flex-wrap: wrap; gap: 14px; padding: 16px; }
+            .detail-image { width: 112px; height: 112px; }
+            .detail-image .monogram { font-size: 44px; }
+            .detail-head { flex: 1 1 0; padding-right: 36px; }
+            .detail-head h2 { font-size: 26px; }
+            .detail-head .tag-row, .detail-tools { flex-basis: 100%; }
+            .detail-panel .modal-close { top: 12px; right: 12px; }
+            .panel-actions { margin: 24px -16px -28px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); bottom: -28px; }
+            .detail-body { padding: 0 16px 32px; }
+            .detail-updated { margin-left: 0; width: 100%; }
+            .filter-grid { grid-template-columns: 1fr 1fr; }
+            .form-section { padding: 0; }
+            .form-inner { border-radius: 0; min-height: 100%; padding: 20px 16px; border: 0; }
+            .form-section .form-actions.sticky { bottom: -20px; }
         }
-
-        .import-banner.hidden {
-            display: none;
+        @media (max-width: 380px) {
+            .filter-grid { grid-template-columns: 1fr; }
         }
-
-        .import-banner ul {
-            margin: 8px 0 0 20px;
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; animation: none !important; }
         }
-
     </style>
 </head>
 <body>
-    <header>
-        <button class="dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()">
-            <span id="darkModeIcon">🌙</span>
-        </button>
-        <div class="container">
-            <h1>🎮 Enemy Design Database</h1>
-            <div class="header-info">
-                <div class="header-user" id="headerUser"></div>
-                <div class="header-stats">
-                    <span id="headerEnemyCount">-</span> <span>enemies cataloged</span>
-                </div>
+    <!-- Icon set -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+        <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 5h18M6 12h12M10 19h4"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V3m0 0-4 4m4-4 4 4M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+        <symbol id="i-swords" viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M9.5 6.5 14 2h3v3l-4.5 4.5M5 14l-2 2 3 3 2-2"/></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+        <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+        <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+        <symbol id="i-move" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+        <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+        <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/></symbol>
+        <symbol id="i-notes" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
+        <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+        <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
+        <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+    </svg>
+
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <div class="brand">
+                <div class="brand-mark"><svg class="icon"><use href="#i-swords"/></svg></div>
+                <div class="brand-title">Enemy Design Database</div>
+                <span class="brand-count"><span id="headerEnemyCount">-</span> enemies</span>
             </div>
-            <a class="about-link" onclick="openAbout()">ℹ️ About</a>
+            <button class="icon-btn" onclick="openAbout()" title="About" aria-label="About"><svg class="icon"><use href="#i-info"/></svg></button>
+            <button class="icon-btn" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle light/dark" aria-label="Toggle light or dark mode"><svg class="icon" id="darkModeIcon"><use href="#i-sun"/></svg></button>
+            <div class="header-user" id="headerUser"></div>
         </div>
     </header>
 
-    <div id="aboutModal" class="modal">
+    <div id="aboutModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
         <div class="modal-content">
-            <span class="modal-close" onclick="closeAbout()">&times;</span>
-            <h2>About Enemy Design Database</h2>
-            <p style="margin-top: 15px; line-height: 1.8;">
+            <button class="modal-close" onclick="closeAbout()" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+            <h2 id="aboutTitle">About</h2>
+            <p style="margin-top: 10px;">
                 This database is a reference tool for cataloging and analyzing enemy designs across (primarily) action-adventure video games.
             </p>
-            <h3 style="margin-top: 20px; color: var(--text-primary);">Notes</h3>
-            <p style="margin-top: 10px; line-height: 1.8;">
+            <h3>Notes</h3>
+            <p>
                 This is not comprehensive as there are enemy details and systems hidden to the player. Certain sections of the enemy's behaviors are more vague (like wind-up speeds and attack ranges) because what is slow or fast and close or far changes per game. This allows me to document things quickly according to that specific game without calculating specific ranges or framecounts on wind-ups. The videos are attached so you can also make that judgement yourself.
             </p>
-            <h3 style="margin-top: 20px; color: var(--text-primary);">How to Use</h3>
-            <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
+            <h3>How to Use</h3>
+            <ul>
                 <li><strong>Anyone can view</strong> all enemy entries</li>
                 <li>Currently, <strong>only Tri</strong> can add, edit, or delete entries</li>
                 <li><strong>Search</strong> across all fields (name, game, damage types, actions, etc.)</li>
-                <li><strong>Click "Show Details"</strong> to expand enemy information</li>
+                <li><strong>Tap an enemy</strong> to see its full moveset and video</li>
             </ul>
-            <h3 style="margin-top: 20px; color: var(--text-primary);">Contact</h3>
-            <p style="margin-top: 10px; line-height: 1.8;">
-                Created by Tri Nguyen. Check me out here: <a href="https://linktr.ee/trigrows" target="_blank">linktr.ee/trigrows</a>
+            <h3>Contact</h3>
+            <p>
+                Created by Tri Nguyen. Check me out here: <a href="https://linktr.ee/trigrows" target="_blank" rel="noopener">linktr.ee/trigrows</a>
             </p>
         </div>
     </div>
 
-    <div id="importModal" class="modal">
+    <div id="importModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
         <div class="modal-content import-modal-content">
-            <span class="modal-close" onclick="closeImport()">&times;</span>
-            <h2>Import Enemy JSON</h2>
-            <p style="margin-top: 10px; font-size: 14px; color: var(--text-secondary);">
+            <button class="modal-close" onclick="closeImport()" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+            <h2 id="importTitle">Import Enemy JSON</h2>
+            <p style="margin-top: 6px; font-size: 14px; color: var(--text-muted);">
                 Paste one enemy object, or an array of several. Each one opens in the form for review &mdash; nothing is saved until you click Save Enemy.
             </p>
             <textarea id="importText" placeholder='{ "name": "...", "game": "...", "offensiveActions": [ ... ] }'></textarea>
             <div class="import-error" id="importError"></div>
             <div class="form-actions">
                 <button class="btn" onclick="runImport()">Fill Form</button>
-                <button class="btn btn-secondary" onclick="copyImportTemplate(this)">📋 Copy Template</button>
-                <button class="btn btn-secondary" onclick="closeImport()">Cancel</button>
+                <button class="btn btn-secondary" onclick="copyImportTemplate(this)">Copy Template</button>
+                <button class="btn btn-ghost" onclick="closeImport()">Cancel</button>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <div id="migrationBanner" class="migration-banner hidden">
-            <div>
-                <strong>Local data found!</strong> You have enemies saved locally. Migrate them to the cloud?
-            </div>
-            <button class="btn btn-success" onclick="migrateLocalData()">Migrate Now</button>
-        </div>
-
-        <div class="stats">
-            <h3 id="enemyCount">-</h3>
-            <p>Enemies Cataloged</p>
-        </div>
-
-        <div id="mainContent" class="loading">
-            <p>Loading...</p>
-        </div>
-    </div>
-
-    <div class="workspace hidden" id="workspace">
-        <div class="container">
-            <div class="controls" id="controls">
-                <input type="text" id="searchBox" class="search-box" placeholder="Search by typing any part of the enemy description...">
-                <button class="btn" id="addNewBtn" disabled>+ Add New Enemy</button>
-                <button class="btn btn-secondary" id="importBtn" disabled onclick="openImport()">📥 Import JSON</button>
-            </div>
-
-            <div class="filters" id="filters">
-            <div class="filters-header" onclick="toggleFilters()">
-                <h3>🔍 Filters</h3>
-                <span class="filter-toggle-icon" id="filterToggleIcon">▼</span>
-            </div>
-            <div class="active-filters" id="activeFilters"></div>
-            <div class="filter-grid hidden" id="filterGrid">
+    <!-- Filters -->
+    <div id="filterModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
+        <div class="modal-content filter-panel">
+            <button class="modal-close" onclick="closeFilters()" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+            <h2 id="filterTitle">Filters</h2>
+            <div class="filter-grid" id="filterGrid">
+                <div class="filter-group-title">Enemy</div>
                 <div class="filter-item">
-                    <label>Game</label>
+                    <label for="filterGame">Game</label>
                     <select id="filterGame" onchange="applyFilters()">
                         <option value="">All Games</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Enemy Type</label>
+                    <label for="filterType">Enemy Type</label>
                     <select id="filterType" onchange="applyFilters()">
                         <option value="">All Types</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Enemy Size</label>
+                    <label for="filterSize">Enemy Size</label>
                     <select id="filterSize" onchange="applyFilters()">
                         <option value="">All Sizes</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Off. Action Type</label>
+                    <label for="filterLocomotion">Locomotion</label>
+                    <select id="filterLocomotion" onchange="applyFilters()">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-group-title">Offensive actions</div>
+                <div class="filter-item">
+                    <label for="filterOffensiveType">Action Type</label>
                     <select id="filterOffensiveType" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Off. Range</label>
+                    <label for="filterOffensiveRange">Range</label>
                     <select id="filterOffensiveRange" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Off. Combo Count</label>
+                    <label for="filterOffensiveCombo">Combo Count</label>
                     <select id="filterOffensiveCombo" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Off. Windup Time</label>
+                    <label for="filterOffensiveWindup">Windup Time</label>
                     <select id="filterOffensiveWindup" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Off. Damage Type</label>
+                    <label for="filterOffensiveDamage">Damage Type</label>
                     <select id="filterOffensiveDamage" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Off. Condition</label>
+                    <label for="filterOffensiveCondition">Condition</label>
                     <select id="filterOffensiveCondition" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
+                <div class="filter-group-title">Defense, support &amp; reactions</div>
                 <div class="filter-item">
-                    <label>Def. Action Type</label>
+                    <label for="filterDefensiveType">Defensive Action</label>
                     <select id="filterDefensiveType" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Def. Reaction</label>
+                    <label for="filterDefensiveReaction">Defensive Followup</label>
                     <select id="filterDefensiveReaction" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Support Type</label>
+                    <label for="filterSupportType">Support Type</label>
                     <select id="filterSupportType" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>Reaction Type</label>
+                    <label for="filterReactionType">Reaction Type</label>
                     <select id="filterReactionType" onchange="applyFilters()">
                         <option value="">All</option>
                     </select>
                 </div>
-                <div class="filter-item">
-                    <label>Locomotion</label>
-                    <select id="filterLocomotion" onchange="applyFilters()">
-                        <option value="">All</option>
-                    </select>
-                </div>
             </div>
-        </div>
-
-        <div class="filters" id="sortSection">
-            <h3 style="margin-bottom: 15px;">📊 Sort</h3>
-            <div class="filter-item">
-                <label>Sort By</label>
-                <select id="sortField" onchange="applySorting()">
-                    <option value="dateDesc">Date Added (Newest First)</option>
-                    <option value="dateAsc">Date Added (Oldest First)</option>
-                    <option value="nameAZ">Enemy Name (A-Z)</option>
-                    <option value="nameZA">Enemy Name (Z-A)</option>
-                    <option value="gameAZ">Game (A-Z)</option>
-                    <option value="gameZA">Game (Z-A)</option>
-                    <option value="sizeSmallLarge">Size (Small → Large)</option>
-                    <option value="sizeLargeSmall">Size (Large → Small)</option>
-                    <option value="typeWeakStrong">Type (Regular → Boss)</option>
-                    <option value="typeStrongWeak">Type (Boss → Regular)</option>
-                </select>
+            <div class="panel-actions">
+                <button class="btn btn-ghost" onclick="clearAllFilters()">Clear all</button>
+                <button class="btn" onclick="closeFilters()">Show results</button>
             </div>
-        </div>
         </div>
     </div>
 
-    <div class="container content-section">
-        <div class="form-section hidden" id="formSection">
+    <!-- Enemy detail -->
+    <div id="detailModal" class="modal detail-modal" role="dialog" aria-modal="true">
+        <div class="modal-content detail-panel" id="detailPanel"></div>
+    </div>
+
+    <div class="workspace hidden" id="workspace">
+        <div class="toolbar">
+            <div class="container">
+                <div class="toolbar-row" id="controls">
+                    <div class="search-wrap">
+                        <svg class="icon"><use href="#i-search"/></svg>
+                        <input type="search" id="searchBox" class="search-box" placeholder="Search moves, weapons, games…" autocomplete="off" aria-label="Search">
+                    </div>
+                    <button class="btn btn-secondary" onclick="openFilters()" id="filterButton">
+                        <svg class="icon"><use href="#i-filter"/></svg>Filters<span class="filter-count hidden" id="filterCount">0</span>
+                    </button>
+                    <select id="sortField" class="sort-select" onchange="applySorting()" aria-label="Sort">
+                        <option value="dateDesc">Newest first</option>
+                        <option value="dateAsc">Oldest first</option>
+                        <option value="nameAZ">Name A–Z</option>
+                        <option value="nameZA">Name Z–A</option>
+                        <option value="gameAZ">Game A–Z</option>
+                        <option value="gameZA">Game Z–A</option>
+                        <option value="sizeSmallLarge">Size: small → large</option>
+                        <option value="sizeLargeSmall">Size: large → small</option>
+                        <option value="typeWeakStrong">Type: regular → boss</option>
+                        <option value="typeStrongWeak">Type: boss → regular</option>
+                    </select>
+                    <div class="owner-tools hidden" id="ownerTools">
+                        <button class="btn" id="addNewBtn" disabled><svg class="icon"><use href="#i-plus"/></svg>Add</button>
+                        <button class="btn btn-secondary" id="importBtn" disabled onclick="openImport()"><svg class="icon"><use href="#i-upload"/></svg>Import</button>
+                    </div>
+                </div>
+                <div class="results-meta">
+                    <div class="active-filters" id="activeFilters"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <div id="migrationBanner" class="migration-banner hidden">
+            <div>
+                <strong>Local data found!</strong> You have enemies saved locally. Migrate them to the cloud?
+            </div>
+            <button class="btn" onclick="migrateLocalData()">Migrate Now</button>
+        </div>
+
+        <div class="stats">
+            <h3 id="enemyCount">-</h3>
+        </div>
+
+        <div id="mainContent" class="loading">
+            <div class="spinner"></div>
+            <p>Loading enemies…</p>
+        </div>
+
+        <div class="result-count" id="resultCount"></div>
+        <div class="enemy-list" id="enemyList"></div>
+    </main>
+
+    <!-- Editor (owner only) -->
+    <div class="form-section hidden" id="formSection">
+        <div class="form-inner">
             <h2 id="formTitle">Add New Enemy</h2>
             <div class="import-banner hidden" id="importBanner"></div>
             <form id="enemyForm">
-                <!-- Basic Info -->
-                <div class="form-group">
-                    <label for="enemyName">Enemy Name *</label>
-                    <input type="text" id="enemyName" placeholder="What's the enemy's name?" autocomplete="off" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="enemyName">Enemy Name *</label>
+                        <input type="text" id="enemyName" placeholder="What's the enemy's name?" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gameName">Game *</label>
+                        <select id="gameName" required onchange="handleGameSelection()">
+                            <option value="">Select a game...</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="gameName">Game *</label>
-                    <select id="gameName" required onchange="handleGameSelection()">
-                        <option value="">Select a game...</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="enemyType">Enemy Type</label>
+                        <select id="enemyType">
+                            <option value="">How tough are they?</option>
+                            <option value="Regular">Regular</option>
+                            <option value="Elite">Elite</option>
+                            <option value="Mini-Boss">Mini-Boss</option>
+                            <option value="Boss">Boss</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="enemySize">Enemy Size</label>
+                        <select id="enemySize">
+                            <option value="">How big are they? Medium is the size of the player.</option>
+                            <option value="Tiny">Tiny</option>
+                            <option value="Small">Small</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Large">Large</option>
+                            <option value="Huge">Huge</option>
+                            <option value="Gargantuan">Gargantuan</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="enemyType">Enemy Type</label>
-                    <select id="enemyType">
-                        <option value="">How tough are they?</option>
-                        <option value="Regular">Regular</option>
-                        <option value="Elite">Elite</option>
-                        <option value="Mini-Boss">Mini-Boss</option>
-                        <option value="Boss">Boss</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="enemySize">Enemy Size</label>
-                    <select id="enemySize">
-                        <option value="">How big are they? Medium is the size of the player.</option>
-                        <option value="Tiny">Tiny</option>
-                        <option value="Small">Small</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Large">Large</option>
-                        <option value="Huge">Huge</option>
-                        <option value="Gargantuan">Gargantuan</option>
-                    </select>
-                </div>
                 <div class="form-group">
                     <label for="enemyWeapon">Weapon Type</label>
                     <input type="text" id="enemyWeapon" list="weaponOptions" placeholder="Select or type custom weapon..." autocomplete="off">
                     <datalist id="weaponOptions"></datalist>
                 </div>
 
-                <div class="form-group">
-                    <label for="videoLink">Video Reference</label>
-                    <input type="url" id="videoLink" placeholder="https://youtube.com/..." autocomplete="off">
-                </div>
-
-                <div class="form-group">
-                    <label for="imageLink">Image Reference</label>
-                    <input type="url" id="imageLink" placeholder="https://example.com/image.jpg" autocomplete="off">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="videoLink">Video Reference</label>
+                        <input type="url" id="videoLink" placeholder="https://youtube.com/..." autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="imageLink">Image Reference</label>
+                        <input type="url" id="imageLink" placeholder="https://i.imgur.com/....jpg" autocomplete="off">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -1262,75 +755,48 @@
                     <textarea id="notes" placeholder="Your observations about this enemy's design..."></textarea>
                 </div>
 
-                <!-- Offensive Actions -->
                 <div class="complex-section">
-                    <h3>
-                        Offensive Actions
-                        <button type="button" class="btn btn-small btn-success" onclick="addOffensiveAction()">+ Add Action</button>
-                    </h3>
+                    <h3>Offensive Actions <button type="button" class="btn btn-small btn-success" onclick="addOffensiveAction()">+ Add Action</button></h3>
                     <div id="offensiveActionsList"></div>
                 </div>
 
-                <!-- Defensive Actions -->
                 <div class="complex-section">
-                    <h3>
-                        Defensive Actions
-                        <button type="button" class="btn btn-small btn-success" onclick="addDefensiveAction()">+ Add Action</button>
-                    </h3>
+                    <h3>Defensive Actions <button type="button" class="btn btn-small btn-success" onclick="addDefensiveAction()">+ Add Action</button></h3>
                     <div id="defensiveActionsList"></div>
                 </div>
 
-                <!-- Support Actions -->
                 <div class="complex-section">
-                    <h3>
-                        Support Actions
-                        <button type="button" class="btn btn-small btn-success" onclick="addSupportAction()">+ Add Action</button>
-                    </h3>
+                    <h3>Support Actions <button type="button" class="btn btn-small btn-success" onclick="addSupportAction()">+ Add Action</button></h3>
                     <div id="supportActionsList"></div>
                 </div>
 
-                <!-- Reactions -->
                 <div class="complex-section">
-                    <h3>
-                        Reactions
-                        <button type="button" class="btn btn-small btn-success" onclick="addReaction()">+ Add Reaction</button>
-                    </h3>
+                    <h3>Reactions <button type="button" class="btn btn-small btn-success" onclick="addReaction()">+ Add Reaction</button></h3>
                     <div id="reactionsList"></div>
                 </div>
 
-                <!-- Locomotion -->
                 <div class="complex-section">
-                    <h3>
-                        Locomotion
-                        <button type="button" class="btn btn-small btn-success" onclick="addLocomotion()">+ Add Locomotion</button>
-                    </h3>
+                    <h3>Locomotion <button type="button" class="btn btn-small btn-success" onclick="addLocomotion()">+ Add Locomotion</button></h3>
                     <div id="locomotionList"></div>
                 </div>
 
-                <!-- Special Traits -->
                 <div class="complex-section">
-                    <h3>
-                        Special Traits
-                        <button type="button" class="btn btn-small btn-success" onclick="addSpecialTrait()">+ Add Trait</button>
-                    </h3>
+                    <h3>Special Traits <button type="button" class="btn btn-small btn-success" onclick="addSpecialTrait()">+ Add Trait</button></h3>
                     <div id="specialTraitsList"></div>
                 </div>
 
-                <!-- Variant -->
                 <div class="form-group">
                     <label for="variantEnemy">Variant (Link to similar enemy)</label>
                     <input type="text" id="variantEnemy" list="variantOptions" placeholder="Type to search for an enemy...">
                     <datalist id="variantOptions"></datalist>
                 </div>
 
-                <div class="form-actions">
+                <div class="form-actions sticky">
                     <button type="submit" class="btn" id="saveBtn">Save Enemy</button>
                     <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
                 </div>
             </form>
         </div>
-
-        <div class="enemy-list" id="enemyList"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -1391,26 +857,21 @@
 
         function renderAuthSection() {
             const headerUser = document.getElementById('headerUser');
-            
+            const owner = isOwner();
+
             if (currentUser) {
+                const first = escapeHtml((currentUser.displayName || '').split(' ')[0]);
                 headerUser.innerHTML = `
-                    <img src="${currentUser.photoURL}" alt="${currentUser.displayName}" class="header-user-avatar">
-                    <span>${currentUser.displayName.split(' ')[0]}${isOwner() ? '' : ' (view only)'}</span>
-                    <button class="btn btn-small btn-secondary" onclick="signOut()" style="padding: 6px 12px; font-size: 13px; margin-left: 10px;">
-                        Sign out
-                    </button>
+                    ${currentUser.photoURL ? `<img src="${escapeHtml(currentUser.photoURL)}" alt="" class="header-user-avatar" referrerpolicy="no-referrer">` : ''}
+                    <span class="user-name">${first}${owner ? '' : ' (view only)'}</span>
+                    <button class="btn btn-small btn-secondary" onclick="signOut()">Sign out</button>
                 `;
-                document.getElementById('addNewBtn').disabled = !isOwner();
-                document.getElementById('importBtn').disabled = !isOwner();
             } else {
-                document.getElementById('importBtn').disabled = true;
-                headerUser.innerHTML = `
-                    <button class="btn btn-small" onclick="signIn()" style="padding: 6px 12px; font-size: 13px;">
-                        Sign in
-                    </button>
-                `;
-                document.getElementById('addNewBtn').disabled = true;
+                headerUser.innerHTML = `<button class="btn btn-small btn-secondary" onclick="signIn()">Sign in</button>`;
             }
+            document.getElementById('addNewBtn').disabled = !owner;
+            document.getElementById('importBtn').disabled = !owner;
+            document.getElementById('ownerTools').classList.toggle('hidden', !owner);
         }
 
         function signIn() {
@@ -1425,7 +886,8 @@
         }
 
         function checkForLocalData() {
-            const localData = localStorage.getItem('enemyDatabase');
+            let localData = null;
+            try { localData = localStorage.getItem('enemyDatabase'); } catch (e) { return; }
             if (localData) {
                 const localEnemies = JSON.parse(localData);
                 if (localEnemies.length > 0) {
@@ -1453,23 +915,39 @@
         }
 
         function openAbout() {
-            document.getElementById('aboutModal').classList.add('active');
+            openModal('aboutModal');
         }
 
         function closeAbout() {
-            document.getElementById('aboutModal').classList.remove('active');
+            closeModal('aboutModal');
         }
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('aboutModal');
-            if (event.target === modal) {
-                closeAbout();
-            }
-            if (event.target === document.getElementById('importModal')) {
-                closeImport();
-            }
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.classList.add('no-scroll');
         }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            const anyOpen = document.querySelector('.modal.active') || !document.getElementById('formSection').classList.contains('hidden');
+            if (!anyOpen) document.body.classList.remove('no-scroll');
+        }
+
+        // Close a modal when tapping its dark backdrop
+        window.onclick = function(event) {
+            if (event.target.id === 'aboutModal') closeAbout();
+            if (event.target.id === 'importModal') closeImport();
+            if (event.target.id === 'filterModal') closeFilters();
+            if (event.target.id === 'detailModal') closeEnemy();
+        };
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+            if (document.getElementById('importModal').classList.contains('active')) return closeImport();
+            if (document.getElementById('filterModal').classList.contains('active')) return closeFilters();
+            if (document.getElementById('aboutModal').classList.contains('active')) return closeAbout();
+            if (document.getElementById('detailModal').classList.contains('active')) return closeEnemy();
+        });
 
         function loadEnemies() {
             const enemiesRef = database.ref('enemies');
@@ -1484,6 +962,9 @@
                 populateFilterOptions();  // ADD THIS
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('workspace').classList.remove('hidden');
+                if (openEnemyKey) {
+                    if (enemies[openEnemyKey]) renderEnemyDetail(openEnemyKey); else closeEnemy();
+                }
                 
                 // Handle URL hash for direct enemy links
                 handleEnemyHash();
@@ -1519,46 +1000,20 @@
         function handleEnemyHash() {
             const hash = window.location.hash;
             if (hash.startsWith('#enemy-')) {
-                const key = hash.replace('#enemy-', '');
-                // Small delay to ensure DOM is ready
-                setTimeout(() => {
-                    const element = document.getElementById(`enemy-${key}`);
-                    if (element) {
-                        // Expand details if they exist
-                        const details = document.getElementById(`details-${key}`);
-                        if (details && !details.classList.contains('expanded')) {
-                            toggleEnemyDetails(key);
-                        }
-                        // Scroll to the enemy
-                        scrollToEnemy(key);
-                    }
-                }, 100);
+                const key = decodeURIComponent(hash.replace('#enemy-', ''));
+                if (enemies[key] && openEnemyKey !== key) openEnemy(key, false);
             }
         }
+
+        window.addEventListener('hashchange', () => {
+            if (!window.location.hash.startsWith('#enemy-') && openEnemyKey) closeEnemy(false);
+            else handleEnemyHash();
+        });
 
         function updateCount() {
             const count = Object.keys(enemies).length;
             document.getElementById('enemyCount').textContent = count;
             document.getElementById('headerEnemyCount').textContent = count;
-        }
-
-        function toggleEnemyDetails(key) {
-            const card = document.getElementById(`enemy-${key}`);
-            const details = document.getElementById(`details-${key}`);
-            const icon = document.getElementById(`icon-${key}`);
-            const text = document.getElementById(`text-${key}`);
-            
-            if (details.classList.contains('expanded')) {
-                details.classList.remove('expanded');
-                card.classList.remove('expanded');
-                icon.classList.remove('expanded');
-                text.textContent = 'Show Details';
-            } else {
-                details.classList.add('expanded');
-                card.classList.add('expanded');
-                icon.classList.add('expanded');
-                text.textContent = 'Hide Details';
-            }
         }
 
         function updateFormDatalists() {
@@ -1810,8 +1265,8 @@
                     const label = document.querySelector(`#filter${key.charAt(0).toUpperCase() + key.slice(1)}`).previousElementSibling.textContent;
                     activeTags.push(`
                         <div class="filter-tag">
-                            ${label}: ${value}
-                            <span class="filter-tag-close" onclick="clearFilter('${key}')">×</span>
+                            ${escapeHtml(label)}: ${escapeHtml(value)}
+                            <span class="filter-tag-close" role="button" aria-label="Remove filter" onclick="clearFilter('${key}')">×</span>
                         </div>
                     `);
                 }
@@ -1819,11 +1274,14 @@
             
             if (activeTags.length > 0) {
                 container.innerHTML = activeTags.join('') + `
-                    <button class="clear-filters" onclick="clearAllFilters()">Clear All</button>
+                    <button class="clear-filters" onclick="clearAllFilters()">Clear all</button>
                 `;
             } else {
                 container.innerHTML = '';
             }
+            const badge = document.getElementById('filterCount');
+            badge.textContent = activeTags.length;
+            badge.classList.toggle('hidden', activeTags.length === 0);
         }
         
         function clearFilter(filterKey) {
@@ -1848,14 +1306,14 @@
             applyFilters();
         }
 
-        function toggleFilters() {
-            const filterGrid = document.getElementById('filterGrid');
-            const icon = document.getElementById('filterToggleIcon');
-            
-            filterGrid.classList.toggle('hidden');
-            icon.classList.toggle('expanded');
+        function openFilters() {
+            openModal('filterModal');
         }
-        
+
+        function closeFilters() {
+            closeModal('filterModal');
+        }
+
         function populateSelect(id, values) {
             const select = document.getElementById(id);
             const currentValue = select.value;
@@ -2377,7 +1835,10 @@
             const formTitle = document.getElementById('formTitle');
             const form = document.getElementById('enemyForm');
             
+            if (openEnemyKey) closeEnemy();
             formSection.classList.remove('hidden');
+            formSection.scrollTop = 0;
+            document.body.classList.add('no-scroll');
             formTitle.textContent = isEdit ? 'Edit Enemy' : 'Add New Enemy';
             document.getElementById('importBanner').classList.add('hidden');
             
@@ -2453,7 +1914,6 @@
             updateVariantDropdown();
             updateFormDatalists();
             
-            formSection.scrollIntoView({ behavior: 'smooth' });
         }
 
         // ===== JSON Import (drafts reviewed in the form before saving) =====
@@ -2519,18 +1979,18 @@
                 return;
             }
             document.getElementById('importError').textContent = '';
-            document.getElementById('importModal').classList.add('active');
+            openModal('importModal');
             document.getElementById('importText').focus();
         }
 
         function closeImport() {
-            document.getElementById('importModal').classList.remove('active');
+            closeModal('importModal');
         }
 
         function copyImportTemplate(button) {
             navigator.clipboard.writeText(JSON.stringify(IMPORT_TEMPLATE, null, 2)).then(() => {
                 const original = button.innerHTML;
-                button.innerHTML = '✅ Copied!';
+                button.textContent = 'Copied!';
                 setTimeout(() => { button.innerHTML = original; }, 2000);
             });
         }
@@ -2705,9 +2165,9 @@
             const notes = Array.isArray(data.reviewNotes) ? data.reviewNotes : (data.reviewNotes ? [data.reviewNotes] : []);
             const escape = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
             const banner = document.getElementById('importBanner');
-            let html = `<strong>📥 Imported draft${importTotal > 1 ? ` ${position} of ${importTotal}` : ''}</strong>. Review everything, then click Save Enemy.`;
+            let html = `<strong>Imported draft${importTotal > 1 ? ` ${position} of ${importTotal}` : ''}</strong>. Review everything, then click Save Enemy.`;
             if (importQueue.length > 0) html += ` Saving or cancelling opens the next draft. <a href="#" onclick="event.preventDefault(); discardImportQueue();">Discard the remaining ${importQueue.length}</a>`;
-            if (warnings.length) html += `<ul>${warnings.map(w => `<li>⚠️ ${escape(w)}</li>`).join('')}</ul>`;
+            if (warnings.length) html += `<ul>${warnings.map(w => `<li>${escape(w)}</li>`).join('')}</ul>`;
             if (notes.length) html += `<div style="margin-top:8px;"><strong>Things to double-check:</strong><ul>${notes.map(n => `<li>${escape(n)}</li>`).join('')}</ul></div>`;
             banner.innerHTML = html;
             banner.classList.remove('hidden');
@@ -2721,6 +2181,7 @@
                 setTimeout(loadNextImport, 0);
             }
             document.getElementById('formSection').classList.add('hidden');
+            if (!document.querySelector('.modal.active')) document.body.classList.remove('no-scroll');
             document.getElementById('enemyForm').reset();
             editingKey = null;
             offensiveActions = [];
@@ -2873,258 +2334,237 @@
             const endIndex = startIndex + itemsPerPage;
             const paginatedEnemies = enemyArray.slice(startIndex, endIndex);
             
+            const total = Object.keys(enemies).length;
+            const filtering = searchTerm || Object.values(filters).some(v => v !== '');
+            document.getElementById('resultCount').textContent = filtering
+                ? `${totalEnemies} of ${total} enemies`
+                : `${total} enemies`;
+
             if (totalEnemies === 0) {
                 listContainer.innerHTML = `
                     <div class="empty-state">
-                        <h3>${searchTerm ? 'No enemies found' : 'No enemies yet'}</h3>
-                        <p>${searchTerm ? 'Try a different search term' : isOwner() ? 'Click "Add New Enemy" to get started' : 'Check back soon'}</p>
+                        <h3>${filtering ? 'No enemies found' : 'No enemies yet'}</h3>
+                        <p>${filtering ? 'Try a different search or clear your filters.' : isOwner() ? 'Click "Add" to get started.' : 'Check back soon.'}</p>
                     </div>
                 `;
                 return;
             }
             
             const enemyCardsHtml = paginatedEnemies.map((enemy) => {
-                let badges = '';
-                if (enemy.type) badges += `<span class="badge type">${enemy.type}</span>`;
-                if (enemy.size) badges += `<span class="badge size">${enemy.size}</span>`;
-                if (enemy.weapon) badges += `<span class="badge weapon">${enemy.weapon}</span>`;
-                
-                let links = '';
-                let complexSections = '';
-                
-                if (enemy.videoLink) {
-                    const videoId = getYouTubeVideoId(enemy.videoLink);
-                    if (videoId) {
-                        complexSections += `
-                            <div class="enemy-section">
-                                <h4>🎥 Video Reference</h4>
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; margin-top: 10px;">
-                                    <iframe 
-                                        loading="lazy"
-                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                                        src="https://www.youtube.com/embed/${videoId}"
-                                        frameborder="0"
-                                        allowfullscreen>
-                                    </iframe>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        // Fallback to link if URL format not recognized
-                        links += `<a href="${enemy.videoLink}" target="_blank">🎥 Video</a>`;
-                    }
-                }
-                if (enemy.imageLink) links += `<a href="${enemy.imageLink}" target="_blank">🖼️ Image</a>`;
-                
-                // Offensive Actions
-                if (enemy.offensiveActions && enemy.offensiveActions.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>⚔️ Offensive Actions (${enemy.offensiveActions.length})</h4>
-                            ${enemy.offensiveActions.map(a => `
-                                <div class="action-display">
-                                    <strong>${a.name || a.type || 'Action'}:</strong> 
-                                    ${a.range ? `Range: ${a.range}` : ''} 
-                                    ${a.comboCount ? `| Combo: ${a.comboCount}` : ''} 
-                                    ${a.windupTime ? `| Windup: ${a.windupTime}` : ''}
-                                    ${a.damageType ? `| Damage: ${a.damageType}` : ''}
-                                    ${a.condition ? `| Condition: ${a.condition}` : ''}
-                                    ${a.details ? `<br>${a.details}` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                // Defensive Actions
-                if (enemy.defensiveActions && enemy.defensiveActions.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>🛡️ Defensive Actions (${enemy.defensiveActions.length})</h4>
-                            ${enemy.defensiveActions.map(a => `
-                                <div class="action-display">
-                                    <strong>${a.type || 'Defense'}:</strong> 
-                                    ${a.defensiveReaction ? `Reaction: ${a.defensiveReaction}` : ''}
-                                    ${a.details ? `<br>${a.details}` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                // Support Actions
-                if (enemy.supportActions && enemy.supportActions.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>✨ Support Actions (${enemy.supportActions.length})</h4>
-                            ${enemy.supportActions.map(a => `
-                                <div class="action-display">
-                                    <strong>${a.type || 'Support'}:</strong> 
-                                    ${a.details || ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                // Reactions
-                if (enemy.reactions && enemy.reactions.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>⚡ Reactions (${enemy.reactions.length})</h4>
-                            ${enemy.reactions.map(r => {
-                                const typeDisplay = r.type ? r.type.charAt(0).toUpperCase() + r.type.slice(1) : 'Reaction';
-                                return `
-                                    <div class="action-display">
-                                        <strong>${typeDisplay}:</strong> 
-                                        ${r.details || ''}
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `;
-                }
-                
-                // Locomotion
-                if (enemy.locomotion && enemy.locomotion.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>🦶 Locomotion</h4>
-                            ${enemy.locomotion.map(l => `<span class="badge">${l.type}</span>`).join(' ')}
-                        </div>
-                    `;
-                }
-                
-                // Special Traits
-                if (enemy.specialTraits && enemy.specialTraits.length > 0) {
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>⭐ Special Traits</h4>
-                            ${enemy.specialTraits.map(t => {
-                                // Handle both old format (string) and new format (object)
-                                if (typeof t === 'string') {
-                                    return `<div class="action-display">${t}</div>`;
-                                } else {
-                                    const category = t.category ? `<strong>${t.category}:</strong> ` : '';
-                                    return `<div class="action-display">${category}${t.text || ''}</div>`;
-                                }
-                            }).join('')}
-                        </div>
-                    `;
-                }
-                
-                // Variants - show entire network
-                const allVariants = findAllVariants(enemy.key);
-                if (allVariants.length > 0) {
-                    const variantLinks = allVariants
-                        .filter(key => enemies[key]) // Make sure enemy still exists
-                        .map(key => {
-                            const variantEnemy = enemies[key];
-                            return `
-                                <a href="#" class="variant-link" onclick="event.preventDefault(); scrollToEnemy('${key}')" style="margin-right: 8px; margin-bottom: 8px; display: inline-block;">
-                                    → ${variantEnemy.name} (${variantEnemy.game})
-                                </a>
-                            `;
-                        })
-                        .join('');
-                    
-                    complexSections += `
-                        <div class="enemy-section">
-                            <h4>🔗 Variants (${allVariants.length})</h4>
-                            <div style="display: flex; flex-wrap: wrap;">
-                                ${variantLinks}
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                const actions = isOwner() ? `
-                    <div class="enemy-actions">
-                        ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
-                        <button class="btn btn-success" onclick="cloneEnemy('${enemy.key}')">👯 Clone</button>
-                        <button class="btn btn-secondary" onclick="editEnemy('${enemy.key}')">Edit</button>
-                        <button class="btn btn-danger" onclick="deleteEnemy('${enemy.key}')">Delete</button>
-                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
-                    </div>
-                ` : `
-                    <div class="enemy-actions">
-                        ${enemy.lastUpdated ? `<span class="enemy-updated-inline">${formatDate(enemy.lastUpdated)}</span>` : ''}
-                        <button class="btn btn-secondary" onclick="copyShareLink('${enemy.key}', this)">📋 Share</button>
-                    </div>
-                `;
-                
-                // Get game box art for background
-                const gameImage = gameImages[enemy.game];
-                const bgStyle = gameImage ? `style="--bg-image: url('${gameImage}')"` : '';
-                
-                // Get enemy-specific image for thumbnail (fallback to game box art if not available)
-                const enemyImageUrl = enemy.imageLink || gameImage;
-                const thumbnailHtml = enemyImageUrl
-                    ? `<img src="${enemyImageUrl}" alt="${enemy.name}" class="game-thumbnail" onerror="this.style.display='none'">` 
-                    : `<div class="game-thumbnail-placeholder">${enemy.name.charAt(0)}</div>`;
-                
+                const moveCount = (enemy.offensiveActions || []).length;
+                const meta = [enemy.size, enemy.weapon].filter(Boolean).join(' · ');
                 return `
-                    <div class="enemy-card" id="enemy-${enemy.key}" ${bgStyle}>
-                        <div class="enemy-compact-info">
-                            ${thumbnailHtml}
-                            <div class="enemy-content">
-                                <div class="enemy-header">
-                                    <div class="enemy-title">
-                                        <h3>${enemy.name}</h3>
-                                        <div class="enemy-game">${enemy.game}</div>
-                                    </div>
-                                </div>
-                                ${badges ? `<div class="enemy-badges">${badges}</div>` : ''}
-                                ${links ? `<div class="enemy-links">${links}</div>` : ''}
-                                
-                                ${complexSections || enemy.notes ? `
-                                    <button class="expand-button" onclick="toggleEnemyDetails('${enemy.key}')">
-                                        <span class="expand-icon" id="icon-${enemy.key}">▼</span>
-                                        <span id="text-${enemy.key}">Show Details</span>
-                                    </button>
-                                ` : ''}
-                            </div>
+                    <button type="button" class="enemy-card" id="enemy-${enemy.key}" onclick="openEnemy('${enemy.key}')">
+                        <div class="card-media">
+                            ${enemyImageHtml(enemy, 'lazy')}
+                            ${enemy.type ? `<span class="card-type ${typeClass(enemy.type)}">${escapeHtml(enemy.type)}</span>` : ''}
                         </div>
-                        
-                        ${complexSections || enemy.notes ? `
-                            <div class="enemy-detailed-info" id="details-${enemy.key}">
-                                ${enemy.notes ? `<div class="enemy-notes" style="margin-top: 15px;">${enemy.notes}</div>` : ''}
-                                ${complexSections}
-                            </div>
-                        ` : ''}
-                        
-                        ${actions}
-                    </div>
+                        <div class="card-body">
+                            <div class="card-name">${escapeHtml(enemy.name)}</div>
+                            <div class="card-game">${escapeHtml(enemy.game)}</div>
+                            ${meta ? `<div class="card-meta" title="${escapeHtml(meta)}">${escapeHtml(meta)}</div>` : ''}
+                            ${moveCount ? `<div class="card-meta">${moveCount} attack${moveCount === 1 ? '' : 's'}</div>` : ''}
+                        </div>
+                    </button>
                 `;
             }).join('');
-            
-            // Pagination controls
+
             const paginationHtml = totalPages > 1 ? `
                 <div class="pagination">
-                    <button class="btn btn-secondary" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                        ← Previous
-                    </button>
-                    <span class="pagination-info">
-                        Page ${currentPage} of ${totalPages} (${totalEnemies} total enemies)
-                    </span>
-                    <button class="btn btn-secondary" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                        Next →
-                    </button>
+                    <button class="btn btn-secondary btn-small" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Previous</button>
+                    <span class="pagination-info">Page ${currentPage} of ${totalPages}</span>
+                    <button class="btn btn-secondary btn-small" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>
                 </div>
             ` : '';
-            
+
             listContainer.innerHTML = enemyCardsHtml + paginationHtml;
         }
 
-        function scrollToEnemy(key) {
-            const element = document.getElementById(`enemy-${key}`);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                element.style.background = '#fff3cd';
-                setTimeout(() => {
-                    element.style.background = '';
-                }, 2000);
+        // ===== Display helpers =====
+        function typeClass(type) {
+            return 't-' + String(type || 'regular').toLowerCase().replace(/[^a-z]+/g, '-');
+        }
+
+        function cap(text) {
+            const s = String(text || '');
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        function safeUrl(url) {
+            return /^https?:\/\//i.test(String(url || '').trim()) ? String(url).trim() : '';
+        }
+
+        // Enemy screenshot, else the game's cover art, else a letter
+        function enemyImageHtml(enemy, loading) {
+            const url = safeUrl(enemy.imageLink) || safeUrl(gameImages[enemy.game]);
+            const letter = escapeHtml((enemy.name || '?').charAt(0).toUpperCase());
+            if (!url) return `<div class="monogram">${letter}</div>`;
+            return `<img src="${escapeHtml(url)}" alt="" loading="${loading || 'eager'}" data-letter="${letter}" onerror="imageFallback(this)">`;
+        }
+
+        function imageFallback(img) {
+            const div = document.createElement('div');
+            div.className = 'monogram';
+            div.textContent = img.dataset.letter || '?';
+            img.replaceWith(div);
+        }
+
+        // ===== Enemy detail view =====
+        let openEnemyKey = null;
+
+        function openEnemy(key, updateHash = true) {
+            if (!enemies[key]) return;
+            openEnemyKey = key;
+            renderEnemyDetail(key);
+            openModal('detailModal');
+            document.getElementById('detailModal').scrollTop = 0;
+            document.getElementById('detailPanel').scrollTop = 0;
+            if (updateHash) history.replaceState(null, '', '#enemy-' + key);
+        }
+
+        function closeEnemy(updateHash = true) {
+            openEnemyKey = null;
+            closeModal('detailModal');
+            document.getElementById('detailPanel').innerHTML = '';
+            if (updateHash && window.location.hash.startsWith('#enemy-')) {
+                history.replaceState(null, '', window.location.pathname + window.location.search);
             }
+        }
+
+        function playVideo(button, videoId) {
+            const frame = button.closest('.video-frame');
+            frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1" title="Enemy video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+        }
+
+        function section(icon, title, count, inner) {
+            return `
+                <div class="detail-section">
+                    <h4><svg class="icon"><use href="#${icon}"/></svg>${title}${count ? ` <span class="count">${count}</span>` : ''}</h4>
+                    ${inner}
+                </div>`;
+        }
+
+        function moveRow(name, tags, details) {
+            return `
+                <div class="move">
+                    <div class="move-name">${escapeHtml(name)}</div>
+                    ${tags.length ? `<div class="move-tags">${tags.join('')}</div>` : ''}
+                    ${details ? `<div class="move-details">${escapeHtml(details)}</div>` : ''}
+                </div>`;
+        }
+
+        function renderEnemyDetail(key) {
+            const enemy = { key, ...enemies[key] };
+            const owner = isOwner();
+            const tag = (label, value, cls = '') => `<span class="tag ${cls}">${label ? `${label} ` : ''}<strong>${escapeHtml(value)}</strong></span>`;
+
+            const heroTags = [];
+            if (enemy.type) heroTags.push(`<span class="tag type ${typeClass(enemy.type)}"><strong>${escapeHtml(enemy.type)}</strong></span>`);
+            if (enemy.size) heroTags.push(tag('Size', enemy.size));
+            if (enemy.weapon) heroTags.push(tag('', enemy.weapon));
+            (enemy.locomotion || []).forEach(l => l && l.type && heroTags.push(tag('', cap(l.type))));
+
+            let sections = '';
+            let side = '';
+
+            if (enemy.notes) {
+                side += section('i-notes', 'Notes', '', `<div class="detail-notes">${escapeHtml(enemy.notes)}</div>`);
+            }
+
+            const videoId = getYouTubeVideoId(enemy.videoLink);
+            if (videoId) {
+                const id = escapeHtml(videoId);
+                side += section('i-video', 'Video', '', `
+                    <div class="video-frame">
+                        <img src="https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">
+                        <button class="video-play" onclick="playVideo(this, '${id}')" aria-label="Play video"><span><svg class="icon"><use href="#i-play"/></svg></span></button>
+                    </div>`);
+            } else if (safeUrl(enemy.videoLink)) {
+                side += section('i-video', 'Video', '', `<a class="variant-link" href="${escapeHtml(safeUrl(enemy.videoLink))}" target="_blank" rel="noopener">Open video</a>`);
+            }
+
+            const offensive = enemy.offensiveActions || [];
+            if (offensive.length) {
+                const rows = offensive.map(a => {
+                    const t = [];
+                    if (a.type) t.push(tag('', a.type === 'aoe' ? 'AOE' : cap(a.type)));
+                    if (a.range) t.push(tag('Range', cap(a.range)));
+                    if (a.comboCount) t.push(tag('Hits', a.comboCount));
+                    if (a.windupTime) t.push(tag('Windup', cap(a.windupTime)));
+                    if (a.damageType) t.push(`<span class="tag dmg dmg-${escapeHtml(a.damageType)}">${escapeHtml(cap(a.damageType))}</span>`);
+                    if (a.condition) t.push(`<span class="tag cond">${escapeHtml(cap(a.condition))}</span>`);
+                    return moveRow(a.name || cap(a.type) || 'Action', t, a.details);
+                }).join('');
+                sections += section('i-swords', 'Offensive actions', offensive.length, `<div class="move-list">${rows}</div>`);
+            }
+
+            const defensive = enemy.defensiveActions || [];
+            if (defensive.length) {
+                const rows = defensive.map(a => {
+                    const t = a.defensiveReaction && a.defensiveReaction !== 'none' ? [tag('', cap(a.defensiveReaction))] : [];
+                    return moveRow(cap(a.type) || 'Defense', t, a.details);
+                }).join('');
+                sections += section('i-shield', 'Defensive actions', defensive.length, `<div class="move-list">${rows}</div>`);
+            }
+
+            const support = enemy.supportActions || [];
+            if (support.length) {
+                const rows = support.map(a => moveRow(cap(a.type) || 'Support', [], a.details)).join('');
+                sections += section('i-spark', 'Support actions', support.length, `<div class="move-list">${rows}</div>`);
+            }
+
+            const reactionList = enemy.reactions || [];
+            if (reactionList.length) {
+                const names = { reduced: 'Reduced reactions', increased: 'Increased reactions', defensive: 'Defensive reaction', offensive: 'Offensive reaction', death: 'Death reaction' };
+                const rows = reactionList.map(r => moveRow(names[r.type] || cap(r.type) || 'Reaction', [], r.details)).join('');
+                sections += section('i-bolt', 'Reactions', reactionList.length, `<div class="move-list">${rows}</div>`);
+            }
+
+            const traits = enemy.specialTraits || [];
+            if (traits.length) {
+                const rows = traits.map(t => typeof t === 'string'
+                    ? moveRow('Trait', [], t)
+                    : moveRow(cap(t.category) || 'Trait', [], t.text)).join('');
+                sections += section('i-star', 'Special traits', traits.length, `<div class="move-list">${rows}</div>`);
+            }
+
+            const variants = findAllVariants(key).filter(k => enemies[k]);
+            if (variants.length) {
+                const links = variants.map(k => `<button type="button" class="variant-link" onclick="openEnemy('${k}')">${escapeHtml(enemies[k].name)} <span style="color:var(--text-faint)">${escapeHtml(enemies[k].game)}</span></button>`).join('');
+                side += section('i-link', 'Variants', variants.length, `<div class="tag-row">${links}</div>`);
+            }
+
+            const tools = `
+                <button class="btn btn-secondary btn-small" onclick="copyShareLink('${key}', this)"><svg class="icon"><use href="#i-share"/></svg>Share</button>
+                ${safeUrl(enemy.imageLink) ? `<a class="btn btn-ghost btn-small" href="${escapeHtml(safeUrl(enemy.imageLink))}" target="_blank" rel="noopener"><svg class="icon"><use href="#i-image"/></svg>Image</a>` : ''}
+                ${owner ? `
+                    <button class="btn btn-secondary btn-small" onclick="editEnemy('${key}')"><svg class="icon"><use href="#i-edit"/></svg>Edit</button>
+                    <button class="btn btn-secondary btn-small" onclick="cloneEnemy('${key}')"><svg class="icon"><use href="#i-copy"/></svg>Clone</button>
+                    <button class="btn btn-danger btn-small" onclick="deleteEnemy('${key}')"><svg class="icon"><use href="#i-trash"/></svg>Delete</button>
+                ` : ''}
+                ${enemy.lastUpdated ? `<span class="detail-updated">${escapeHtml(formatDate(enemy.lastUpdated))}</span>` : ''}`;
+
+            document.getElementById('detailModal').setAttribute('aria-label', enemy.name || 'Enemy');
+            document.getElementById('detailPanel').innerHTML = `
+                <button class="modal-close" onclick="closeEnemy()" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+                <div class="detail-hero">
+                    <div class="detail-image">${enemyImageHtml(enemy)}</div>
+                    <div class="detail-head">
+                        <h2>${escapeHtml(enemy.name)}</h2>
+                        <div class="detail-game">${escapeHtml(enemy.game)}</div>
+                        <div class="tag-row">${heroTags.join('')}</div>
+                        <div class="detail-tools">${tools}</div>
+                    </div>
+                </div>
+                <div class="detail-body">
+                    ${side ? `<div class="detail-side">${side}</div>` : ''}
+                    <div class="detail-main">${sections || (side ? '' : '<div class="detail-section" style="color:var(--text-muted)">No details yet.</div>')}</div>
+                </div>
+            `;
+        }
+
+        function scrollToEnemy(key) {
+            openEnemy(key);
         }
 
         function changePage(newPage) {
@@ -3138,7 +2578,7 @@
             navigator.clipboard.writeText(url).then(() => {
                 // Show temporary "Copied!" message
                 const originalText = button.innerHTML;
-                button.innerHTML = '✅ Copied!';
+                button.textContent = 'Link copied';
                 button.disabled = true;
                 setTimeout(() => {
                     button.innerHTML = originalText;
@@ -3250,8 +2690,7 @@
             // 4. Slightly modify the name so you don't accidentally trigger a duplicate warning
             document.getElementById('enemyName').value += " (Copy)";
         
-            // 5. Scroll smoothly to the form
-            document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
+
         }
 
         function deleteEnemy(key) {
@@ -3261,6 +2700,7 @@
             }
             
             if (confirm('Are you sure you want to delete this enemy?')) {
+                if (openEnemyKey === key) closeEnemy();
                 database.ref('enemies/' + key).remove()
                     .catch((error) => alert('Delete failed: ' + error.message));
             }
@@ -3273,35 +2713,26 @@
             renderEnemies(e.target.value);
         });
 
-        // Dark mode toggle functionality
+        // Theme: dark by default. 'darkMode' = 'disabled' means the visitor chose light.
+        function readThemePref() {
+            try { return localStorage.getItem('darkMode'); } catch (e) { return null; }
+        }
+
+        function applyTheme(dark) {
+            document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+            document.querySelector('#darkModeIcon use').setAttribute('href', dark ? '#i-sun' : '#i-moon');
+        }
+
         function toggleDarkMode() {
-            const body = document.body;
-            const icon = document.getElementById('darkModeIcon');
-            
-            body.classList.toggle('dark-mode');
-            
-            // Update icon
-            if (body.classList.contains('dark-mode')) {
-                icon.textContent = '☀️';
-                localStorage.setItem('darkMode', 'enabled');
-            } else {
-                icon.textContent = '🌙';
-                localStorage.setItem('darkMode', 'disabled');
-            }
+            const dark = document.documentElement.getAttribute('data-theme') !== 'light';
+            applyTheme(!dark);
+            try { localStorage.setItem('darkMode', dark ? 'disabled' : 'enabled'); } catch (e) {}
         }
 
-        // Check for saved dark mode preference on page load
         function initDarkMode() {
-            const darkMode = localStorage.getItem('darkMode');
-            const icon = document.getElementById('darkModeIcon');
-            
-            if (darkMode === 'enabled') {
-                document.body.classList.add('dark-mode');
-                icon.textContent = '☀️';
-            }
+            applyTheme(readThemePref() !== 'disabled');
         }
 
-        // Initialize dark mode on page load
         initDarkMode();
     </script>
 </body>
