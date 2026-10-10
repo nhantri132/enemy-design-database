@@ -834,7 +834,7 @@
         
         // Pagination
         let currentPage = 1;
-        const itemsPerPage = 20;
+        const itemsPerPage = 24;
 
         // Temporary storage for complex lists
         let offensiveActions = [];
@@ -1387,10 +1387,19 @@
             return Array.from(variantNetwork);
         }
         
+        // New rows go to the top of their list, right under the Add button
+        function focusNewRow(listId) {
+            const row = document.getElementById(listId)?.firstElementChild;
+            if (!row) return;
+            const field = row.querySelector('input, select, textarea');
+            if (field) field.focus({ preventScroll: true });
+            row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+
         // Offensive Actions
         function addOffensiveAction() {
             const action = {
-                id: Date.now(),
+                id: Date.now() + Math.random(),
                 name: '',
                 type: '',
                 range: '',
@@ -1400,8 +1409,9 @@
                 condition: '',
                 details: ''
             };
-            offensiveActions.push(action);
+            offensiveActions.unshift(action);
             renderOffensiveActions();
+            focusNewRow('offensiveActionsList');
         }
 
         function removeOffensiveAction(id) {
@@ -1506,13 +1516,14 @@
         // Defensive Actions
         function addDefensiveAction() {
             const action = {
-                id: Date.now(),
+                id: Date.now() + Math.random(),
                 type: '',
                 defensiveReaction: '',
                 details: ''
             };
-            defensiveActions.push(action);
+            defensiveActions.unshift(action);
             renderDefensiveActions();
+            focusNewRow('defensiveActionsList');
         }
 
         function removeDefensiveAction(id) {
@@ -1572,12 +1583,13 @@
         // Support Actions
         function addSupportAction() {
             const action = {
-                id: Date.now(),
+                id: Date.now() + Math.random(),
                 type: '',
                 details: ''
             };
-            supportActions.push(action);
+            supportActions.unshift(action);
             renderSupportActions();
+            focusNewRow('supportActionsList');
         }
 
         function removeSupportAction(id) {
@@ -1629,12 +1641,13 @@
         // Reactions
         function addReaction() {
             const reaction = {
-                id: Date.now(),
+                id: Date.now() + Math.random(),
                 type: '',
                 details: ''
             };
-            reactions.push(reaction);
+            reactions.unshift(reaction);
             renderReactions();
+            focusNewRow('reactionsList');
         }
 
         function removeReaction(id) {
@@ -1685,11 +1698,12 @@
         // Locomotion
         function addLocomotion() {
             const loco = {
-                id: Date.now(),
+                id: Date.now() + Math.random(),
                 type: ''
             };
-            locomotion.push(loco);
+            locomotion.unshift(loco);
             renderLocomotion();
+            focusNewRow('locomotionList');
         }
 
         function removeLocomotion(id) {
@@ -1735,12 +1749,13 @@
         // Special Traits
         function addSpecialTrait() {
             const trait = {
-                id: Date.now(),
+                id: Date.now() + Math.random(),
                 category: '',
                 text: ''
             };
-            specialTraits.push(trait);
+            specialTraits.unshift(trait);
             renderSpecialTraits();
+            focusNewRow('specialTraitsList');
         }
 
         function removeSpecialTrait(id) {
@@ -2327,12 +2342,11 @@
             const totalPages = Math.ceil(totalEnemies / itemsPerPage);
             
             // Reset to page 1 if current page is out of bounds
-            if (currentPage > totalPages) currentPage = 1;
+            if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
             if (currentPage < 1) currentPage = 1;
             
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const paginatedEnemies = enemyArray.slice(startIndex, endIndex);
+            // Infinite scroll: currentPage = how many chunks are loaded
+            const paginatedEnemies = enemyArray.slice(0, currentPage * itemsPerPage);
             
             const total = Object.keys(enemies).length;
             const filtering = searchTerm || Object.values(filters).some(v => v !== '');
@@ -2350,34 +2364,62 @@
                 return;
             }
             
-            const enemyCardsHtml = paginatedEnemies.map((enemy) => {
-                const moveCount = (enemy.offensiveActions || []).length;
-                const meta = [enemy.size, enemy.weapon].filter(Boolean).join(' · ');
-                return `
-                    <button type="button" class="enemy-card" id="enemy-${enemy.key}" onclick="openEnemy('${enemy.key}')">
-                        <div class="card-media">
-                            ${enemyImageHtml(enemy, 'lazy')}
-                            ${enemy.type ? `<span class="card-type ${typeClass(enemy.type)}">${escapeHtml(enemy.type)}</span>` : ''}
-                        </div>
-                        <div class="card-body">
-                            <div class="card-name">${escapeHtml(enemy.name)}</div>
-                            <div class="card-game">${escapeHtml(enemy.game)}</div>
-                            ${meta ? `<div class="card-meta" title="${escapeHtml(meta)}">${escapeHtml(meta)}</div>` : ''}
-                            ${moveCount ? `<div class="card-meta">${moveCount} attack${moveCount === 1 ? '' : 's'}</div>` : ''}
-                        </div>
-                    </button>
-                `;
-            }).join('');
+            listedEnemies = enemyArray;
+            listContainer.innerHTML = paginatedEnemies.map(enemyCardHtml).join('') + loadMoreSentinelHtml();
+            observeLoadMore();
+        }
 
-            const paginationHtml = totalPages > 1 ? `
-                <div class="pagination">
-                    <button class="btn btn-secondary btn-small" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Previous</button>
-                    <span class="pagination-info">Page ${currentPage} of ${totalPages}</span>
-                    <button class="btn btn-secondary btn-small" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>
-                </div>
-            ` : '';
+        // ===== Infinite scroll =====
+        let listedEnemies = [];
+        let loadMoreObserver = null;
 
-            listContainer.innerHTML = enemyCardsHtml + paginationHtml;
+        function enemyCardHtml(enemy) {
+            const moveCount = (enemy.offensiveActions || []).length;
+            const meta = [enemy.size, enemy.weapon].filter(Boolean).join(' · ');
+            return `
+                <button type="button" class="enemy-card" id="enemy-${enemy.key}" onclick="openEnemy('${enemy.key}')">
+                    <div class="card-media">
+                        ${enemyImageHtml(enemy, 'lazy')}
+                        ${enemy.type ? `<span class="card-type ${typeClass(enemy.type)}">${escapeHtml(enemy.type)}</span>` : ''}
+                    </div>
+                    <div class="card-body">
+                        <div class="card-name">${escapeHtml(enemy.name)}</div>
+                        <div class="card-game">${escapeHtml(enemy.game)}</div>
+                        ${meta ? `<div class="card-meta" title="${escapeHtml(meta)}">${escapeHtml(meta)}</div>` : ''}
+                        ${moveCount ? `<div class="card-meta">${moveCount} attack${moveCount === 1 ? '' : 's'}</div>` : ''}
+                    </div>
+                </button>
+            `;
+        }
+
+        function loadMoreSentinelHtml() {
+            const shown = currentPage * itemsPerPage;
+            if (shown >= listedEnemies.length) return '';
+            return `<div class="pagination" id="loadMoreSentinel"><button class="btn btn-secondary btn-small" onclick="loadMoreEnemies()">Show more (${listedEnemies.length - shown} left)</button></div>`;
+        }
+
+        function loadMoreEnemies() {
+            const sentinel = document.getElementById('loadMoreSentinel');
+            if (!sentinel) return;
+            const start = currentPage * itemsPerPage;
+            currentPage++;
+            const html = listedEnemies.slice(start, currentPage * itemsPerPage).map(enemyCardHtml).join('');
+            sentinel.insertAdjacentHTML('beforebegin', html);
+            sentinel.remove();
+            document.getElementById('enemyList').insertAdjacentHTML('beforeend', loadMoreSentinelHtml());
+            observeLoadMore();
+        }
+
+        function observeLoadMore() {
+            const sentinel = document.getElementById('loadMoreSentinel');
+            if (!sentinel || !('IntersectionObserver' in window)) return;
+            if (!loadMoreObserver) {
+                loadMoreObserver = new IntersectionObserver(entries => {
+                    if (entries.some(e => e.isIntersecting)) loadMoreEnemies();
+                }, { rootMargin: '800px 0px' });
+            }
+            loadMoreObserver.disconnect();
+            loadMoreObserver.observe(sentinel);
         }
 
         // ===== Display helpers =====
