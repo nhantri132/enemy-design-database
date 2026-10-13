@@ -190,6 +190,9 @@
         }
         .search-box:focus { border-color: var(--accent); }
         .search-box::placeholder { color: var(--text-faint); }
+        .search-synonym-hint { margin-top: 8px; font-size: 13px; line-height: 1.5; color: var(--text-faint); }
+        .search-synonym-hint strong { color: var(--text); font-weight: 600; }
+        .search-synonym-hint .search-hint-tip { opacity: .8; }
         .filter-count {
             min-width: 18px; height: 18px; border-radius: 9px; padding: 0 5px; font-size: 11px; font-weight: 700;
             background: var(--accent); color: var(--accent-text); display: inline-grid; place-items: center;
@@ -500,7 +503,7 @@
             <ul>
                 <li><strong>Anyone can view</strong> all enemy entries</li>
                 <li>Currently, <strong>only Tri</strong> can add, edit, or delete entries</li>
-                <li><strong>Search</strong> across all fields (name, game, damage types, actions, etc.)</li>
+                <li><strong>Search</strong> across all fields (name, game, damage types, actions, etc.). Synonyms count too: "jump" also finds "leap". Put a word in "quotes" to match it exactly.</li>
                 <li><strong>Tap an enemy</strong> to see its full moveset and video</li>
             </ul>
             <h3>Contact</h3>
@@ -661,6 +664,7 @@
                         <button class="btn btn-secondary" id="importBtn" disabled onclick="openImport()"><svg class="icon"><use href="#i-upload"/></svg>Import</button>
                     </div>
                 </div>
+                <div id="searchSynonymHint" class="search-synonym-hint hidden" aria-live="polite"></div>
                 <div class="results-meta">
                     <div class="active-filters" id="activeFilters"></div>
                 </div>
@@ -2229,6 +2233,214 @@
             return `Updated ${date.toLocaleDateString('en-US', options)}`;
         }
 
+        // ===================== SYNONYM SEARCH =====================
+        // Each group is two-way: searching ANY word in a group also finds the others.
+        // List base words only -- endings are handled automatically
+        // (leap -> leaps/leaped/leaping, hop -> hopping, slash -> slashes).
+        // Keep groups tight: only words that mean the same thing in your taxonomy.
+        const SEARCH_SYNONYM_GROUPS = [
+            // Motions
+            ['jump', 'leap', 'pounce', 'hop', 'vault'],
+            ['swipe', 'sweep'],
+            ['slash', 'slice', 'cleave'],
+            ['stab', 'thrust', 'pierce', 'impale', 'poke'],
+            ['slam', 'smash', 'pound', 'stomp', 'crush'],
+            ['bash', 'ram', 'shove'],
+            ['charge', 'rush', 'dash', 'lunge'],
+            ['spin', '360', 'whirlwind', 'twirl'],
+            ['overhead', 'vertical', 'downward'],
+            ['retreat', 'backpedal'],
+            ['punch', 'jab'],
+            ['bite', 'chomp'],
+            ['claw', 'talon'],
+            ['spit', 'spew', 'vomit'],
+            ['grab', 'grapple', 'seize'],
+            ['windup', 'wind-up', 'telegraph'],
+
+            // Defense / reactions
+            ['unblockable', 'perilous', 'unparryable'],
+            ['block', 'guard'],
+            ['evade', 'dodge', 'sidestep', 'backstep'],
+            ['parry', 'deflect'],
+            // Hyper armor was merged into Reduced Reactions, so these all point there
+            ['hyper armor', 'hyperarmor', 'super armor', 'poise', 'reduced'],
+
+            // Damage types (mirrors the hints in your Damage Type dropdown)
+            ['lightning', 'electric', 'electricity', 'thunder', 'shock'],
+            ['poison', 'toxic', 'venom'],
+            ['fire', 'flame', 'burn', 'ignite'],
+            ['ice', 'frost', 'freeze', 'cold'],
+            ['force', 'wind', 'kinetic'],
+            ['psychic', 'madness', 'mind'],
+            ['radiant', 'holy'],
+            ['necrotic', 'death', 'blight', 'decay'],
+            ['magic', 'arcane', 'sorcery'],
+
+            // Weapons / projectiles
+            ['gun', 'blaster', 'rifle', 'pistol'],
+            ['sword', 'blade', 'saber', 'lightsaber'],
+            ['grenade', 'bomb', 'explosive'],
+            ['missile', 'rocket'],
+
+            // Locomotion
+            ['fly', 'flight', 'flying', 'airborne', 'aerial'],
+        ];
+
+        // One-way: searching the KEY also finds these, but not the reverse.
+        // Use for "category -> specific kind": "aoe" finds shockwaves, but "shockwave" doesn't return every AOE.
+        const SEARCH_ONE_WAY_EXPANSIONS = {
+            'aoe': ['shockwave', 'burst', 'explosion', 'explode'],
+        };
+
+        // term -> every term it should match (built once at load)
+        const SYNONYM_INDEX = new Map();
+        (function buildSynonymIndex() {
+            const add = (term, matches) => {
+                const existing = SYNONYM_INDEX.get(term) || [term];
+                SYNONYM_INDEX.set(term, Array.from(new Set([...existing, ...matches])));
+            };
+            SEARCH_SYNONYM_GROUPS.forEach(group => {
+                const g = group.map(t => t.toLowerCase());
+                g.forEach(term => add(term, g));
+            });
+            Object.entries(SEARCH_ONE_WAY_EXPANSIONS).forEach(([key, list]) => {
+                add(key.toLowerCase(), list.map(t => t.toLowerCase()));
+            });
+        })();
+
+        // Strips common endings so typed "leaping"/"swiped"/"spinning" find their synonym group.
+        function stemSearchWord(word) {
+            if (word.includes(' ')) return word.split(' ').map(stemSearchWord).join(' ');
+            for (const suffix of ['ing', 'ed', 'es', 'e', 's']) {
+                if (word.endsWith(suffix) && word.length - suffix.length >= 3) {
+                    let stem = word.slice(0, -suffix.length);
+                    // spinning -> spinn -> spin, grabbed -> grabb -> grab
+                    if ((suffix === 'ing' || suffix === 'ed') && /([b-df-hj-np-tv-z])\1$/.test(stem)) {
+                        stem = stem.slice(0, -1);
+                    }
+                    return stem;
+                }
+            }
+            return word;
+        }
+
+        function escapeRegex(s) {
+            return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Whole-word match plus common endings: "leap" hits "Leaping Slash",
+        // but "wind" won't hit "windup" and "ram" won't hit "rampage".
+        const _synonymRegexCache = new Map();
+        function synonymRegex(term) {
+            if (_synonymRegexCache.has(term)) return _synonymRegexCache.get(term);
+            const stem = stemSearchWord(term);
+            const last = escapeRegex(stem.slice(-1));
+            const body = escapeRegex(stem).replace(/ /g, '[\\s\\-_]*'); // "hyper armor" = "hyper-armor" = "hyperarmor"
+            const re = new RegExp(`(^|[^a-z0-9])${body}(${last})?(e|es|s|ed|d|ing)?(?![a-z0-9])`, 'i');
+            _synonymRegexCache.set(term, re);
+            return re;
+        }
+
+        // Splits the query into clauses. Every clause must match (AND); any variant in a clause can match (OR).
+        // "quoted text" is searched literally with no synonyms.
+        function parseSearchQuery(raw) {
+            const tokens = [];
+            const re = /"([^"]+)"|(\S+)/g;
+            let m;
+            while ((m = re.exec(raw.toLowerCase())) !== null) {
+                if (m[1]) tokens.push({ text: m[1].trim(), exact: true });
+                else tokens.push({ text: m[2], exact: false });
+            }
+
+            const clauses = [];
+            let i = 0;
+            while (i < tokens.length) {
+                if (tokens[i].exact) {
+                    clauses.push({ typed: tokens[i].text, synonyms: [], exact: true });
+                    i++;
+                    continue;
+                }
+                // Try multi-word terms first ("hyper armor"), up to 3 words
+                let matched = null;
+                for (let len = 3; len >= 1 && !matched; len--) {
+                    const slice = tokens.slice(i, i + len);
+                    if (slice.length < len || slice.some(t => t.exact)) continue;
+                    const phrase = slice.map(t => t.text).join(' ');
+                    const key = findSynonymKey(phrase);
+                    if (key) matched = { phrase, key, len };
+                }
+                if (matched) {
+                    const synonyms = SYNONYM_INDEX.get(matched.key)
+                        .filter(v => stemSearchWord(v) !== stemSearchWord(matched.phrase));
+                    clauses.push({ typed: matched.phrase, synonyms });
+                    i += matched.len;
+                } else {
+                    clauses.push({ typed: tokens[i].text, synonyms: [] });
+                    i++;
+                }
+            }
+            return clauses;
+        }
+
+        function findSynonymKey(phrase) {
+            if (SYNONYM_INDEX.has(phrase)) return phrase;
+            const stem = stemSearchWord(phrase);
+            for (const key of SYNONYM_INDEX.keys()) {
+                if (stemSearchWord(key) === stem) return key;
+            }
+            return null;
+        }
+
+        // One flat lowercase string per enemy covering every searchable field.
+        function buildSearchText(enemy) {
+            const parts = [enemy.name, enemy.game, enemy.type, enemy.size, enemy.weapon, enemy.notes,
+                           enemy.videoLink, enemy.imageLink];
+            (enemy.offensiveActions || []).forEach(a => parts.push(
+                a.name, a.type, a.range, a.comboCount, a.windupTime, a.damageType, a.condition, a.details));
+            (enemy.defensiveActions || []).forEach(a => parts.push(a.type, a.defensiveReaction, a.details));
+            (enemy.supportActions || []).forEach(a => parts.push(a.type, a.details));
+            (enemy.reactions || []).forEach(r => parts.push(r.type, r.details));
+            (enemy.locomotion || []).forEach(l => parts.push(l.type));
+            (enemy.specialTraits || []).forEach(t => {
+                if (typeof t === 'string') parts.push(t);
+                else if (t) parts.push(t.category, t.text);
+            });
+            return parts
+                .filter(p => p !== undefined && p !== null && p !== '')
+                .map(p => String(p).toLowerCase())
+                .join(' | ');
+        }
+
+        // What you typed matches anywhere (same as before), plus its other endings ("charge" finds "Charging");
+        // synonyms match as whole words.
+        function enemyMatchesSearch(enemy, clauses) {
+            const text = buildSearchText(enemy);
+            return clauses.every(c =>
+                text.includes(c.typed) ||
+                (!c.exact && synonymRegex(c.typed).test(text)) ||
+                c.synonyms.some(s => synonymRegex(s).test(text)));
+        }
+
+        // Shows "jump also matches: leap, pounce…" under the search box so expansions are visible.
+        function updateSynonymHint(searchTerm) {
+            const el = document.getElementById('searchSynonymHint');
+            if (!el) return;
+            const lines = (searchTerm && searchTerm.trim())
+                ? parseSearchQuery(searchTerm)
+                    .filter(c => c.synonyms.length)
+                    .map(c => `<strong>${escapeHtmlText(c.typed)}</strong> also matches ${c.synonyms.map(escapeHtmlText).join(', ')}`)
+                : [];
+            el.innerHTML = lines.length
+                ? lines.join(' · ') + ' <span class="search-hint-tip">— use "quotes" for an exact match</span>'
+                : '';
+            el.classList.toggle('hidden', !lines.length);
+        }
+
+        function escapeHtmlText(s) {
+            return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        // =================== END SYNONYM SEARCH ===================
+
         function renderEnemies(searchTerm = '') {
             const listContainer = document.getElementById('enemyList');
             
@@ -2237,67 +2449,9 @@
                 ...enemies[key]
             }));
             
-            if (searchTerm) {
-                const term = searchTerm.toLowerCase();
-                enemyArray = enemyArray.filter(enemy => {
-                    // Search basic fields
-                    if (enemy.name?.toLowerCase().includes(term)) return true;
-                    if (enemy.game?.toLowerCase().includes(term)) return true;
-                    if (enemy.type?.toLowerCase().includes(term)) return true;
-                    if (enemy.size?.toLowerCase().includes(term)) return true;
-                    if (enemy.weapon?.toLowerCase().includes(term)) return true;
-                    if (enemy.notes?.toLowerCase().includes(term)) return true;
-                    if (enemy.videoLink?.toLowerCase().includes(term)) return true;
-                    if (enemy.imageLink?.toLowerCase().includes(term)) return true;
-                    
-                    // Search offensive actions - ALL FIELDS
-                    if (enemy.offensiveActions?.some(a => 
-                        a.name?.toLowerCase().includes(term) ||
-                        a.type?.toLowerCase().includes(term) ||
-                        a.range?.toLowerCase().includes(term) ||
-                        a.comboCount?.toString().toLowerCase().includes(term) ||
-                        a.windupTime?.toLowerCase().includes(term) ||
-                        a.damageType?.toLowerCase().includes(term) ||
-                        a.condition?.toLowerCase().includes(term) ||
-                        a.details?.toLowerCase().includes(term)
-                    )) return true;
-                    
-                    // Search defensive actions - ALL FIELDS
-                    if (enemy.defensiveActions?.some(a =>
-                        a.type?.toLowerCase().includes(term) ||
-                        a.defensiveReaction?.toLowerCase().includes(term) ||
-                        a.details?.toLowerCase().includes(term)
-                    )) return true;
-                    
-                    // Search support actions - ALL FIELDS
-                    if (enemy.supportActions?.some(a =>
-                        a.type?.toLowerCase().includes(term) ||
-                        a.details?.toLowerCase().includes(term)
-                    )) return true;
-                    
-                    // Search reactions - ALL FIELDS
-                    if (enemy.reactions?.some(r =>
-                        r.type?.toLowerCase().includes(term) ||
-                        r.details?.toLowerCase().includes(term)
-                    )) return true;
-                    
-                    // Search locomotion
-                    if (enemy.locomotion?.some(l =>
-                        l.type?.toLowerCase().includes(term)
-                    )) return true;
-                    
-                    // Search special traits
-                    if (enemy.specialTraits?.some(t => {
-                        if (typeof t === 'string') {
-                            return t.toLowerCase().includes(term);
-                        } else {
-                            return (t.category?.toLowerCase().includes(term) || 
-                                    t.text?.toLowerCase().includes(term));
-                        }
-                    })) return true;
-                    
-                    return false;
-                });
+            if (searchTerm && searchTerm.trim()) {
+                const clauses = parseSearchQuery(searchTerm);
+                enemyArray = enemyArray.filter(enemy => enemyMatchesSearch(enemy, clauses));
             }
 
             // Apply filters
@@ -2752,6 +2906,7 @@
         document.getElementById('cancelBtn').addEventListener('click', hideForm);
         document.getElementById('searchBox').addEventListener('input', (e) => {
             currentPage = 1; // Reset to first page when searching
+            updateSynonymHint(e.target.value);
             renderEnemies(e.target.value);
         });
 
