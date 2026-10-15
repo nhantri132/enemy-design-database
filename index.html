@@ -367,6 +367,32 @@
         }
         .video-play:hover span { transform: scale(1.06); }
         .video-play svg.icon { width: 26px; height: 26px; fill: #fff; stroke: none; margin-left: 4px; }
+        .video-start-badge {
+            position: absolute; left: 10px; bottom: 10px; z-index: 1; pointer-events: none;
+            font-size: 12px; font-weight: 600; color: #fff; padding: 4px 9px; border-radius: 6px;
+            background: rgba(10,11,14,.8); border-left: 3px solid var(--accent);
+        }
+
+        .video-unmute {
+            position: absolute; top: 10px; right: 10px; z-index: 2;
+            display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px;
+            border-radius: 999px; border: 1px solid rgba(255,255,255,.25); cursor: pointer;
+            background: rgba(10,11,14,.85); color: #fff; font: 600 13px var(--font);
+            box-shadow: 0 2px 10px rgba(0,0,0,.4);
+        }
+        .video-unmute:hover { background: rgba(30,32,38,.95); }
+        .video-unmute svg.icon { width: 16px; height: 16px; }
+
+        /* Share dialog */
+        .share-panel { max-width: 480px; }
+        .share-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
+        .share-time-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+        .share-time-row .share-check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+        .share-time-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); }
+        .share-time-row input[type="text"] { width: 96px; }
+        .share-hint { font-size: 12.5px; color: var(--text-faint); min-height: 18px; margin-bottom: 12px; }
+        .share-hint.error { color: var(--danger); }
+        #shareLinkOutput { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
 
         /* ===== Editor form (owner only) ===== */
         .form-section {
@@ -472,6 +498,7 @@
         <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
         <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
         <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
+        <symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM22 9l-6 6M16 9l6 6"/></symbol>
         <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
     </svg>
 
@@ -634,6 +661,28 @@
     <!-- Enemy detail -->
     <div id="detailModal" class="modal detail-modal" role="dialog" aria-modal="true">
         <div class="modal-content detail-panel" id="detailPanel"></div>
+    </div>
+
+    <!-- Share (with optional video timestamp) -->
+    <div id="shareModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+        <div class="modal-content share-panel">
+            <button class="modal-close" onclick="closeShare()" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+            <h2 id="shareTitle">Share</h2>
+            <p class="share-subtitle" id="shareEnemyName"></p>
+            <div id="shareTimeSection">
+                <div class="share-time-row">
+                    <label class="share-check"><input type="checkbox" id="shareUseTime" onchange="updateShareLink()">Start video at</label>
+                    <input type="text" id="shareTime" placeholder="1:35" inputmode="numeric" autocomplete="off"
+                           oninput="document.getElementById('shareUseTime').checked = this.value.trim() !== ''; updateShareLink()">
+                    <button type="button" class="btn btn-secondary btn-small" id="shareUseCurrent" onclick="useCurrentVideoTime()">Use current time</button>
+                </div>
+                <div class="share-hint" id="shareTimeHint"></div>
+            </div>
+            <input type="text" id="shareLinkOutput" readonly onclick="this.select()" aria-label="Share link">
+            <div class="form-actions">
+                <button class="btn" id="shareCopyBtn" onclick="copyShareFromModal()"><svg class="icon"><use href="#i-copy"/></svg>Copy link</button>
+            </div>
+        </div>
     </div>
 
     <div class="workspace hidden" id="workspace">
@@ -943,10 +992,12 @@
             if (event.target.id === 'importModal') closeImport();
             if (event.target.id === 'filterModal') closeFilters();
             if (event.target.id === 'detailModal') closeEnemy();
+            if (event.target.id === 'shareModal') closeShare();
         };
 
         document.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
+            if (document.getElementById('shareModal').classList.contains('active')) return closeShare();
             if (document.getElementById('importModal').classList.contains('active')) return closeImport();
             if (document.getElementById('filterModal').classList.contains('active')) return closeFilters();
             if (document.getElementById('aboutModal').classList.contains('active')) return closeAbout();
@@ -1001,11 +1052,31 @@
             });
         }
 
+        // Links look like #enemy-<key> or #enemy-<key>&t=95 (t = video start, in seconds or 1:35 / 1m35s)
+        function parseEnemyHash() {
+            const hash = window.location.hash.slice(1);
+            if (!hash.startsWith('enemy-')) return null;
+            const [keyPart, ...params] = hash.split('&');
+            const key = decodeURIComponent(keyPart.slice('enemy-'.length));
+            let t = null;
+            params.forEach(p => {
+                const [k, v] = p.split('=');
+                if (k === 't') t = parseTimestamp(decodeURIComponent(v || ''));
+            });
+            return { key, t };
+        }
+
+        let lastHandledHash = null;
         function handleEnemyHash() {
-            const hash = window.location.hash;
-            if (hash.startsWith('#enemy-')) {
-                const key = decodeURIComponent(hash.replace('#enemy-', ''));
-                if (enemies[key] && openEnemyKey !== key) openEnemy(key, false);
+            const parsed = parseEnemyHash();
+            if (!parsed || !enemies[parsed.key]) return;
+            if (openEnemyKey !== parsed.key) {
+                lastHandledHash = window.location.hash;
+                openEnemy(parsed.key, false);
+            } else if (lastHandledHash !== window.location.hash) {
+                // Same enemy, new timestamp (e.g. a second shared link pasted into the address bar)
+                lastHandledHash = window.location.hash;
+                renderEnemyDetail(parsed.key);
             }
         }
 
@@ -1830,15 +1901,15 @@
             if (!url) return null;
             
             // Handle youtube.com/watch?v=
-            const watchMatch = url.match(/[?&]v=([^&]+)/);
+            const watchMatch = url.match(/[?&]v=([^&#]+)/);
             if (watchMatch) return watchMatch[1];
             
             // Handle youtu.be/
-            const shortMatch = url.match(/youtu\.be\/([^?]+)/);
+            const shortMatch = url.match(/youtu\.be\/([^?&#/]+)/);
             if (shortMatch) return shortMatch[1];
             
             // Handle youtube.com/embed/
-            const embedMatch = url.match(/youtube\.com\/embed\/([^?]+)/);
+            const embedMatch = url.match(/youtube\.com\/(?:embed|shorts)\/([^?&#/]+)/);
             if (embedMatch) return embedMatch[1];
             
             return null;
@@ -2616,10 +2687,14 @@
             document.getElementById('detailModal').scrollTop = 0;
             document.getElementById('detailPanel').scrollTop = 0;
             if (updateHash) history.replaceState(null, '', '#enemy-' + key);
+            lastHandledHash = window.location.hash;
         }
 
         function closeEnemy(updateHash = true) {
             openEnemyKey = null;
+            activePlayer = null;
+            autoplayedHash = null;
+            closeShare();
             closeModal('detailModal');
             document.getElementById('detailPanel').innerHTML = '';
             if (updateHash && window.location.hash.startsWith('#enemy-')) {
@@ -2628,8 +2703,233 @@
         }
 
         function playVideo(button, videoId) {
-            const frame = button.closest('.video-frame');
-            frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1" title="Enemy video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+            startVideo(button.closest('.video-frame'), videoId, false);
+        }
+
+        // muted = true is used for shared timestamp links: browsers allow muted videos to auto-play
+        function startVideo(frame, videoId, muted) {
+            const key = frame.dataset.enemyKey;
+            const start = parseInt(frame.dataset.start, 10) || 0;
+            const params = new URLSearchParams({ autoplay: '1', enablejsapi: '1', rel: '0', playsinline: '1' });
+            if (muted) params.set('mute', '1');
+            if (window.location.origin && window.location.origin !== 'null') params.set('origin', window.location.origin);
+            if (start) params.set('start', String(start));
+            frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?${params}" title="Enemy video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`
+                + (muted ? `<button type="button" class="video-unmute" onclick="unmuteVideo(this)"><svg class="icon"><use href="#i-volume-off"/></svg>Tap for sound</button>` : '');
+            activePlayer = { key, iframe: frame.querySelector('iframe'), player: null, start, muted };
+            attachActivePlayer();
+        }
+
+        function unmuteVideo(button) {
+            const p = activePlayer && activePlayer.player;
+            if (p && typeof p.unMute === 'function') {
+                p.unMute();
+                if (typeof p.getVolume === 'function' && p.getVolume() === 0) p.setVolume(100);
+                if (typeof p.getPlayerState === 'function' && p.getPlayerState() !== 1) p.playVideo();
+            }
+            // If the player API hasn't loaded yet, YouTube's own speaker icon still works
+            if (activePlayer) activePlayer.muted = false;
+            button.remove();
+        }
+
+        // Hide "Tap for sound" if the viewer unmutes with YouTube's own controls instead
+        function watchForUnmute(entry) {
+            const timer = setInterval(() => {
+                const btn = entry.iframe.parentElement && entry.iframe.parentElement.querySelector('.video-unmute');
+                if (activePlayer !== entry || !btn || !document.body.contains(entry.iframe)) return clearInterval(timer);
+                if (typeof entry.player.isMuted === 'function' && !entry.player.isMuted()) {
+                    entry.muted = false;
+                    btn.remove();
+                    clearInterval(timer);
+                }
+            }, 500);
+        }
+
+        // Auto-play once per shared timestamp link, not on every later re-render
+        let autoplayedHash = null;
+        function maybeAutoplayShared(key) {
+            const parsed = parseEnemyHash();
+            if (!parsed || parsed.key !== key || !parsed.t) return;
+            if (autoplayedHash === window.location.hash) return;
+            const frame = document.querySelector(`#detailPanel .video-frame[data-enemy-key="${CSS.escape(key)}"]`);
+            const videoId = getYouTubeVideoId(enemies[key]?.videoLink);
+            if (!frame || !videoId) return;
+            autoplayedHash = window.location.hash;
+            startVideo(frame, videoId, true);
+        }
+
+        // ===== Video timestamps & sharing =====
+        let ytApiReady = false;
+        let ytApiRequested = false;
+        let activePlayer = null;   // { key, iframe, player, start } for the video playing in the open detail view
+        let shareKey = null;
+
+        window.onYouTubeIframeAPIReady = function () {
+            ytApiReady = true;
+            attachActivePlayer();
+        };
+
+        // The API script only loads the first time someone presses play
+        function attachActivePlayer() {
+            if (!activePlayer) return;
+            if (!ytApiReady) {
+                if (!ytApiRequested) {
+                    ytApiRequested = true;
+                    const s = document.createElement('script');
+                    s.src = 'https://www.youtube.com/iframe_api';
+                    document.head.appendChild(s);
+                }
+                return;
+            }
+            if (!activePlayer.player && document.body.contains(activePlayer.iframe)) {
+                const entry = activePlayer;
+                entry.player = new YT.Player(entry.iframe, {
+                    events: {
+                        onReady: () => {
+                            if (entry.muted) {
+                                entry.player.mute();
+                                watchForUnmute(entry);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function getCurrentVideoTime(key) {
+            if (!activePlayer || activePlayer.key !== key) return null;
+            const p = activePlayer.player;
+            if (p && typeof p.getCurrentTime === 'function') {
+                const t = p.getCurrentTime();
+                if (typeof t === 'number' && t > 0) return Math.floor(t);
+            }
+            return null;
+        }
+
+        // Accepts 95, 1:35, 1:02:03, 1m35s, 95s
+        function parseTimestamp(str) {
+            if (str === null || str === undefined) return null;
+            str = String(str).trim().toLowerCase();
+            if (!str) return null;
+            if (/^\d+$/.test(str)) return parseInt(str, 10);
+            if (/^\d+(:\d{1,2}){1,2}$/.test(str)) {
+                return str.split(':').reduce((acc, part) => acc * 60 + parseInt(part, 10), 0);
+            }
+            const m = str.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
+            if (m && (m[1] || m[2] || m[3])) return (+m[1] || 0) * 3600 + (+m[2] || 0) * 60 + (+m[3] || 0);
+            return null;
+        }
+
+        function formatTimestamp(sec) {
+            sec = Math.max(0, Math.floor(sec));
+            const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+            const pad = n => String(n).padStart(2, '0');
+            return h ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+        }
+
+        // A t= / start= saved in the video link itself (e.g. ...watch?v=abc&t=42)
+        function getYouTubeStart(url) {
+            if (!url) return null;
+            const m = String(url).match(/[?&#](?:t|start)=([^&#]+)/);
+            return m ? parseTimestamp(m[1]) : null;
+        }
+
+        // Shared-link time wins; otherwise whatever time is saved in the entry's video link
+        function videoStartFor(key) {
+            const parsed = parseEnemyHash();
+            if (parsed && parsed.key === key && parsed.t) return parsed.t;
+            return getYouTubeStart(enemies[key]?.videoLink) || 0;
+        }
+
+        function buildShareUrl(key, seconds) {
+            let url = `${window.location.origin}${window.location.pathname}#enemy-${key}`;
+            if (seconds) url += `&t=${seconds}`;
+            return url;
+        }
+
+        function openShare(key) {
+            if (!enemies[key]) return;
+            shareKey = key;
+            const enemy = enemies[key];
+            document.getElementById('shareEnemyName').textContent = `${enemy.name} · ${enemy.game}`;
+
+            const hasVideo = !!getYouTubeVideoId(enemy.videoLink);
+            document.getElementById('shareTimeSection').classList.toggle('hidden', !hasVideo);
+
+            // Pre-fill: where the video is right now, else the time this enemy was opened at
+            const current = hasVideo ? getCurrentVideoTime(key) : null;
+            const parsed = parseEnemyHash();
+            const fromLink = parsed && parsed.key === key ? parsed.t : null;
+            const prefill = current || fromLink || null;
+            document.getElementById('shareUseTime').checked = !!prefill;
+            document.getElementById('shareTime').value = prefill ? formatTimestamp(prefill) : '';
+
+            const copyBtn = document.getElementById('shareCopyBtn');
+            copyBtn.disabled = false;
+            copyBtn.innerHTML = '<svg class="icon"><use href="#i-copy"/></svg>Copy link';
+
+            updateShareLink();
+            openModal('shareModal');
+        }
+
+        function closeShare() {
+            const modal = document.getElementById('shareModal');
+            if (!modal || !modal.classList.contains('active')) return;
+            closeModal('shareModal');
+            shareKey = null;
+        }
+
+        function updateShareLink() {
+            if (!shareKey) return;
+            const useTime = document.getElementById('shareUseTime').checked;
+            const raw = document.getElementById('shareTime').value;
+            const hint = document.getElementById('shareTimeHint');
+            const hasPlayer = !!(activePlayer && activePlayer.key === shareKey);
+
+            let seconds = null;
+            hint.classList.remove('error');
+            hint.textContent = hasPlayer ? '' : 'Tip: press play, pause where you want, then "Use current time".';
+            if (useTime && raw.trim()) {
+                seconds = parseTimestamp(raw);
+                if (seconds === null) {
+                    hint.textContent = 'Use a format like 95, 1:35 or 1m35s.';
+                    hint.classList.add('error');
+                }
+            }
+            document.getElementById('shareLinkOutput').value = buildShareUrl(shareKey, seconds);
+        }
+
+        function useCurrentVideoTime() {
+            const t = getCurrentVideoTime(shareKey);
+            const hint = document.getElementById('shareTimeHint');
+            if (t === null) {
+                hint.textContent = 'Play the video first, then pause where you want the link to start.';
+                hint.classList.add('error');
+                return;
+            }
+            document.getElementById('shareTime').value = formatTimestamp(t);
+            document.getElementById('shareUseTime').checked = true;
+            updateShareLink();
+        }
+
+        function copyShareFromModal() {
+            const btn = document.getElementById('shareCopyBtn');
+            const output = document.getElementById('shareLinkOutput');
+            const done = () => {
+                btn.textContent = 'Link copied';
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.innerHTML = '<svg class="icon"><use href="#i-copy"/></svg>Copy link';
+                    btn.disabled = false;
+                }, 2000);
+            };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(output.value).then(done).catch(() => { output.select(); document.execCommand('copy'); done(); });
+            } else {
+                output.select();
+                document.execCommand('copy');
+                done();
+            }
         }
 
         function section(icon, title, count, inner) {
@@ -2650,6 +2950,7 @@
         }
 
         function renderEnemyDetail(key) {
+            activePlayer = null; // any playing video is replaced by this render
             const enemy = { key, ...enemies[key] };
             const owner = isOwner();
             const tag = (label, value, cls = '') => `<span class="tag ${cls}">${label ? `${label} ` : ''}<strong>${escapeHtml(value)}</strong></span>`;
@@ -2670,10 +2971,12 @@
             const videoId = getYouTubeVideoId(enemy.videoLink);
             if (videoId) {
                 const id = escapeHtml(videoId);
+                const start = videoStartFor(key);
                 side += section('i-video', 'Video', '', `
-                    <div class="video-frame">
+                    <div class="video-frame" data-enemy-key="${escapeHtml(key)}" data-start="${start || 0}">
                         <img src="https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">
-                        <button class="video-play" onclick="playVideo(this, '${id}')" aria-label="Play video"><span><svg class="icon"><use href="#i-play"/></svg></span></button>
+                        ${start ? `<span class="video-start-badge">Starts at ${formatTimestamp(start)}</span>` : ''}
+                        <button class="video-play" onclick="playVideo(this, '${id}')" aria-label="${start ? `Play video from ${formatTimestamp(start)}` : 'Play video'}"><span><svg class="icon"><use href="#i-play"/></svg></span></button>
                     </div>`);
             } else if (safeUrl(enemy.videoLink)) {
                 side += section('i-video', 'Video', '', `<a class="variant-link" href="${escapeHtml(safeUrl(enemy.videoLink))}" target="_blank" rel="noopener">Open video</a>`);
@@ -2731,7 +3034,7 @@
             }
 
             const tools = `
-                <button class="btn btn-secondary btn-small" onclick="copyShareLink('${key}', this)"><svg class="icon"><use href="#i-share"/></svg>Share</button>
+                <button class="btn btn-secondary btn-small" onclick="openShare('${key}')"><svg class="icon"><use href="#i-share"/></svg>Share</button>
                 ${safeUrl(enemy.imageLink) ? `<a class="btn btn-ghost btn-small" href="${escapeHtml(safeUrl(enemy.imageLink))}" target="_blank" rel="noopener"><svg class="icon"><use href="#i-image"/></svg>Image</a>` : ''}
                 ${owner ? `
                     <button class="btn btn-secondary btn-small" onclick="editEnemy('${key}')"><svg class="icon"><use href="#i-edit"/></svg>Edit</button>
@@ -2757,6 +3060,7 @@
                     <div class="detail-main">${sections || (side ? '' : '<div class="detail-section" style="color:var(--text-muted)">No details yet.</div>')}</div>
                 </div>
             `;
+            maybeAutoplayShared(key);
         }
 
         function scrollToEnemy(key) {
@@ -2769,8 +3073,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Kept for compatibility; the Share button now opens the share dialog (openShare)
         function copyShareLink(key, button) {
-            const url = `${window.location.origin}${window.location.pathname}#enemy-${key}`;
+            const url = buildShareUrl(key, null);
             navigator.clipboard.writeText(url).then(() => {
                 // Show temporary "Copied!" message
                 const originalText = button.innerHTML;
