@@ -517,6 +517,35 @@
             .an-table-wrap { margin: 0 -14px; padding: 0 14px; }
         }
 
+        /* ===== Editor validation ===== */
+        .req { color: var(--danger); margin-left: 2px; }
+        .invalid, select.invalid, input.invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 1px var(--danger); }
+        .field-error { color: var(--danger); font-size: 12.5px; margin-top: 5px; }
+        .list-item.invalid { border-color: color-mix(in srgb, var(--danger) 60%, transparent); }
+        .complex-section.invalid { border-color: var(--danger); }
+        .form-errors {
+            flex-basis: 100%; display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm);
+            background: color-mix(in srgb, var(--danger) 12%, transparent); border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+            color: var(--text); font-size: 13.5px; line-height: 1.45; cursor: pointer;
+        }
+        .form-errors strong { color: var(--danger); }
+
+        /* ===== Per-attack video times ===== */
+        .move-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+        .move-head .move-name { margin-bottom: 0; }
+        .move-time-tools { display: inline-flex; gap: 6px; flex-shrink: 0; }
+        .move-time, .move-mark {
+            display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 999px;
+            font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; font-family: inherit; white-space: nowrap;
+        }
+        .move-time { border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--text); }
+        .move-time:hover { background: color-mix(in srgb, var(--accent) 26%, transparent); }
+        .move-time svg.icon { width: 11px; height: 11px; fill: currentColor; stroke: none; }
+        .move-mark { border: 1px dashed var(--border-strong); background: transparent; color: var(--text-muted); }
+        .move-mark:hover { color: var(--text); border-style: solid; }
+        .move-mark.flash, .move-time.flash { color: var(--success); border-color: var(--success); border-style: solid; }
+        .move.playing { box-shadow: inset 3px 0 0 var(--accent); }
+
         /* Share dialog */
         .share-panel { max-width: 480px; }
         .share-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
@@ -901,15 +930,15 @@
         <div class="form-inner">
             <h2 id="formTitle">Add New Enemy</h2>
             <div class="import-banner hidden" id="importBanner"></div>
-            <form id="enemyForm">
+            <form id="enemyForm" novalidate>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="enemyName">Enemy Name *</label>
-                        <input type="text" id="enemyName" placeholder="What's the enemy's name?" autocomplete="off" required>
+                        <label for="enemyName">Enemy Name <span class="req">*</span></label>
+                        <input type="text" id="enemyName" placeholder="What's the enemy's name?" autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label for="gameName">Game *</label>
-                        <select id="gameName" required onchange="handleGameSelection()">
+                        <label for="gameName">Game <span class="req">*</span></label>
+                        <select id="gameName" onchange="handleGameSelection()">
                             <option value="">Select a game...</option>
                         </select>
                     </div>
@@ -917,7 +946,7 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="enemyType">Enemy Type</label>
+                        <label for="enemyType">Enemy Type <span class="req">*</span></label>
                         <select id="enemyType">
                             <option value="">How tough are they?</option>
                             <option value="Regular">Regular</option>
@@ -927,7 +956,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="enemySize">Enemy Size</label>
+                        <label for="enemySize">Enemy Size <span class="req">*</span></label>
                         <select id="enemySize">
                             <option value="">How big are they? Medium is the size of the player.</option>
                             <option value="Tiny">Tiny</option>
@@ -941,18 +970,18 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="enemyWeapon">Weapon Type</label>
+                    <label for="enemyWeapon">Weapon Type <span class="req">*</span></label>
                     <input type="text" id="enemyWeapon" list="weaponOptions" placeholder="Select or type custom weapon..." autocomplete="off">
                     <datalist id="weaponOptions"></datalist>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="videoLink">Video Reference</label>
+                        <label for="videoLink">Video Reference <span class="req">*</span></label>
                         <input type="url" id="videoLink" placeholder="https://youtube.com/..." autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label for="imageLink">Image Reference</label>
+                        <label for="imageLink">Image Reference <span class="req">*</span></label>
                         <input type="url" id="imageLink" placeholder="https://i.imgur.com/....jpg" autocomplete="off">
                     </div>
                 </div>
@@ -983,7 +1012,7 @@
                 </div>
 
                 <div class="complex-section">
-                    <h3><span>Locomotion<button type="button" class="help-dot" data-help="locomotion" aria-label="What is locomotion?"><svg class="icon"><use href="#i-info"/></svg></button></span> <button type="button" class="btn btn-small btn-success" onclick="addLocomotion()">+ Add Locomotion</button></h3>
+                    <h3><span>Locomotion <span class="req">*</span><button type="button" class="help-dot" data-help="locomotion" aria-label="What is locomotion?"><svg class="icon"><use href="#i-info"/></svg></button></span> <button type="button" class="btn btn-small btn-success" onclick="addLocomotion()">+ Add Locomotion</button></h3>
                     <div id="locomotionList"></div>
                 </div>
 
@@ -999,6 +1028,7 @@
                 </div>
 
                 <div class="form-actions sticky">
+                    <div class="form-errors hidden" id="formErrors" role="alert" onclick="focusFirstInvalid()"></div>
                     <button type="submit" class="btn" id="saveBtn">Save Enemy</button>
                     <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
                 </div>
@@ -1173,7 +1203,7 @@
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('workspace').classList.remove('hidden');
                 if (openEnemyKey) {
-                    if (enemies[openEnemyKey]) renderEnemyDetail(openEnemyKey); else closeEnemy();
+                    if (enemies[openEnemyKey]) renderEnemyDetail(openEnemyKey, { keepVideo: true }); else closeEnemy();
                 }
                 
                 if (currentView === 'analysis') renderAnalysis();
@@ -1672,13 +1702,13 @@
                         <button type="button" class="btn btn-small btn-danger" onclick="removeOffensiveAction(${action.id})">Remove</button>
                     </div>
                     <div class="field-inline" style="margin-bottom: 10px;">
-                        <label>Action Name</label>
-                        <input type="text" value="${escapeHtml(action.name)}" onchange="updateOffensiveAction(${action.id}, 'name', this.value)" placeholder="e.g., Slash, Fireball, Charge">
+                        <label>Action Name <span class="req">*</span></label>
+                        <input type="text" value="${escapeHtml(action.name)}" data-field="name" onchange="updateOffensiveAction(${action.id}, 'name', this.value)" placeholder="e.g., Slash, Fireball, Charge">
                     </div>
                     <div class="list-item-grid">
                         <div class="field-inline">
-                            <label>Type${helpDot('attackType')}</label>
-                            <select onchange="updateOffensiveAction(${action.id}, 'type', this.value)" value="${action.type}">
+                            <label>Type <span class="req">*</span>${helpDot('attackType')}</label>
+                            <select data-field="type" onchange="updateOffensiveAction(${action.id}, 'type', this.value)" value="${action.type}">
                                 <option value="">Select...</option>
                                 <option value="melee" ${action.type === 'melee' ? 'selected' : ''}>Melee</option>
                                 <option value="ranged" ${action.type === 'ranged' ? 'selected' : ''}>Ranged</option>
@@ -1687,8 +1717,8 @@
                             </select>
                         </div>
                         <div class="field-inline">
-                            <label>Range${helpDot('range')}</label>
-                            <select onchange="updateOffensiveAction(${action.id}, 'range', this.value)">
+                            <label>Range <span class="req">*</span>${helpDot('range')}</label>
+                            <select data-field="range" onchange="updateOffensiveAction(${action.id}, 'range', this.value)">
                                 <option value="">Select...</option>
                                 <option value="close" ${action.range === 'close' ? 'selected' : ''}>Close</option>
                                 <option value="medium" ${action.range === 'medium' ? 'selected' : ''}>Medium</option>
@@ -1696,12 +1726,12 @@
                             </select>
                         </div>
                         <div class="field-inline">
-                            <label>Combo Count${helpDot('combo')}</label>
-                            <input type="number" value="${escapeHtml(action.comboCount)}" onchange="updateOffensiveAction(${action.id}, 'comboCount', this.value)" min="0">
+                            <label>Combo Count <span class="req">*</span>${helpDot('combo')}</label>
+                            <input type="number" value="${escapeHtml(action.comboCount)}" data-field="comboCount" onchange="updateOffensiveAction(${action.id}, 'comboCount', this.value)" min="1" step="1" inputmode="numeric">
                         </div>
                         <div class="field-inline">
-                            <label>Windup Time${helpDot('windup')}</label>
-                            <select onchange="updateOffensiveAction(${action.id}, 'windupTime', this.value)">
+                            <label>Windup Time <span class="req">*</span>${helpDot('windup')}</label>
+                            <select data-field="windupTime" onchange="updateOffensiveAction(${action.id}, 'windupTime', this.value)">
                                 <option value="">Select...</option>
                                 <option value="slow" ${action.windupTime === 'slow' ? 'selected' : ''}>Slow</option>
                                 <option value="medium" ${action.windupTime === 'medium' ? 'selected' : ''}>Medium</option>
@@ -1709,8 +1739,8 @@
                             </select>
                         </div>
                         <div class="field-inline">
-                            <label>Damage Type${helpDot('damage')}</label>
-                            <select onchange="updateOffensiveAction(${action.id}, 'damageType', this.value)">
+                            <label>Damage Type <span class="req">*</span>${helpDot('damage')}</label>
+                            <select data-field="damageType" onchange="updateOffensiveAction(${action.id}, 'damageType', this.value)">
                                 <option value="">Select...</option>
                                 <option value="physical" ${action.damageType === 'physical' ? 'selected' : ''}>Physical</option>
                                 <option value="fire" ${action.damageType === 'fire' ? 'selected' : ''}>Fire</option>
@@ -1736,6 +1766,10 @@
                                 <option value="poisoned" ${action.condition === 'poisoned' ? 'selected' : ''}>Poisoned</option>
                                 <option value="vulnerable" ${action.condition === 'vulnerable' ? 'selected' : ''}>Vulnerable</option>
                             </select>
+                        </div>
+                        <div class="field-inline">
+                            <label>Time${helpDot('time')}</label>
+                            <input type="text" data-field="time" value="${action.time === undefined || action.time === null || action.time === '' ? '' : escapeHtml(/^\d+$/.test(String(action.time)) ? formatTimestamp(action.time) : action.time)}" placeholder="1:35" inputmode="numeric" autocomplete="off" onchange="updateOffensiveAction(${action.id}, 'time', this.value)">
                         </div>
                     </div>
                     <label class="check-inline">
@@ -1977,7 +2011,7 @@
                     <div class="list-item-grid">
                         <div class="field-inline">
                             <label>Type${helpDot('locomotion')}</label>
-                            <select onchange="updateLocomotion(${loco.id}, 'type', this.value)">
+                            <select data-field="type" onchange="updateLocomotion(${loco.id}, 'type', this.value)">
                                 <option value="">Select...</option>
                                 <option value="grounded" ${loco.type === 'grounded' ? 'selected' : ''}>Grounded</option>
                                 <option value="hovering" ${loco.type === 'hovering' ? 'selected' : ''}>Hovering</option>
@@ -2100,6 +2134,7 @@
             const form = document.getElementById('enemyForm');
             
             if (openEnemyKey) closeEnemy();
+            clearValidation();
             formSection.classList.remove('hidden');
             formSection.scrollTop = 0;
             document.body.classList.add('no-scroll');
@@ -2220,6 +2255,7 @@
                 damageType: IMPORT_ENUMS.offensive.damageType.join(' | '),
                 condition: IMPORT_ENUMS.offensive.condition.join(' | ') + ' | (blank)',
                 unblockable: 'true | false (true if any hit is unblockable / unparryable / a critical blow; grabs are always true)',
+                time: '1:35 (optional: where this attack happens in the video; 95 or 1m35s also work)',
                 details: ''
             }],
             defensiveActions: [{
@@ -2323,6 +2359,17 @@
             if (UNBLOCKABLE_WORDS.test(a.name || '')) return true;
             return UNBLOCKABLE_WORDS.test(String(a.details || '').replace(CHAIN_CLAUSE, ''));
         }
+        function importTime(a, label, warnings) {
+            const raw = a.time ?? a.timestamp;
+            if (raw === undefined || raw === null || String(raw).trim() === '') return '';
+            const secs = parseTimestamp(raw);
+            if (secs === null) {
+                warnings.push(`${label} time "${raw}" couldn't be read, so it was left blank.`);
+                return '';
+            }
+            return secs;
+        }
+
         function importUnblockable(a, label, warnings) {
             const v = a.unblockable;
             if (v === true || v === 'true' || v === 'yes') return true;
@@ -2412,6 +2459,7 @@
                 damageType: matchEnum(a.damageType, E.offensive.damageType, `${l} damage type`, warnings),
                 condition: matchEnum(a.condition, E.offensive.condition, `${l} condition`, warnings),
                 unblockable: importUnblockable(a, l, warnings),
+                time: importTime(a, l, warnings),
                 details: a.details || ''
             }));
             defensiveActions = importList(data.defensiveActions, 'Defensive action', (a, l) => ({
@@ -2458,6 +2506,7 @@
             banner.classList.remove('hidden');
 
             document.getElementById('formTitle').textContent = 'Add New Enemy (Imported)';
+            validateEnemyForm({ summary: true, scroll: false });
         }
 
         function hideForm() {
@@ -3141,17 +3190,16 @@
                 </div>`;
         }
 
-        function moveRow(name, tags, details) {
+        function moveRow(name, tags, details, tools = '', attrs = '') {
             return `
-                <div class="move">
-                    <div class="move-name">${escapeHtml(name)}</div>
+                <div class="move"${attrs}>
+                    ${tools ? `<div class="move-head"><div class="move-name">${escapeHtml(name)}</div>${tools}</div>` : `<div class="move-name">${escapeHtml(name)}</div>`}
                     ${tags.length ? `<div class="move-tags">${tags.join('')}</div>` : ''}
                     ${details ? `<div class="move-details">${escapeHtml(details)}</div>` : ''}
                 </div>`;
         }
 
-        function renderEnemyDetail(key) {
-            activePlayer = null; // any playing video is replaced by this render
+        function renderEnemyDetail(key, { keepVideo = false } = {}) {
             const enemy = { key, ...enemies[key] };
             const owner = isOwner();
             const tag = (label, value, cls = '', tip = '') => `<span class="tag ${cls}"${tip ? ` title="${escapeHtml(tip)}"` : ''}>${label ? `${label} ` : ''}<strong>${escapeHtml(value)}</strong></span>`;
@@ -3185,7 +3233,8 @@
 
             const offensive = enemy.offensiveActions || [];
             if (offensive.length) {
-                const rows = offensive.map(a => {
+                const hasVideo = !!getYouTubeVideoId(enemy.videoLink);
+                const rows = offensive.map((a, i) => {
                     const t = [];
                     if (a.type) t.push(tag('', a.type === 'aoe' ? 'AOE' : cap(a.type), '', guideTip('attackType', a.type)));
                     if (a.range) t.push(tag('Range', cap(a.range), '', guideTip('range', a.range)));
@@ -3194,9 +3243,16 @@
                     if (a.damageType) t.push(`<span class="tag dmg dmg-${escapeHtml(a.damageType)}" title="${escapeHtml(guideTip('damage', a.damageType))}">${escapeHtml(cap(a.damageType))}</span>`);
                     if (a.condition) t.push(`<span class="tag cond" title="${escapeHtml(guideTip('condition', a.condition))}">${escapeHtml(cap(a.condition))}</span>`);
                     if (a.unblockable === true) t.push(`<span class="tag unblockable" title="${escapeHtml(guideTip('unblockable'))}">Unblockable</span>`);
-                    return moveRow(a.name || cap(a.type) || 'Action', t, a.details);
+                    const secs = parseTimestamp(a.time);
+                    let tools = '';
+                    if (hasVideo && secs !== null) tools += `<button type="button" class="move-time" onclick="playAttackAt(${secs}, this)" title="Play the video from ${formatTimestamp(secs)}"><svg class="icon"><use href="#i-play"/></svg>${formatTimestamp(secs)}</button>`;
+                    if (hasVideo && owner) tools += `<button type="button" class="move-mark" onclick="markAttackTime('${key}', ${i}, this)" title="Save the video's current position as this attack's time">${secs !== null ? 'Re-mark' : 'Mark'}</button>`;
+                    return moveRow(a.name || cap(a.type) || 'Action', t, a.details, tools ? `<span class="move-time-tools">${tools}</span>` : '', ` data-move-index="${i}"`);
                 }).join('');
-                sections += section('i-swords', 'Offensive actions', offensive.length, `<div class="move-list">${rows}</div>`);
+                const timed = offensive.filter(a => parseTimestamp(a.time) !== null).length;
+                const timeNote = hasVideo && owner && timed < offensive.length
+                    ? `<div class="an-note" style="margin:0 0 8px">Tip: play the video, pause on an attack and press Mark to save its time. ${timed}/${offensive.length} attacks have times.</div>` : '';
+                sections += section('i-swords', 'Offensive actions', offensive.length, `${timeNote}<div class="move-list">${rows}</div>`);
             }
 
             const defensive = enemy.defensiveActions || [];
@@ -3246,7 +3302,7 @@
                 ${enemy.lastUpdated ? `<span class="detail-updated">${escapeHtml(formatDate(enemy.lastUpdated))}</span>` : ''}`;
 
             document.getElementById('detailModal').setAttribute('aria-label', enemy.name || 'Enemy');
-            document.getElementById('detailPanel').innerHTML = `
+            const detailHtml = `
                 <button class="modal-close" onclick="closeEnemy()" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
                 <div class="detail-hero">
                     <div class="detail-image">${enemyImageHtml(enemy)}</div>
@@ -3262,7 +3318,70 @@
                     <div class="detail-main">${sections || (side ? '' : '<div class="detail-section" style="color:var(--text-muted)">No details yet.</div>')}</div>
                 </div>
             `;
+            const panel = document.getElementById('detailPanel');
+            if (keepVideo && activePlayer && activePlayer.key === key && document.body.contains(activePlayer.iframe)) {
+                // Swap only the moves and the toolbar so the video keeps playing
+                const tpl = document.createElement('template');
+                tpl.innerHTML = detailHtml;
+                ['.detail-main', '.detail-tools'].forEach(sel => {
+                    const fresh = tpl.content.querySelector(sel), old = panel.querySelector(sel);
+                    if (fresh && old) old.replaceWith(fresh);
+                });
+                return;
+            }
+            activePlayer = null; // any playing video is replaced by this render
+            panel.innerHTML = detailHtml;
             maybeAutoplayShared(key);
+        }
+
+        // ▶ on an attack: jump the open enemy's video to that moment and play with sound
+        function playAttackAt(seconds, button) {
+            const key = openEnemyKey;
+            if (!key) return;
+            document.querySelectorAll('#detailPanel .move.playing').forEach(m => m.classList.remove('playing'));
+            const move = button && button.closest('.move');
+            if (move) move.classList.add('playing');
+            const frame = document.querySelector('#detailPanel .video-frame');
+            if (!frame) return;
+            const p = activePlayer && activePlayer.key === key && activePlayer.player;
+            if (p && typeof p.seekTo === 'function' && document.body.contains(activePlayer.iframe)) {
+                p.seekTo(seconds, true);
+                if (typeof p.unMute === 'function') p.unMute();
+                p.playVideo();
+                activePlayer.muted = false;
+                const btn = frame.querySelector('.video-unmute');
+                if (btn) btn.remove();
+            } else {
+                frame.dataset.start = String(seconds);
+                startVideo(frame, getYouTubeVideoId(enemies[key].videoLink), false);
+            }
+            // On phones the video sits above the moves; bring it into view
+            const r = frame.getBoundingClientRect();
+            if (r.top < 0 || r.bottom > window.innerHeight) frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Owner only: save the video's current position as this attack's time
+        function markAttackTime(key, index, button) {
+            if (!isOwner()) return;
+            const say = (text, ok) => {
+                const old = button.dataset.label || button.textContent;
+                button.dataset.label = old;
+                button.textContent = text;
+                button.classList.toggle('flash', !!ok);
+                setTimeout(() => { button.textContent = button.dataset.label; button.classList.remove('flash'); }, 1800);
+            };
+            const t = getCurrentVideoTime(key);
+            if (t === null) return say('Play video first');
+            database.ref(`enemies/${key}`).update({
+                [`offensiveActions/${index}/time`]: t,
+                lastUpdated: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                // The list re-renders on save; flash the attack's new time pill
+                const pill = document.querySelector(`#detailPanel [data-move-index="${index}"] .move-time`);
+                if (pill) { pill.classList.add('flash'); setTimeout(() => pill.classList.remove('flash'), 1500); }
+                if (document.body.contains(button)) say(`Saved ${formatTimestamp(t)}`, true);
+            })
+              .catch(err => alert('Saving the time failed: ' + err.message));
         }
 
         function scrollToEnemy(key) {
@@ -3300,6 +3419,8 @@
                 return;
             }
             
+            if (!validateEnemyForm({ summary: true })) return;
+
             // Get form values
             const enemyName = document.getElementById('enemyName').value.trim();
             const gameName = document.getElementById('gameName').value;
@@ -3321,6 +3442,8 @@
             const cleanOffensive = offensiveActions.map(a => {
                 const {id, ...rest} = a;
                 rest.unblockable = rest.unblockable === true ? true : null;
+                const secs = parseTimestamp(rest.time);
+                rest.time = secs === null ? null : secs;
                 return rest;
             });
             const cleanDefensive = defensiveActions.map(a => {
@@ -3439,6 +3562,145 @@
         }
 
 
+
+
+        // ===================== VALIDATION =====================
+        // One set of rules for the editor (blocks Save) and the analysis "Gaps to fill" list.
+        const URL_PATTERN = /^https?:\/\/\S+$/i;
+        const REQUIRED_ENEMY = [
+            { id: 'enemyName', key: 'name', label: 'Name', msg: 'Enter a name.' },
+            { id: 'gameName', key: 'game', label: 'Game', msg: 'Choose a game.', test: v => v && v !== 'ADD_NEW_GAME' },
+            { id: 'enemyType', key: 'type', label: 'Type', msg: 'Choose a type.' },
+            { id: 'enemySize', key: 'size', label: 'Size', msg: 'Choose a size.' },
+            { id: 'enemyWeapon', key: 'weapon', label: 'Weapon type', msg: 'Enter a weapon type, e.g. "Natural Claws".' },
+            { id: 'videoLink', key: 'videoLink', label: 'Video', msg: 'Add a video link starting with http.', test: v => URL_PATTERN.test(v) },
+            { id: 'imageLink', key: 'imageLink', label: 'Image', msg: 'Add an image link starting with http.', test: v => URL_PATTERN.test(v) }
+        ];
+        const REQUIRED_ATTACK = [
+            { field: 'name', label: 'name' },
+            { field: 'type', label: 'type' },
+            { field: 'range', label: 'range' },
+            { field: 'comboCount', label: 'combo count', test: v => /^\d+$/.test(String(v ?? '').trim()) && parseInt(v, 10) >= 1, msg: 'Whole number, 1 or more.' },
+            { field: 'windupTime', label: 'windup' },
+            { field: 'damageType', label: 'damage type' }
+        ];
+        const filled = v => String(v ?? '').trim() !== '';
+
+        function missingAttackFields(a) {
+            return REQUIRED_ATTACK.filter(r => !(r.test ? r.test(a[r.field]) : filled(a[r.field])));
+        }
+
+        // Saved data -> list of what's missing (used by Analysis)
+        function enemyGaps(e) {
+            const out = REQUIRED_ENEMY.filter(r => !(r.test ? r.test(String(e[r.key] || '').trim()) : filled(e[r.key]))).map(r => r.label.toLowerCase());
+            if (!(e.locomotion || []).some(l => l && filled(l.type))) out.push('locomotion');
+            const badAttacks = (e.offensiveActions || []).filter(a => a && missingAttackFields(a).length).length;
+            if (badAttacks) out.push(`${badAttacks} attack${badAttacks > 1 ? 's' : ''} with blank fields`);
+            return out;
+        }
+
+        function clearValidation() {
+            document.querySelectorAll('#enemyForm .invalid').forEach(el => { el.classList.remove('invalid'); el.removeAttribute('aria-invalid'); });
+            document.querySelectorAll('#enemyForm .field-error').forEach(el => el.remove());
+            const box = document.getElementById('formErrors');
+            if (box) { box.classList.add('hidden'); box.innerHTML = ''; }
+        }
+
+        function markInvalid(el, msg) {
+            el.classList.add('invalid');
+            el.setAttribute('aria-invalid', 'true');
+            if (msg) {
+                const note = document.createElement('div');
+                note.className = 'field-error';
+                note.textContent = msg;
+                el.insertAdjacentElement('afterend', note);
+            }
+        }
+
+        // Returns true when the form can be saved. Marks every problem and shows a summary otherwise.
+        function validateEnemyForm({ summary = true, scroll = true } = {}) {
+            clearValidation();
+            const problems = [];
+
+            REQUIRED_ENEMY.forEach(r => {
+                const el = document.getElementById(r.id);
+                const v = el.value.trim();
+                if (!(r.test ? r.test(v) : v)) { markInvalid(el, r.msg); problems.push(r.label); }
+            });
+
+            const locoSection = document.getElementById('locomotionList').closest('.complex-section');
+            const locoSelects = document.querySelectorAll('#locomotionList select[data-field="type"]');
+            if (!locomotion.some(l => filled(l.type))) {
+                locoSection.classList.add('invalid');
+                const note = document.createElement('div');
+                note.className = 'field-error';
+                note.textContent = 'Add at least one locomotion type.';
+                document.getElementById('locomotionList').insertAdjacentElement('afterend', note);
+                problems.push('Locomotion');
+            } else {
+                locoSelects.forEach((sel, i) => { if (!filled(locomotion[i] && locomotion[i].type)) markInvalid(sel, 'Pick a type or remove this row.'); });
+            }
+
+            const rows = document.querySelectorAll('#offensiveActionsList .list-item');
+            offensiveActions.forEach((a, i) => {
+                if (filled(a.time) && parseTimestamp(a.time) === null && rows[i]) {
+                    const el = rows[i].querySelector('[data-field="time"]');
+                    if (el) markInvalid(el, 'Use 95, 1:35 or 1m35s, or leave it blank.');
+                    rows[i].classList.add('invalid');
+                    problems.push(`Action ${i + 1} (time format)`);
+                }
+                const missing = missingAttackFields(a);
+                if (!missing.length || !rows[i]) return;
+                rows[i].classList.add('invalid');
+                missing.forEach(r => {
+                    const el = rows[i].querySelector(`[data-field="${r.field}"]`);
+                    if (el) markInvalid(el, r.msg || 'Required.');
+                });
+                problems.push(`Action ${i + 1} (${missing.map(r => r.label).join(', ')})`);
+            });
+
+            if (!problems.length) return true;
+            if (summary) {
+                const box = document.getElementById('formErrors');
+                box.innerHTML = `<span><strong>Can't save yet.</strong> Needs: ${problems.map(escapeHtml).join(' · ')}</span>`;
+                box.classList.remove('hidden');
+            }
+            if (scroll) focusFirstInvalid();
+            return false;
+        }
+
+        function focusFirstInvalid() {
+            const first = document.querySelector('#enemyForm .invalid');
+            if (!first) return;
+            first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (first.matches('input, select, textarea')) first.focus({ preventScroll: true });
+        }
+
+        // Fixing a field clears its error right away
+        document.getElementById('enemyForm').addEventListener('input', clearFieldError);
+        document.getElementById('enemyForm').addEventListener('change', clearFieldError);
+        function clearFieldError(e) {
+            const el = e.target;
+            if (!el.classList || !el.classList.contains('invalid')) {
+                // Picking a locomotion type clears the section-level error
+                if (el.matches && el.matches('#locomotionList select') && el.value) {
+                    const sec = el.closest('.complex-section');
+                    if (sec && sec.classList.contains('invalid')) {
+                        sec.classList.remove('invalid');
+                        const note = sec.querySelector(':scope > .field-error');
+                        if (note) note.remove();
+                    }
+                }
+                return;
+            }
+            el.classList.remove('invalid');
+            el.removeAttribute('aria-invalid');
+            const next = el.nextElementSibling;
+            if (next && next.classList.contains('field-error')) next.remove();
+            const row = el.closest('.list-item');
+            if (row && !row.querySelector('.invalid')) row.classList.remove('invalid');
+        }
+        // =================== END VALIDATION ===================
 
         // ===================== ANALYSIS VIEW =====================
         // Everything is computed live from the loaded enemies. Percentages always show their n.
@@ -3734,18 +3996,13 @@
         function dataQualityHtml(scope) {
             const issues = [];
             scope.ens.forEach(e => {
-                const missing = [];
-                if (!e.size) missing.push('size');
-                if (!e.type) missing.push('type');
-                if (!(e.videoLink || '').trim()) missing.push('video');
-                const blankAtk = (e.offensiveActions || []).filter(a => a && (!a.type || !a.range || !a.windupTime || !a.damageType || !comboOf(a))).length;
-                if (blankAtk) missing.push(`${blankAtk} attack${blankAtk > 1 ? 's' : ''} with blank fields`);
+                const missing = enemyGaps(e);
                 if (missing.length) issues.push([e, missing.join(', ')]);
             });
             if (!issues.length) return '';
             return `<div class="an-card">
                 <h3>Gaps to fill</h3>
-                <div class="an-sub">Entries with missing data. These are left out of the matching charts above.</div>
+                <div class="an-sub">Entries missing a required field. The editor won't save them until they're filled.</div>
                 <div class="an-list">${issues.map(([e, msg]) => `<button type="button" class="an-item" data-enemy="${escapeHtml(e.key)}"><span>${escapeHtml(e.name)}<br><span class="who">${escapeHtml(e.game)}</span></span><span class="val" style="font-weight:500;color:var(--text-muted)">${escapeHtml(msg)}</span></button>`).join('')}</div>
             </div>`;
         }
@@ -3916,6 +4173,7 @@
                 'paralyze': 'Stunned and unable to act for a moment.',
                 'poisoned': 'Takes damage over time or carries a lasting debuff.',
                 'vulnerable': 'Takes extra damage or is open to a follow-up, like a broken guard.' } },
+            time: { group: 'Offensive actions', label: 'Time', summary: 'Optional. Where this attack happens in the enemy\'s video, like 1:35. In the enemy view, the ▶ button on the attack plays the video from that moment.' },
             unblockable: { group: 'Offensive actions', label: 'Unblockable', summary: 'At least one hit in this attack can\'t be stopped by the game\'s standard block and needs another answer: dodge, deflect, jump, duck or escaping a grab. Includes "critical blow", "perilous" and "unparryable" attacks, and all grabs.' },
 
             defensive: { group: 'Defense, support and reactions', label: 'Defensive actions', summary: 'Enemy actions mainly meant to avoid or reduce incoming damage.' },
