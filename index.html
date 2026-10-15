@@ -278,6 +278,13 @@
         .tag.dmg { color: var(--dmg, var(--text-muted)); border-color: color-mix(in srgb, var(--dmg, var(--border)) 45%, transparent); background: color-mix(in srgb, var(--dmg, transparent) 10%, transparent); }
         .tag.dmg::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
         .tag.cond { color: var(--text); border-style: dashed; }
+        .tag.unblockable {
+            color: var(--danger); font-weight: 600;
+            border-color: color-mix(in srgb, var(--danger) 55%, transparent);
+            background: color-mix(in srgb, var(--danger) 12%, transparent);
+        }
+        .check-inline { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); cursor: pointer; margin-bottom: 10px; }
+        .check-inline input { width: 18px; height: 18px; accent-color: var(--danger); }
         .dmg-physical { --dmg: var(--d-physical); } .dmg-fire { --dmg: var(--d-fire); } .dmg-ice { --dmg: var(--d-ice); }
         .dmg-poison { --dmg: var(--d-poison); } .dmg-force { --dmg: var(--d-force); } .dmg-lightning { --dmg: var(--d-lightning); }
         .dmg-psychic { --dmg: var(--d-psychic); } .dmg-radiant { --dmg: var(--d-radiant); } .dmg-necrotic { --dmg: var(--d-necrotic); }
@@ -623,6 +630,14 @@
                     <label for="filterOffensiveCondition">Condition</label>
                     <select id="filterOffensiveCondition" onchange="applyFilters()">
                         <option value="">All</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="filterOffensiveUnblockable">Unblockable</label>
+                    <select id="filterOffensiveUnblockable" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="has">Has an unblockable attack</option>
+                        <option value="none">No unblockable attacks</option>
                     </select>
                 </div>
                 <div class="filter-group-title">Defense, support &amp; reactions</div>
@@ -1256,6 +1271,7 @@
                 offensiveWindup: document.getElementById('filterOffensiveWindup').value,
                 offensiveDamage: document.getElementById('filterOffensiveDamage').value,
                 offensiveCondition: document.getElementById('filterOffensiveCondition').value,
+                offensiveUnblockable: document.getElementById('filterOffensiveUnblockable').value,
                 defensiveType: document.getElementById('filterDefensiveType').value,
                 defensiveReaction: document.getElementById('filterDefensiveReaction').value,
                 supportType: document.getElementById('filterSupportType').value,
@@ -1337,10 +1353,12 @@
             
             Object.entries(filters).forEach(([key, value]) => {
                 if (value) {
-                    const label = document.querySelector(`#filter${key.charAt(0).toUpperCase() + key.slice(1)}`).previousElementSibling.textContent;
+                    const select = document.querySelector(`#filter${key.charAt(0).toUpperCase() + key.slice(1)}`);
+                    const label = select.previousElementSibling.textContent;
+                    const shown = key === 'offensiveUnblockable' ? select.options[select.selectedIndex].text : value;
                     activeTags.push(`
                         <div class="filter-tag">
-                            ${escapeHtml(label)}: ${escapeHtml(value)}
+                            ${escapeHtml(label)}: ${escapeHtml(shown)}
                             <span class="filter-tag-close" role="button" aria-label="Remove filter" onclick="clearFilter('${key}')">×</span>
                         </div>
                     `);
@@ -1369,7 +1387,7 @@
             const filterIds = [
                 'filterGame', 'filterType', 'filterSize',
                 'filterOffensiveType', 'filterOffensiveRange', 'filterOffensiveCombo',
-                'filterOffensiveWindup', 'filterOffensiveDamage', 'filterOffensiveCondition',
+                'filterOffensiveWindup', 'filterOffensiveDamage', 'filterOffensiveCondition', 'filterOffensiveUnblockable',
                 'filterDefensiveType', 'filterDefensiveReaction',
                 'filterSupportType', 'filterReactionType', 'filterLocomotion'
             ];
@@ -1482,6 +1500,7 @@
                 windupTime: '',
                 damageType: '',
                 condition: '',
+                unblockable: false,
                 details: ''
             };
             offensiveActions.unshift(action);
@@ -1575,6 +1594,10 @@
                             </select>
                         </div>
                     </div>
+                    <label class="check-inline">
+                        <input type="checkbox" data-action-id="${action.id}" ${action.unblockable === true ? 'checked' : ''} onchange="updateOffensiveAction(${action.id}, 'unblockable', this.checked)">
+                        Unblockable <span style="color: var(--text-faint); font-size: 12px;">(any hit in this attack: unblockable, unparryable, critical blow, perilous, grabs…)</span>
+                    </label>
                     <div class="field-inline">
                         <label>Details</label>
                         <textarea onchange="updateOffensiveAction(${action.id}, 'details', this.value)">${escapeHtml(action.details)}</textarea>
@@ -1585,7 +1608,14 @@
 
         function updateOffensiveAction(id, field, value) {
             const action = offensiveActions.find(a => a.id === id);
-            if (action) action[field] = value;
+            if (!action) return;
+            action[field] = value;
+            // Grabs are always unblockable
+            if (field === 'type' && value === 'grab' && action.unblockable !== true) {
+                action.unblockable = true;
+                const box = document.querySelector(`#offensiveActionsList input[type=checkbox][data-action-id="${id}"]`);
+                if (box) box.checked = true;
+            }
         }
 
         // Defensive Actions
@@ -2045,6 +2075,7 @@
                 windupTime: IMPORT_ENUMS.offensive.windupTime.join(' | '),
                 damageType: IMPORT_ENUMS.offensive.damageType.join(' | '),
                 condition: IMPORT_ENUMS.offensive.condition.join(' | ') + ' | (blank)',
+                unblockable: 'true | false (true if any hit is unblockable / unparryable / a critical blow; grabs are always true)',
                 details: ''
             }],
             defensiveActions: [{
@@ -2140,6 +2171,25 @@
             return '';
         }
 
+        // true/false from the JSON wins; if missing, it's guessed from the attack's name and details
+        const UNBLOCKABLE_WORDS = /un-?blockable|un-?parr?y-?able|un-?deflect-?able|perilous|critical(?: blow)?/i;
+        const CHAIN_CLAUSE = /(combos? into|chains? into|can chain|can follow|follows|goes into|often chains|leads into)[^.]*/ig;
+        function guessUnblockable(a) {
+            if (normalizeEnumText(a.type || '') === 'grab') return true;
+            if (UNBLOCKABLE_WORDS.test(a.name || '')) return true;
+            return UNBLOCKABLE_WORDS.test(String(a.details || '').replace(CHAIN_CLAUSE, ''));
+        }
+        function importUnblockable(a, label, warnings) {
+            const v = a.unblockable;
+            if (v === true || v === 'true' || v === 'yes') return true;
+            if (v === false || v === 'false' || v === 'no') return false;
+            if (guessUnblockable(a)) {
+                warnings.push(`${label} ("${a.name || 'unnamed'}") was marked Unblockable from its wording. Uncheck it if that's wrong.`);
+                return true;
+            }
+            return false;
+        }
+
         function importList(items, label, mapper) {
             if (!Array.isArray(items)) return [];
             return items.map((item, i) => ({
@@ -2217,6 +2267,7 @@
                 windupTime: matchEnum(a.windupTime, E.offensive.windupTime, `${l} windup`, warnings),
                 damageType: matchEnum(a.damageType, E.offensive.damageType, `${l} damage type`, warnings),
                 condition: matchEnum(a.condition, E.offensive.condition, `${l} condition`, warnings),
+                unblockable: importUnblockable(a, l, warnings),
                 details: a.details || ''
             }));
             defensiveActions = importList(data.defensiveActions, 'Defensive action', (a, l) => ({
@@ -2467,7 +2518,8 @@
             const parts = [enemy.name, enemy.game, enemy.type, enemy.size, enemy.weapon, enemy.notes,
                            enemy.videoLink, enemy.imageLink];
             (enemy.offensiveActions || []).forEach(a => parts.push(
-                a.name, a.type, a.range, a.comboCount, a.windupTime, a.damageType, a.condition, a.details));
+                a.name, a.type, a.range, a.comboCount, a.windupTime, a.damageType, a.condition, a.details,
+                a.unblockable === true ? 'unblockable' : ''));
             (enemy.defensiveActions || []).forEach(a => parts.push(a.type, a.defensiveReaction, a.details));
             (enemy.supportActions || []).forEach(a => parts.push(a.type, a.details));
             (enemy.reactions || []).forEach(r => parts.push(r.type, r.details));
@@ -2541,6 +2593,11 @@
                     if (filters.offensiveWindup && !enemy.offensiveActions?.some(a => a.windupTime === filters.offensiveWindup)) return false;
                     if (filters.offensiveDamage && !enemy.offensiveActions?.some(a => a.damageType === filters.offensiveDamage)) return false;
                     if (filters.offensiveCondition && !enemy.offensiveActions?.some(a => a.condition === filters.offensiveCondition)) return false;
+                    if (filters.offensiveUnblockable) {
+                        const has = !!enemy.offensiveActions?.some(a => a.unblockable === true);
+                        if (filters.offensiveUnblockable === 'has' && !has) return false;
+                        if (filters.offensiveUnblockable === 'none' && has) return false;
+                    }
                     
                     // Defensive action filters
                     if (filters.defensiveType && !enemy.defensiveActions?.some(a => a.type === filters.defensiveType)) return false;
@@ -2992,6 +3049,7 @@
                     if (a.windupTime) t.push(tag('Windup', cap(a.windupTime)));
                     if (a.damageType) t.push(`<span class="tag dmg dmg-${escapeHtml(a.damageType)}">${escapeHtml(cap(a.damageType))}</span>`);
                     if (a.condition) t.push(`<span class="tag cond">${escapeHtml(cap(a.condition))}</span>`);
+                    if (a.unblockable === true) t.push(`<span class="tag unblockable">Unblockable</span>`);
                     return moveRow(a.name || cap(a.type) || 'Action', t, a.details);
                 }).join('');
                 sections += section('i-swords', 'Offensive actions', offensive.length, `<div class="move-list">${rows}</div>`);
@@ -3118,6 +3176,7 @@
             // Clean up actions (remove temp IDs)
             const cleanOffensive = offensiveActions.map(a => {
                 const {id, ...rest} = a;
+                rest.unblockable = rest.unblockable === true ? true : null;
                 return rest;
             });
             const cleanDefensive = defensiveActions.map(a => {
