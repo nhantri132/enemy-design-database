@@ -415,6 +415,108 @@
         .field-guide-group { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); margin: 16px 0 4px; }
         .tag[title] { cursor: help; }
 
+        /* ===== View switch ===== */
+        .view-switch { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-raised); flex-shrink: 0; }
+        .view-switch button {
+            height: 30px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: var(--text-muted);
+            font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .view-switch button:hover { color: var(--text); }
+        .view-switch button[aria-pressed="true"] { background: var(--bg-hover); color: var(--text); }
+        .view-switch svg.icon { width: 15px; height: 15px; }
+        body.view-analysis #workspace, body.view-analysis main.container { display: none !important; }
+        body:not(.view-analysis) #analysisView { display: none; }
+
+        /* ===== Analysis view ===== */
+        :root { --k1: #6f8fd8; --k2: #d9a54a; --k3: #4fb3a0; --k4: #c46a8f; --k-unset: #4a505c; }
+        html[data-theme="light"] { --k1: #3f63b8; --k2: #a8721c; --k3: #2b8a78; --k4: #a8466f; --k-unset: #cfcac0; }
+        #analysisView { padding-top: 20px; padding-bottom: 56px; }
+        .an-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+        .an-head h2 { font-family: var(--font-display); font-size: 30px; letter-spacing: .01em; line-height: 1; }
+        .an-head p { color: var(--text-muted); font-size: 14px; margin-top: 6px; max-width: 640px; }
+        .an-scope { display: flex; align-items: center; gap: 8px; }
+        .an-scope label { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+        .an-scope select { width: auto; min-width: 200px; }
+        .an-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .an-kpi { background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+        .an-kpi .k { font-size: 12px; color: var(--text-muted); }
+        .an-kpi .v { font-family: var(--font-display); font-size: 32px; font-weight: 700; line-height: 1.1; margin-top: 2px; font-variant-numeric: tabular-nums; }
+        .an-kpi .s { font-size: 12px; color: var(--text-faint); }
+        .an-card { background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 18px 16px; margin-bottom: 16px; min-width: 0; overflow: hidden; }
+        .an-card h3 { display: flex; align-items: center; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
+        .an-card .an-sub { font-size: 13px; color: var(--text-faint); margin: 4px 0 14px; }
+        .an-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+        .an-grid .an-card { margin-bottom: 0; }
+        .an-section-title { font-family: var(--font-display); font-size: 20px; letter-spacing: .02em; text-transform: uppercase; margin: 28px 0 12px; color: var(--text); }
+
+        .an-rows { display: flex; flex-direction: column; gap: 2px; }
+        .an-row {
+            display: grid; grid-template-columns: minmax(84px, 120px) 1fr 74px; align-items: center; gap: 10px;
+            padding: 5px 6px; margin: 0 -6px; border-radius: 6px; font-size: 13px; color: var(--text);
+            background: none; border: 0; text-align: left; font-family: inherit; cursor: default; width: calc(100% + 12px);
+        }
+        .an-row.x { grid-template-columns: minmax(64px, 90px) minmax(0, 1fr) 122px; }
+        button.an-row { cursor: pointer; }
+        button.an-row:hover { background: var(--bg-hover); }
+        .an-row .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .an-row .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); white-space: nowrap; }
+        .an-row .num strong { color: var(--text); font-weight: 600; }
+        .an-row.unset { opacity: .55; }
+        .an-track { position: relative; height: 12px; border-radius: 3px; background: var(--bg-hover); overflow: visible; }
+        .an-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--dmg, var(--accent)); }
+        .an-mark { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--text); border-radius: 1px; opacity: .8; }
+        .an-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+        .an-legend span { display: inline-flex; align-items: center; gap: 6px; }
+        .an-legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+        .an-legend .mk { width: 2px; height: 12px; border-radius: 1px; background: var(--text); opacity: .8; }
+
+        .an-stack { display: flex; height: 14px; border-radius: 3px; overflow: hidden; min-width: 120px; gap: 1px; background: var(--bg-raised); }
+        .an-stack > span { display: block; height: 100%; }
+        .an-table-wrap { overflow-x: auto; margin: 0 -18px; padding: 0 18px; }
+        .an-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+        .an-table th { text-align: left; font-size: 11.5px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; padding: 0 10px 8px 0; white-space: nowrap; border-bottom: 1px solid var(--border); }
+        .an-table td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .an-table tr:last-child td { border-bottom: 0; }
+        .an-table td.r, .an-table th.r { text-align: right; }
+        .an-table tr.clickable { cursor: pointer; }
+        .an-table tr.clickable:hover td { background: var(--bg-hover); }
+        .an-table tr.current td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+        .an-table tr.small td { color: var(--text-faint); }
+        .an-table td.game { font-weight: 600; position: sticky; left: 0; background: var(--bg-raised); max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
+        .an-table tr.clickable:hover td.game { background: var(--bg-hover); }
+        .an-table tr.current td.game { background: color-mix(in srgb, var(--accent) 10%, var(--bg-raised)); }
+        .an-small { display: inline-block; font-size: 10.5px; font-weight: 600; color: var(--text-faint); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; margin-left: 6px; vertical-align: 1px; }
+        .an-note { font-size: 12.5px; color: var(--text-faint); margin-top: 10px; line-height: 1.5; }
+        .an-list { display: flex; flex-direction: column; }
+        .an-item {
+            display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 8px 6px; margin: 0 -6px; border-radius: 6px;
+            font-size: 13.5px; color: var(--text); background: none; border: 0; text-align: left; font-family: inherit; cursor: pointer; width: calc(100% + 12px);
+        }
+        .an-item:hover { background: var(--bg-hover); }
+        .an-item + .an-item { border-top: 1px solid var(--border); border-radius: 0; }
+        .an-item .who { color: var(--text-muted); font-size: 12.5px; }
+        .an-item .val { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+        .an-empty { color: var(--text-faint); font-size: 13px; padding: 6px 0; }
+
+        @media (max-width: 720px) {
+            .topbar-inner { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 10px; row-gap: 10px; }
+            .brand { flex: 1 1 100%; }
+            .view-switch { flex: 1 1 0; min-width: 0; }
+            .view-switch button { flex: 1; justify-content: center; padding: 0 6px; min-width: 0; }
+            .view-switch svg.icon { display: none; }
+            .an-row { grid-template-columns: minmax(64px, 88px) minmax(0, 1fr) auto; }
+            .an-row.x { grid-template-columns: minmax(64px, 80px) minmax(0, 1fr) 118px; }
+            .an-stack { min-width: 0; }
+            .an-head h2 { font-size: 26px; }
+            .an-scope { width: 100%; }
+            .an-scope select { flex: 1; min-width: 0; }
+            .an-grid { grid-template-columns: 1fr; }
+            .an-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .an-kpi .v { font-size: 28px; }
+            .an-card { padding: 16px 14px 14px; }
+            .an-table-wrap { margin: 0 -14px; padding: 0 14px; }
+        }
+
         /* Share dialog */
         .share-panel { max-width: 480px; }
         .share-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
@@ -531,6 +633,8 @@
         <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
         <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
         <symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM22 9l-6 6M16 9l6 6"/></symbol>
+        <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
         <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
     </svg>
 
@@ -540,6 +644,10 @@
                 <div class="brand-mark"><svg class="icon"><use href="#i-swords"/></svg></div>
                 <div class="brand-title">Enemy Design Database</div>
                 <span class="brand-count"><span id="headerEnemyCount">-</span> enemies</span>
+            </div>
+            <div class="view-switch" role="group" aria-label="View">
+                <button type="button" id="viewBrowseBtn" aria-pressed="true" onclick="showView('browse')"><svg class="icon"><use href="#i-grid"/></svg><span class="vs-text">Browse</span></button>
+                <button type="button" id="viewAnalysisBtn" aria-pressed="false" onclick="showView('analysis')"><svg class="icon"><use href="#i-chart"/></svg><span class="vs-text">Analysis</span></button>
             </div>
             <button class="icon-btn" onclick="openAbout()" title="About" aria-label="About"><svg class="icon"><use href="#i-info"/></svg></button>
             <button class="icon-btn" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle light/dark" aria-label="Toggle light or dark mode"><svg class="icon" id="darkModeIcon"><use href="#i-sun"/></svg></button>
@@ -567,6 +675,7 @@
                 <li>Currently, <strong>only Tri</strong> can add, edit, or delete entries</li>
                 <li><strong>Search</strong> across all fields (name, game, damage types, actions, etc.). Synonyms count too: "jump" also finds "leap". Put a word in "quotes" to match it exactly.</li>
                 <li><strong>Tap an enemy</strong> to see its full moveset and video</li>
+                <li><strong>Analysis</strong> (top of the page) shows patterns across all enemies or one game. Tap any bar to see the enemies behind it.</li>
             </ul>
             <h3>Contact</h3>
             <p>
@@ -784,6 +893,8 @@
         <div class="result-count" id="resultCount"></div>
         <div class="enemy-list" id="enemyList"></div>
     </main>
+
+    <section id="analysisView" class="container" aria-label="Analysis"></section>
 
     <!-- Editor (owner only) -->
     <div class="form-section hidden" id="formSection">
@@ -1065,8 +1176,11 @@
                     if (enemies[openEnemyKey]) renderEnemyDetail(openEnemyKey); else closeEnemy();
                 }
                 
+                if (currentView === 'analysis') renderAnalysis();
+
                 // Handle URL hash for direct enemy links
                 handleEnemyHash();
+                if (window.location.hash === '#analysis' && currentView !== 'analysis') showView('analysis', false);
             });
         }
 
@@ -1125,6 +1239,7 @@
         }
 
         window.addEventListener('hashchange', () => {
+            if (window.location.hash === '#analysis') { if (openEnemyKey) closeEnemy(false); showView('analysis', false); return; }
             if (!window.location.hash.startsWith('#enemy-') && openEnemyKey) closeEnemy(false);
             else handleEnemyHash();
         });
@@ -2784,7 +2899,7 @@
             closeModal('detailModal');
             document.getElementById('detailPanel').innerHTML = '';
             if (updateHash && window.location.hash.startsWith('#enemy-')) {
-                history.replaceState(null, '', window.location.pathname + window.location.search);
+                history.replaceState(null, '', window.location.pathname + window.location.search + (currentView === 'analysis' ? '#analysis' : ''));
             }
         }
 
@@ -3323,6 +3438,424 @@
             applyTheme(readThemePref() !== 'disabled');
         }
 
+
+
+        // ===================== ANALYSIS VIEW =====================
+        // Everything is computed live from the loaded enemies. Percentages always show their n.
+        // Combo count 99 = "unlimited": shown as ∞, excluded from medians.
+        let currentView = 'browse';
+        let analysisGame = '';
+        const SMALL_SAMPLE = 10;     // games/tiers with fewer enemies than this are marked as small samples
+        const UNLIMITED_COMBO = 99;
+
+        function showView(view, updateHash = true) {
+            currentView = view === 'analysis' ? 'analysis' : 'browse';
+            document.body.classList.toggle('view-analysis', currentView === 'analysis');
+            document.getElementById('viewBrowseBtn').setAttribute('aria-pressed', String(currentView === 'browse'));
+            document.getElementById('viewAnalysisBtn').setAttribute('aria-pressed', String(currentView === 'analysis'));
+            if (currentView === 'analysis') renderAnalysis();
+            if (updateHash) {
+                const base = window.location.pathname + window.location.search;
+                history.replaceState(null, '', currentView === 'analysis' ? base + '#analysis' : base);
+            }
+            window.scrollTo({ top: 0 });
+        }
+
+        // ---------- small stat helpers ----------
+        const pct = (n, d) => d ? Math.round(100 * n / d) : 0;
+        function median(nums) {
+            const a = nums.filter(n => Number.isFinite(n)).sort((x, y) => x - y);
+            if (!a.length) return null;
+            const m = Math.floor(a.length / 2);
+            return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+        }
+        const fmtNum = n => n === null ? '–' : (Math.round(n * 10) / 10).toString();
+        const comboOf = a => { const n = parseInt(a.comboCount, 10); return Number.isFinite(n) && n > 0 ? n : null; };
+        const isUnlimited = a => comboOf(a) === UNLIMITED_COMBO;
+        const valueLabel = (key, v) => v === 'aoe' ? 'AOE' : cap(v);
+
+        function analysisScope(game) {
+            const ens = Object.keys(enemies).map(key => ({ key, ...enemies[key] })).filter(e => !game || e.game === game);
+            const atks = [];
+            ens.forEach(e => (e.offensiveActions || []).forEach(a => { if (a) atks.push({ ...a, _e: e }); }));
+            return { ens, atks };
+        }
+
+        // Counts per value; multi = an enemy counts once per distinct value (share of enemies with at least one)
+        function tally(items, getValues) {
+            const counts = new Map();
+            let unset = 0;
+            items.forEach(item => {
+                let vals = getValues(item);
+                vals = (Array.isArray(vals) ? vals : [vals]).filter(v => v !== undefined && v !== null && v !== '');
+                if (!vals.length) { unset++; return; }
+                new Set(vals.map(String)).forEach(v => counts.set(v, (counts.get(v) || 0) + 1));
+            });
+            return { counts, unset, total: items.length };
+        }
+
+        const ORDER = {
+            type: ['Regular', 'Elite', 'Mini-Boss', 'Boss'],
+            size: ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'],
+            attackType: ['melee', 'aoe', 'ranged', 'grab'],
+            range: ['close', 'medium', 'far'],
+            windup: ['fast', 'medium', 'slow'],
+            locomotion: ['grounded', 'hovering', 'flying', 'swimming']
+        };
+        const ATTACK_COLORS = { melee: 'var(--k1)', aoe: 'var(--k2)', ranged: 'var(--k3)', grab: 'var(--k4)' };
+        const WINDUP_COLORS = {
+            fast: 'color-mix(in srgb, var(--accent) 35%, var(--bg-hover))',
+            medium: 'color-mix(in srgb, var(--accent) 68%, var(--bg-hover))',
+            slow: 'var(--accent)'
+        };
+
+        function orderedEntries(counts, orderKey) {
+            const order = ORDER[orderKey];
+            return [...counts.entries()].sort((a, b) => {
+                if (order) {
+                    const ia = order.indexOf(a[0]), ib = order.indexOf(b[0]);
+                    if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+                }
+                return b[1] - a[1];
+            });
+        }
+
+        // One bar per value. With a game selected, a tick marks the all-games share for comparison.
+        // filter = { key, map? } makes rows clickable into the Browse view.
+        function distributionCard({ title, help, sub, scope, all, getValues, unit, orderKey, filter, colorClass }) {
+            const t = tally(unit === 'enemy' ? scope.ens : scope.atks, getValues);
+            const tAll = all ? tally(unit === 'enemy' ? all.ens : all.atks, getValues) : null;
+            const rows = orderedEntries(t.counts, orderKey);
+            if (all) {
+                // keep values that exist overall but not in this game, so absences are visible
+                orderedEntries(tAll.counts, orderKey).forEach(([v]) => { if (!t.counts.has(v)) rows.push([v, 0]); });
+            }
+            const body = rows.map(([v, n]) => {
+                const p = pct(n, t.total);
+                const mark = tAll ? `<span class="an-mark" style="left:${pct(tAll.counts.get(v) || 0, tAll.total)}%" title="All games: ${pct(tAll.counts.get(v) || 0, tAll.total)}%"></span>` : '';
+                const cls = colorClass ? ` ${colorClass}-${escapeHtml(v)}` : '';
+                const tag = filter ? 'button' : 'div';
+                const attrs = filter ? ` type="button" data-filter="${filter}" data-value="${escapeHtml(v)}" title="Show these enemies"` : '';
+                return `<${tag} class="an-row"${attrs}>
+                    <span class="lbl" title="${escapeHtml(guideTip(help, v) || valueLabel(help, v))}">${escapeHtml(valueLabel(help, v))}</span>
+                    <span class="an-track"><span class="an-fill${cls}" style="width:${p}%"></span>${mark}</span>
+                    <span class="num"><strong>${p}%</strong> · ${n}</span>
+                </${tag}>`;
+            }).join('');
+            const unsetLabel = (unit === 'enemy' && /action|reaction|trait|locomotion/i.test(title)) || help === 'condition' ? 'None' : 'Not set';
+            const unsetRow = t.unset ? `<div class="an-row unset"><span class="lbl">${unsetLabel}</span><span class="an-track"><span class="an-fill" style="width:${pct(t.unset, t.total)}%; background: var(--k-unset)"></span></span><span class="num"><strong>${pct(t.unset, t.total)}%</strong> · ${t.unset}</span></div>` : '';
+            return `<div class="an-card">
+                <h3>${escapeHtml(title)}${help ? helpDot(help) : ''}</h3>
+                <div class="an-sub">${sub} · n=${t.total} ${unit === 'enemy' ? 'enemies' : 'attacks'}</div>
+                <div class="an-rows">${body || '<div class="an-empty">No data yet.</div>'}${unsetRow}</div>
+            </div>`;
+        }
+
+        function stackBar(parts, colors, total) {
+            if (!total) return '<span class="an-empty">–</span>';
+            return `<span class="an-stack">${parts.map(([k, n]) => n ? `<span style="width:${100 * n / total}%; background:${colors[k] || 'var(--k-unset)'}" title="${escapeHtml(valueLabel('', k))}: ${pct(n, total)}% (${n})"></span>` : '').join('')}</span>`;
+        }
+
+        function legend(entries, extra = '') {
+            return `<div class="an-legend">${entries.map(([label, color]) => `<span><i style="background:${color}"></i>${escapeHtml(label)}</span>`).join('')}${extra}</div>`;
+        }
+
+        // ---------- sections ----------
+        function kpiHtml(scope) {
+            const unbl = scope.atks.filter(a => a.unblockable === true).length;
+            const games = new Set(scope.ens.map(e => e.game)).size;
+            const perEnemy = median(scope.ens.map(e => (e.offensiveActions || []).length));
+            const multi = scope.atks.filter(a => (comboOf(a) || 1) > 1).length;
+            const kpi = (k, v, s) => `<div class="an-kpi"><div class="k">${k}</div><div class="v">${v}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`;
+            return `<div class="an-kpis">
+                ${kpi('Enemies', scope.ens.length, analysisGame ? '' : `${games} games`)}
+                ${kpi('Attacks', scope.atks.length, `median ${fmtNum(perEnemy)} per enemy`)}
+                ${kpi('Unblockable', pct(unbl, scope.atks.length) + '%', `${unbl} attacks`)}
+                ${kpi('Multi-hit', pct(multi, scope.atks.length) + '%', 'attacks with 2+ hits')}
+            </div>`;
+        }
+
+        function fingerprintHtml(all) {
+            const byGame = {};
+            all.ens.forEach(e => { (byGame[e.game] = byGame[e.game] || []).push(e); });
+            const rows = Object.entries(byGame).sort((a, b) => b[1].length - a[1].length).map(([game, ens]) => {
+                const atks = ens.flatMap(e => (e.offensiveActions || []).filter(Boolean));
+                const n = atks.length;
+                const count = f => atks.filter(f).length;
+                const typeParts = ORDER.attackType.map(k => [k, count(a => a.type === k)]);
+                const windParts = ORDER.windup.map(k => [k, count(a => a.windupTime === k)]);
+                const small = ens.length < SMALL_SAMPLE;
+                const cls = ['clickable', game === analysisGame ? 'current' : '', small ? 'small' : ''].join(' ');
+                return `<tr class="${cls}" data-game="${escapeHtml(game)}" title="Focus on ${escapeHtml(game)}">
+                    <td class="game">${escapeHtml(game)}${small ? '<span class="an-small">small n</span>' : ''}</td>
+                    <td class="r">${ens.length}</td>
+                    <td class="r">${n}</td>
+                    <td class="r">${fmtNum(median(ens.map(e => (e.offensiveActions || []).length)))}</td>
+                    <td>${stackBar(typeParts, ATTACK_COLORS, n)}</td>
+                    <td>${stackBar(windParts, WINDUP_COLORS, n)}</td>
+                    <td class="r">${pct(count(a => a.unblockable === true), n)}%</td>
+                    <td class="r">${pct(count(a => (comboOf(a) || 1) > 1), n)}%</td>
+                    <td class="r">${pct(count(a => a.damageType && a.damageType !== 'physical'), n)}%</td>
+                    <td class="r">${pct(ens.filter(e => (e.defensiveActions || []).some(d => d && d.type && d.type !== 'none')).length, ens.length)}%</td>
+                    <td class="r">${pct(ens.filter(e => (e.reactions || []).some(r => r && r.type)).length, ens.length)}%</td>
+                </tr>`;
+            }).join('');
+            return `<div class="an-card">
+                <h3>Game fingerprints</h3>
+                <div class="an-sub">How each game builds its enemies. Click a game to focus the whole page on it.</div>
+                ${legend([['Melee', ATTACK_COLORS.melee], ['AOE', ATTACK_COLORS.aoe], ['Ranged', ATTACK_COLORS.ranged], ['Grab', ATTACK_COLORS.grab]],
+                    ' <span style="margin-left:8px">Windup:</span>' + legend([['Fast', WINDUP_COLORS.fast], ['Medium', WINDUP_COLORS.medium], ['Slow', WINDUP_COLORS.slow]]).replace('<div class="an-legend">', '').replace(/<\/div>$/, ''))}
+                <div class="an-table-wrap"><table class="an-table">
+                    <thead><tr>
+                        <th>Game</th><th class="r">Enemies</th><th class="r">Attacks</th><th class="r" title="Median attacks per enemy">Moveset</th>
+                        <th>Attack mix</th><th>Windup mix</th><th class="r">Unblockable</th><th class="r">Multi-hit</th>
+                        <th class="r" title="Attacks with a damage type other than physical">Elemental</th>
+                        <th class="r" title="Enemies with at least one block, evade or deflect">Defends</th>
+                        <th class="r" title="Enemies with at least one special reaction">Reacts</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table></div>
+                <div class="an-note">Percentages are within each game. Games with fewer than ${SMALL_SAMPLE} enemies are marked "small n": treat their numbers as anecdotes, not trends.</div>
+            </div>`;
+        }
+
+        function crossHtml(scope) {
+            // Windup vs unblockable share
+            const wind = ORDER.windup.map(w => {
+                const s = scope.atks.filter(a => a.windupTime === w);
+                const u = s.filter(a => a.unblockable === true).length;
+                return { w, n: s.length, u, p: pct(u, s.length) };
+            });
+            const maxP = Math.max(10, ...wind.map(r => r.p));
+            const windRows = wind.map(r => `<button type="button" class="an-row" data-filter="offensiveWindup" data-value="${r.w}" title="Show enemies with ${r.w} attacks">
+                <span class="lbl">${cap(r.w)}</span>
+                <span class="an-track"><span class="an-fill" style="width:${100 * r.p / maxP}%; background:var(--danger)"></span></span>
+                <span class="num"><strong>${r.p}%</strong> · ${r.u}/${r.n}</span></button>`).join('');
+
+            // Range vs windup mix
+            const rangeRows = ORDER.range.map(rg => {
+                const s = scope.atks.filter(a => a.range === rg);
+                const parts = ORDER.windup.map(w => [w, s.filter(a => a.windupTime === w).length]);
+                const slow = parts[2][1];
+                return `<button type="button" class="an-row x" data-filter="offensiveRange" data-value="${rg}" title="Show enemies with ${rg}-range attacks">
+                    <span class="lbl">${cap(rg)}</span>${stackBar(parts, WINDUP_COLORS, s.length)}
+                    <span class="num"><strong>${pct(slow, s.length)}%</strong> slow · ${s.length}</span></button>`;
+            }).join('');
+
+            // Attack type vs range
+            const typeRows = ORDER.attackType.map(tp => {
+                const s = scope.atks.filter(a => a.type === tp);
+                const rc = { close: 'color-mix(in srgb, var(--k1) 40%, var(--bg-hover))', medium: 'color-mix(in srgb, var(--k1) 70%, var(--bg-hover))', far: 'var(--k1)' };
+                const parts = ORDER.range.map(r => [r, s.filter(a => a.range === r).length]);
+                return `<button type="button" class="an-row x" data-filter="offensiveType" data-value="${tp}" title="Show enemies with ${valueLabel('', tp)} attacks">
+                    <span class="lbl">${valueLabel('', tp)}</span>${stackBar(parts, rc, s.length)}
+                    <span class="num"><strong>${pct(parts[0][1], s.length)}%</strong> close · ${s.length}</span></button>`;
+            }).join('');
+
+            return `<div class="an-grid">
+                <div class="an-card">
+                    <h3>Telegraph vs. threat</h3>
+                    <div class="an-sub">Share of attacks at each windup speed that are unblockable</div>
+                    <div class="an-rows">${windRows}</div>
+                </div>
+                <div class="an-card">
+                    <h3>Range vs. windup</h3>
+                    <div class="an-sub">Windup mix of attacks at each range</div>
+                    ${legend([['Fast', WINDUP_COLORS.fast], ['Medium', WINDUP_COLORS.medium], ['Slow', WINDUP_COLORS.slow]])}
+                    <div class="an-rows">${rangeRows}</div>
+                </div>
+                <div class="an-card">
+                    <h3>Attack type vs. range</h3>
+                    <div class="an-sub">Where each kind of attack is used</div>
+                    ${legend([['Close', 'color-mix(in srgb, var(--k1) 40%, var(--bg-hover))'], ['Medium', 'color-mix(in srgb, var(--k1) 70%, var(--bg-hover))'], ['Far', 'var(--k1)']])}
+                    <div class="an-rows">${typeRows}</div>
+                </div>
+            </div>`;
+        }
+
+        function tierHtml(scope) {
+            const rows = ORDER.type.map(tier => {
+                const ens = scope.ens.filter(e => e.type === tier);
+                if (!ens.length) return '';
+                const atks = ens.flatMap(e => (e.offensiveActions || []).filter(Boolean));
+                const longest = median(ens.map(e => Math.max(0, ...(e.offensiveActions || []).filter(Boolean).map(a => isUnlimited(a) ? 0 : (comboOf(a) || 0)))));
+                const small = ens.length < SMALL_SAMPLE;
+                return `<tr class="clickable${small ? ' small' : ''}" data-filter="type" data-value="${escapeHtml(tier)}" title="Show ${escapeHtml(tier)} enemies">
+                    <td class="game">${escapeHtml(tier)}${small ? '<span class="an-small">small n</span>' : ''}</td>
+                    <td class="r">${ens.length}</td>
+                    <td class="r">${fmtNum(median(ens.map(e => (e.offensiveActions || []).length)))}</td>
+                    <td class="r">${fmtNum(longest)}</td>
+                    <td class="r">${pct(atks.filter(a => a.unblockable === true).length, atks.length)}%</td>
+                    <td class="r">${pct(ens.filter(e => (e.defensiveActions || []).some(d => d && d.type && d.type !== 'none')).length, ens.length)}%</td>
+                    <td class="r">${pct(ens.filter(e => (e.reactions || []).some(r => r && r.type === 'reduced')).length, ens.length)}%</td>
+                    <td class="r">${pct(ens.filter(e => (e.specialTraits || []).length).length, ens.length)}%</td>
+                </tr>`;
+            }).join('');
+            return `<div class="an-card">
+                <h3>Scaling by tier${helpDot('type')}</h3>
+                <div class="an-sub">What changes as enemies get tougher</div>
+                <div class="an-table-wrap"><table class="an-table">
+                    <thead><tr><th>Tier</th><th class="r">Enemies</th><th class="r" title="Median attacks per enemy">Moveset</th>
+                    <th class="r" title="Median of each enemy's longest combo">Longest combo</th><th class="r">Unblockable</th>
+                    <th class="r">Defends</th><th class="r" title="Enemies with Reduced Reactions (includes hyper armor)">Reduced reactions</th><th class="r">Special traits</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table></div>
+            </div>`;
+        }
+
+        function outliersHtml(scope) {
+            const enemyBtn = (e, main, val) => `<button type="button" class="an-item" data-enemy="${escapeHtml(e.key)}">
+                <span><span>${escapeHtml(main)}</span><br><span class="who">${escapeHtml(e.name)} · ${escapeHtml(e.game)}</span></span>
+                <span class="val">${val}</span></button>`;
+
+            const combos = scope.atks.filter(a => comboOf(a)).sort((a, b) => comboOf(b) - comboOf(a)).slice(0, 6)
+                .map(a => enemyBtn(a._e, a.name || 'Attack', isUnlimited(a) ? '∞ hits' : `${comboOf(a)} hits`)).join('');
+
+            const movesets = [...scope.ens].sort((a, b) => (b.offensiveActions || []).length - (a.offensiveActions || []).length).slice(0, 6)
+                .map(e => `<button type="button" class="an-item" data-enemy="${escapeHtml(e.key)}"><span><span>${escapeHtml(e.name)}</span><br><span class="who">${escapeHtml(e.game)} · ${escapeHtml(e.type || '')}</span></span><span class="val">${(e.offensiveActions || []).length} attacks</span></button>`).join('');
+
+            // Rare designs: type + range + windup combinations used by only one attack in this scope
+            const groups = new Map();
+            scope.atks.forEach(a => {
+                if (!a.type || !a.range || !a.windupTime) return;
+                const k = `${a.windupTime} ${a.range}-range ${a.type === 'aoe' ? 'AOE' : a.type}`;
+                (groups.get(k) || groups.set(k, []).get(k)).push(a);
+            });
+            const rare = [...groups.entries()].filter(([, list]) => list.length === 1).slice(0, 8)
+                .map(([k, [a]]) => enemyBtn(a._e, `${a.name || 'Attack'}`, cap(k))).join('');
+
+            return `<div class="an-grid">
+                <div class="an-card"><h3>Longest combos${helpDot('combo')}</h3><div class="an-sub">∞ = continues until interrupted</div><div class="an-list">${combos || '<div class="an-empty">No combos yet.</div>'}</div></div>
+                <div class="an-card"><h3>Biggest movesets</h3><div class="an-sub">Most offensive actions logged</div><div class="an-list">${movesets || '<div class="an-empty">No enemies yet.</div>'}</div></div>
+                <div class="an-card"><h3>One-of-a-kind attacks</h3><div class="an-sub">The only attack with its windup + range + type combination</div><div class="an-list">${rare || '<div class="an-empty">None in this selection.</div>'}</div></div>
+            </div>`;
+        }
+
+        function dataQualityHtml(scope) {
+            const issues = [];
+            scope.ens.forEach(e => {
+                const missing = [];
+                if (!e.size) missing.push('size');
+                if (!e.type) missing.push('type');
+                if (!(e.videoLink || '').trim()) missing.push('video');
+                const blankAtk = (e.offensiveActions || []).filter(a => a && (!a.type || !a.range || !a.windupTime || !a.damageType || !comboOf(a))).length;
+                if (blankAtk) missing.push(`${blankAtk} attack${blankAtk > 1 ? 's' : ''} with blank fields`);
+                if (missing.length) issues.push([e, missing.join(', ')]);
+            });
+            if (!issues.length) return '';
+            return `<div class="an-card">
+                <h3>Gaps to fill</h3>
+                <div class="an-sub">Entries with missing data. These are left out of the matching charts above.</div>
+                <div class="an-list">${issues.map(([e, msg]) => `<button type="button" class="an-item" data-enemy="${escapeHtml(e.key)}"><span>${escapeHtml(e.name)}<br><span class="who">${escapeHtml(e.game)}</span></span><span class="val" style="font-weight:500;color:var(--text-muted)">${escapeHtml(msg)}</span></button>`).join('')}</div>
+            </div>`;
+        }
+
+        function renderAnalysis() {
+            const el = document.getElementById('analysisView');
+            if (!el) return;
+            const games = [...new Set(Object.values(enemies).map(e => e.game).filter(Boolean))].sort();
+            if (analysisGame && !games.includes(analysisGame)) analysisGame = '';
+            const all = analysisScope('');
+            const scope = analysisScope(analysisGame);
+            const vsAll = analysisGame ? all : null;
+            const scopeEnemies = scope.ens.length;
+
+            if (!Object.keys(enemies).length) {
+                el.innerHTML = '<div class="empty-state"><h3>No enemies yet</h3><p>Charts appear once entries are added.</p></div>';
+                return;
+            }
+
+            const d = (opts) => distributionCard({ scope, all: vsAll, ...opts });
+            const smallWarn = analysisGame && scopeEnemies < SMALL_SAMPLE
+                ? `<div class="import-banner" style="margin-bottom:16px">${escapeHtml(analysisGame)} has only ${scopeEnemies} enemies logged, so these numbers describe those enemies, not the game's design overall.</div>` : '';
+
+            el.innerHTML = `
+                <div class="an-head">
+                    <div>
+                        <h2>Analysis</h2>
+                        <p>${analysisGame
+                            ? `${escapeHtml(analysisGame)} compared with all games. The black tick on each bar is the all-games share.`
+                            : 'Patterns across every enemy in the database. Click any bar to see the enemies behind it.'}</p>
+                    </div>
+                    <div class="an-scope">
+                        <label for="analysisGame">Focus</label>
+                        <select id="analysisGame">
+                            <option value="">All games</option>
+                            ${games.map(g => `<option value="${escapeHtml(g)}" ${g === analysisGame ? 'selected' : ''}>${escapeHtml(g)}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+                ${smallWarn}
+                ${kpiHtml(scope)}
+                ${fingerprintHtml(all)}
+
+                <div class="an-section-title">Attacks</div>
+                ${analysisGame ? legend([], '<span><span class="mk"></span>All-games share</span>') : ''}
+                <div class="an-grid">
+                    ${d({ title: 'Attack type', help: 'attackType', sub: 'Share of attacks', unit: 'attack', orderKey: 'attackType', getValues: a => a.type, filter: 'offensiveType' })}
+                    ${d({ title: 'Range', help: 'range', sub: 'Share of attacks', unit: 'attack', orderKey: 'range', getValues: a => a.range, filter: 'offensiveRange' })}
+                    ${d({ title: 'Windup', help: 'windup', sub: 'Share of attacks', unit: 'attack', orderKey: 'windup', getValues: a => a.windupTime, filter: 'offensiveWindup' })}
+                    ${d({ title: 'Damage type', help: 'damage', sub: 'Share of attacks', unit: 'attack', getValues: a => a.damageType, filter: 'offensiveDamage', colorClass: 'dmg' })}
+                    ${d({ title: 'Hits per attack', help: 'combo', sub: 'Share of attacks · 99 shown as ∞', unit: 'attack',
+                        getValues: a => { const c = comboOf(a); return c === null ? '' : c === UNLIMITED_COMBO ? '∞' : c >= 6 ? '6+' : String(c); },
+                        orderKey: 'combo' })}
+                    ${d({ title: 'Condition', help: 'condition', sub: 'Share of attacks that apply one', unit: 'attack', getValues: a => a.condition, filter: 'offensiveCondition' })}
+                </div>
+
+                <div class="an-section-title">Patterns</div>
+                ${crossHtml(scope)}
+
+                <div class="an-section-title">Enemies</div>
+                <div class="an-grid">
+                    ${d({ title: 'Tier', help: 'type', sub: 'Share of enemies', unit: 'enemy', orderKey: 'type', getValues: e => e.type, filter: 'type' })}
+                    ${d({ title: 'Size', help: 'size', sub: 'Share of enemies', unit: 'enemy', orderKey: 'size', getValues: e => e.size, filter: 'size' })}
+                    ${d({ title: 'Defensive actions', help: 'defenseType', sub: 'Enemies with at least one', unit: 'enemy',
+                        getValues: e => (e.defensiveActions || []).map(x => x && x.type).filter(t => t && t !== 'none'), filter: 'defensiveType' })}
+                    ${d({ title: 'Reactions', help: 'reaction', sub: 'Enemies with at least one', unit: 'enemy', getValues: e => (e.reactions || []).map(x => x && x.type), filter: 'reactionType' })}
+                    ${d({ title: 'Special traits', help: 'trait', sub: 'Enemies with at least one', unit: 'enemy', getValues: e => (e.specialTraits || []).map(x => x && typeof x === 'object' ? x.category : '') })}
+                    ${d({ title: 'Locomotion', help: 'locomotion', sub: 'Enemies with at least one', unit: 'enemy', orderKey: 'locomotion', getValues: e => (e.locomotion || []).map(x => x && x.type), filter: 'locomotion' })}
+                </div>
+                <div style="margin-top:16px">${tierHtml(scope)}</div>
+
+                <div class="an-section-title">Outliers</div>
+                ${outliersHtml(scope)}
+                <div style="margin-top:16px">${dataQualityHtml(scope)}</div>
+            `;
+        }
+        ORDER.combo = ['1', '2', '3', '4', '5', '6+', '∞'];
+
+        // Clicks inside the analysis view: focus a game, open an enemy, or jump to Browse with a filter
+        document.getElementById('analysisView').addEventListener('change', (e) => {
+            if (e.target.id === 'analysisGame') { analysisGame = e.target.value; renderAnalysis(); }
+        });
+        document.getElementById('analysisView').addEventListener('click', (e) => {
+            const enemyBtn = e.target.closest('[data-enemy]');
+            if (enemyBtn) return openEnemy(enemyBtn.dataset.enemy);
+            const filterEl = e.target.closest('[data-filter]');
+            if (filterEl) return browseWithFilter(filterEl.dataset.filter, filterEl.dataset.value);
+            const gameRow = e.target.closest('[data-game]');
+            if (gameRow) {
+                analysisGame = gameRow.dataset.game === analysisGame ? '' : gameRow.dataset.game;
+                renderAnalysis();
+                document.getElementById('analysisView').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
+        // Clears search and filters, applies one filter (plus the focused game), and switches to Browse
+        function browseWithFilter(key, value) {
+            document.getElementById('searchBox').value = '';
+            updateSynonymHint('');
+            const ids = ['filterGame', 'filterType', 'filterSize', 'filterOffensiveType', 'filterOffensiveRange', 'filterOffensiveCombo',
+                'filterOffensiveWindup', 'filterOffensiveDamage', 'filterOffensiveCondition', 'filterOffensiveUnblockable',
+                'filterDefensiveType', 'filterDefensiveReaction', 'filterSupportType', 'filterReactionType', 'filterLocomotion'];
+            ids.forEach(id => { document.getElementById(id).value = ''; });
+            const select = document.getElementById('filter' + key.charAt(0).toUpperCase() + key.slice(1));
+            if (select) select.value = value;
+            if (analysisGame) document.getElementById('filterGame').value = analysisGame;
+            showView('browse');
+            applyFilters();
+        }
+        // =================== END ANALYSIS VIEW ===================
 
         // ===================== FIELD GUIDE =====================
         // One source of truth for every definition: feeds the (i) popovers, the hover titles on tags,
