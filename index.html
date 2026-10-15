@@ -547,6 +547,33 @@
         .move-mark.flash, .move-time.flash { color: var(--success); border-color: var(--success); border-style: solid; }
         .move.playing { box-shadow: inset 3px 0 0 var(--accent); }
 
+        /* ===== Quick edit in the enemy view (owner) ===== */
+        button.tag { font-family: inherit; cursor: pointer; }
+        .tag.editable:hover { border-color: var(--accent); color: var(--text); }
+        .tag.add { border-style: dashed; background: transparent; color: var(--text-faint); }
+        .tag.add:hover { color: var(--accent); border-color: var(--accent); }
+        .tag.add.needed { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 55%, transparent); }
+        .edit-pop {
+            position: fixed; z-index: 1300; min-width: 190px; max-width: min(300px, calc(100vw - 24px)); max-height: min(380px, 70vh); overflow-y: auto;
+            background: var(--bg-overlay); border: 1px solid var(--border-strong); border-radius: 10px; box-shadow: var(--shadow); padding: 6px;
+        }
+        .edit-pop h5 { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); padding: 6px 8px 4px; }
+        .edit-opt {
+            display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 0; border-radius: 7px;
+            background: transparent; color: var(--text); font: 500 14px var(--font); text-align: left; cursor: pointer;
+        }
+        .edit-opt:hover, .edit-opt:focus-visible { background: var(--bg-hover); outline: none; }
+        .edit-opt.current { color: var(--accent); }
+        .edit-opt .ck { font-size: 12px; }
+        .edit-num { display: flex; gap: 6px; padding: 4px 6px 6px; }
+        .edit-num input { width: 90px; }
+        .toast {
+            position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1400; max-width: calc(100vw - 32px);
+            background: var(--bg-overlay); color: var(--text); border: 1px solid var(--border-strong); border-left: 3px solid var(--success);
+            border-radius: 10px; padding: 10px 16px; font-size: 14px; box-shadow: var(--shadow); pointer-events: none;
+        }
+        .toast.error { border-left-color: var(--danger); }
+
         /* Share dialog */
         .share-panel { max-width: 480px; }
         .share-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
@@ -1183,6 +1210,7 @@
         document.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
             if (helpPopFor) return closeHelp();
+            if (document.getElementById('editPop')) return closeEditPop();
             if (document.getElementById('shareModal').classList.contains('active')) return closeShare();
             if (document.getElementById('importModal').classList.contains('active')) return closeImport();
             if (document.getElementById('filterModal').classList.contains('active')) return closeFilters();
@@ -1208,6 +1236,7 @@
                 }
                 
                 if (currentView === 'analysis') renderAnalysis();
+                if (pendingOpenKey && enemies[pendingOpenKey]) { const k = pendingOpenKey; pendingOpenKey = null; openEnemy(k); }
 
                 // Handle URL hash for direct enemy links
                 handleEnemyHash();
@@ -2136,6 +2165,7 @@
             
             if (openEnemyKey) closeEnemy();
             clearValidation();
+            formFromImport = false;
             formSection.classList.remove('hidden');
             formSection.scrollTop = 0;
             document.body.classList.add('no-scroll');
@@ -2397,6 +2427,7 @@
             const warnings = [];
 
             showForm(false);
+            formFromImport = true;
 
             // Basic fields
             document.getElementById('enemyName').value = String(data.name || '').trim();
@@ -2946,6 +2977,7 @@
             activePlayer = null;
             autoplayedHash = null;
             closeShare();
+            closeEditPop();
             closeModal('detailModal');
             document.getElementById('detailPanel').innerHTML = '';
             if (updateHash && window.location.hash.startsWith('#enemy-')) {
@@ -3206,8 +3238,17 @@
             const tag = (label, value, cls = '', tip = '') => `<span class="tag ${cls}"${tip ? ` title="${escapeHtml(tip)}"` : ''}>${label ? `${label} ` : ''}<strong>${escapeHtml(value)}</strong></span>`;
 
             const heroTags = [];
-            if (enemy.type) heroTags.push(`<span class="tag type ${typeClass(enemy.type)}" title="${escapeHtml(guideTip('type', enemy.type))}"><strong>${escapeHtml(enemy.type)}</strong></span>`);
-            if (enemy.size) heroTags.push(tag('Size', enemy.size, '', guideTip('size', enemy.size)));
+            if (owner) {
+                heroTags.push(enemy.type
+                    ? `<button type="button" class="tag editable type ${typeClass(enemy.type)}" data-edit="enemy:type" title="${escapeHtml(guideTip('type', enemy.type))} · Click to change"><strong>${escapeHtml(enemy.type)}</strong></button>`
+                    : `<button type="button" class="tag add needed" data-edit="enemy:type">+ Type</button>`);
+                heroTags.push(enemy.size
+                    ? `<button type="button" class="tag editable" data-edit="enemy:size" title="${escapeHtml(guideTip('size', enemy.size))} · Click to change">Size <strong>${escapeHtml(enemy.size)}</strong></button>`
+                    : `<button type="button" class="tag add needed" data-edit="enemy:size">+ Size</button>`);
+            } else {
+                if (enemy.type) heroTags.push(`<span class="tag type ${typeClass(enemy.type)}" title="${escapeHtml(guideTip('type', enemy.type))}"><strong>${escapeHtml(enemy.type)}</strong></span>`);
+                if (enemy.size) heroTags.push(tag('Size', enemy.size, '', guideTip('size', enemy.size)));
+            }
             if (enemy.weapon) heroTags.push(tag('', enemy.weapon));
             (enemy.locomotion || []).forEach(l => l && l.type && heroTags.push(tag('', cap(l.type), '', guideTip('locomotion', l.type))));
 
@@ -3237,13 +3278,19 @@
                 const hasVideo = !!getYouTubeVideoId(enemy.videoLink);
                 const rows = offensive.map((a, i) => {
                     const t = [];
-                    if (a.type) t.push(tag('', a.type === 'aoe' ? 'AOE' : cap(a.type), '', guideTip('attackType', a.type)));
-                    if (a.range) t.push(tag('Range', cap(a.range), '', guideTip('range', a.range)));
-                    if (a.comboCount) t.push(tag('Hits', a.comboCount, '', guideTip('combo')));
-                    if (a.windupTime) t.push(tag('Windup', cap(a.windupTime), '', guideTip('windup', a.windupTime)));
-                    if (a.damageType) t.push(`<span class="tag dmg dmg-${escapeHtml(a.damageType)}" title="${escapeHtml(guideTip('damage', a.damageType))}">${escapeHtml(cap(a.damageType))}</span>`);
-                    if (a.condition) t.push(`<span class="tag cond" title="${escapeHtml(guideTip('condition', a.condition))}">${escapeHtml(cap(a.condition))}</span>`);
-                    if (a.unblockable === true) t.push(`<span class="tag unblockable" title="${escapeHtml(guideTip('unblockable'))}">Unblockable</span>`);
+                    // Owner: every tag is a button that opens a quick-edit menu; missing required fields show as "+ Field"
+                    const chip = (field, cls, inner, tip) => owner
+                        ? `<button type="button" class="tag editable ${cls}" data-edit="${field}" data-index="${i}" title="${escapeHtml((tip ? tip + ' · ' : '') + 'Click to change')}">${inner}</button>`
+                        : `<span class="tag ${cls}"${tip ? ` title="${escapeHtml(tip)}"` : ''}>${inner}</span>`;
+                    const need = (field, label) => owner ? `<button type="button" class="tag add needed" data-edit="${field}" data-index="${i}" title="Required: click to set">+ ${label}</button>` : '';
+                    t.push(a.type ? chip('type', '', `<strong>${escapeHtml(valueLabel('', a.type))}</strong>`, guideTip('attackType', a.type)) : need('type', 'Type'));
+                    t.push(a.range ? chip('range', '', `Range <strong>${escapeHtml(cap(a.range))}</strong>`, guideTip('range', a.range)) : need('range', 'Range'));
+                    t.push(comboOf(a) ? chip('comboCount', '', `Hits <strong>${escapeHtml(a.comboCount)}</strong>`, guideTip('combo')) : need('comboCount', 'Hits'));
+                    t.push(a.windupTime ? chip('windupTime', '', `Windup <strong>${escapeHtml(cap(a.windupTime))}</strong>`, guideTip('windup', a.windupTime)) : need('windupTime', 'Windup'));
+                    t.push(a.damageType ? chip('damageType', `dmg dmg-${escapeHtml(a.damageType)}`, escapeHtml(cap(a.damageType)), guideTip('damage', a.damageType)) : need('damageType', 'Damage'));
+                    if (a.condition) t.push(chip('condition', 'cond', escapeHtml(cap(a.condition)), guideTip('condition', a.condition)));
+                    if (a.unblockable === true) t.push(chip('unblockable', 'unblockable', 'Unblockable', guideTip('unblockable')));
+                    if (owner && (!a.condition || a.unblockable !== true)) t.push(`<button type="button" class="tag add" data-edit="more" data-index="${i}" title="Add a condition or mark as unblockable">+</button>`);
                     const secs = parseTimestamp(a.time);
                     let tools = '';
                     if (hasVideo && secs !== null) tools += `<button type="button" class="move-time" onclick="playAttackAt(${secs}, this)" title="Play the video from ${formatTimestamp(secs)}"><svg class="icon"><use href="#i-play"/></svg>${formatTimestamp(secs)}</button>`;
@@ -3324,7 +3371,7 @@
                 // Swap only the moves and the toolbar so the video keeps playing
                 const tpl = document.createElement('template');
                 tpl.innerHTML = detailHtml;
-                ['.detail-main', '.detail-tools'].forEach(sel => {
+                ['.detail-main', '.detail-tools', '.detail-head .tag-row'].forEach(sel => {
                     const fresh = tpl.content.querySelector(sel), old = panel.querySelector(sel);
                     if (fresh && old) old.replaceWith(fresh);
                 });
@@ -3373,16 +3420,13 @@
             };
             const t = getCurrentVideoTime(key);
             if (t === null) return say('Play video first');
-            database.ref(`enemies/${key}`).update({
-                [`offensiveActions/${index}/time`]: t,
-                lastUpdated: firebase.database.ServerValue.TIMESTAMP
-            }).then(() => {
+            const name = enemies[key]?.offensiveActions?.[index]?.name || `Action ${index + 1}`;
+            saveEnemyPatch(key, { [`offensiveActions/${index}/time`]: t }, `${name}: time ${formatTimestamp(t)}`).then(ok => {
+                if (!ok) return;
                 // The list re-renders on save; flash the attack's new time pill
                 const pill = document.querySelector(`#detailPanel [data-move-index="${index}"] .move-time`);
                 if (pill) { pill.classList.add('flash'); setTimeout(() => pill.classList.remove('flash'), 1500); }
-                if (document.body.contains(button)) say(`Saved ${formatTimestamp(t)}`, true);
-            })
-              .catch(err => alert('Saving the time failed: ' + err.message));
+            });
         }
 
         function scrollToEnemy(key) {
@@ -3496,8 +3540,14 @@
             
             const write = editingKey ? enemiesRef.child(editingKey).update(enemy) : enemiesRef.push(enemy);
             write.catch((error) => alert('Save failed: ' + error.message));
-            
+            const savedKey = editingKey || write.key;
+            const openAfter = !formFromImport;
+
             hideForm();
+            // Outside the JSON import flow, land on the enemy you just saved
+            if (openAfter && savedKey) {
+                if (enemies[savedKey]) openEnemy(savedKey); else pendingOpenKey = savedKey;
+            }
         });
 
         function editEnemy(key) {
@@ -3564,6 +3614,177 @@
 
 
 
+
+
+        // ===================== QUICK EDIT (enemy view) =====================
+        // Owner only. Each change is saved to the database immediately; no Edit/Save needed.
+        let formFromImport = false;   // true while the form holds a JSON import draft
+        let pendingOpenKey = null;    // a newly added enemy to open once its data arrives
+
+        const QUICK_FIELDS = {
+            'type':          { label: 'Attack type', options: () => IMPORT_ENUMS.offensive.type },
+            'range':         { label: 'Range', options: () => IMPORT_ENUMS.offensive.range },
+            'windupTime':    { label: 'Windup', options: () => IMPORT_ENUMS.offensive.windupTime },
+            'damageType':    { label: 'Damage type', options: () => IMPORT_ENUMS.offensive.damageType },
+            'condition':     { label: 'Condition', options: () => IMPORT_ENUMS.offensive.condition, none: 'None' },
+            'unblockable':   { label: 'Unblockable', yesNo: true },
+            'comboCount':    { label: 'Hits', number: true },
+            'enemy:type':    { label: 'Enemy type', options: () => IMPORT_ENUMS.type },
+            'enemy:size':    { label: 'Enemy size', options: () => IMPORT_ENUMS.size }
+        };
+
+        function showToast(message, isError = false) {
+            document.querySelectorAll('.toast').forEach(t => t.remove());
+            const t = document.createElement('div');
+            t.className = 'toast' + (isError ? ' error' : '');
+            t.setAttribute('role', 'status');
+            t.textContent = message;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), isError ? 6000 : 2200);
+        }
+
+        // Writes only the given paths under enemies/<key>, waits for the server, and says whether it stuck
+        function saveEnemyPatch(key, patch, what) {
+            if (!isOwner()) { showToast('Sign in as the owner to make changes.', true); return Promise.resolve(false); }
+            return database.ref(`enemies/${key}`)
+                .update({ ...patch, lastUpdated: firebase.database.ServerValue.TIMESTAMP })
+                .then(() => { showToast(`Saved · ${what}`); return true; })
+                .catch(err => { showToast(`Couldn't save ${what}: ${err.message}`, true); return false; });
+        }
+
+        let editAnchor = null;
+        function closeEditPop() {
+            const pop = document.getElementById('editPop');
+            if (pop) pop.remove();
+            editAnchor = null;
+        }
+
+        function placePop(pop, anchor) {
+            const r = anchor.getBoundingClientRect();
+            const w = pop.offsetWidth, h = pop.offsetHeight;
+            const left = Math.min(Math.max(12, r.left), window.innerWidth - w - 12);
+            let top = r.bottom + 6;
+            if (top + h > window.innerHeight - 12 && r.top - h - 6 > 12) top = r.top - h - 6;
+            pop.style.left = left + 'px';
+            pop.style.top = Math.max(12, top) + 'px';
+        }
+
+        function openEditPop(anchor) {
+            if (!isOwner() || !openEnemyKey) return;
+            if (editAnchor === anchor) return closeEditPop();
+            closeEditPop();
+            const key = openEnemyKey;
+            const field = anchor.dataset.edit;
+            const index = anchor.dataset.index === undefined ? null : parseInt(anchor.dataset.index, 10);
+            const enemy = enemies[key];
+            const attack = index === null ? null : (enemy.offensiveActions || [])[index];
+            const pop = document.createElement('div');
+            pop.className = 'edit-pop';
+            pop.id = 'editPop';
+            pop.setAttribute('role', 'menu');
+
+            const opt = (value, label, current) => `<button type="button" class="edit-opt${current ? ' current' : ''}" data-v='${escapeHtml(JSON.stringify(value))}' role="menuitem">${escapeHtml(label)}${current ? '<span class="ck">✓</span>' : ''}</button>`;
+
+            if (field === 'more') {
+                pop.innerHTML = `<h5>Add to this attack</h5>`
+                    + (!attack.condition ? `<button type="button" class="edit-opt" data-more="condition">Condition…</button>` : '')
+                    + (attack.unblockable !== true ? `<button type="button" class="edit-opt" data-more="unblockable">Mark as unblockable</button>` : '');
+            } else {
+                const def = QUICK_FIELDS[field];
+                const current = field.startsWith('enemy:') ? enemy[field.slice(6)] : attack[field];
+                let html = `<h5>${escapeHtml(def.label)}</h5>`;
+                if (def.number) {
+                    html += `<form class="edit-num" data-number="1" novalidate><input type="number" min="1" step="1" inputmode="numeric" value="${escapeHtml(current || '')}" aria-label="Hits"><button class="btn btn-small" type="submit">Save</button></form>
+                             <div class="an-note" style="padding:0 8px 6px;margin:0">Whole number. 99 = continues until interrupted.</div>`;
+                } else if (def.yesNo) {
+                    html += opt(true, 'Unblockable', current === true) + opt(null, 'Not unblockable', current !== true);
+                } else {
+                    html += def.options().map(v => opt(v, valueLabel('', v), String(current) === String(v))).join('');
+                    if (def.none) html += opt(null, def.none, !current);
+                }
+                pop.innerHTML = html;
+            }
+
+            pop.dataset.field = field;
+            pop.dataset.index = index === null ? '' : String(index);
+            document.body.appendChild(pop);
+            editAnchor = anchor;
+            placePop(pop, anchor);
+            const first = pop.querySelector('input, .edit-opt.current, .edit-opt');
+            if (first) first.focus({ preventScroll: true });
+        }
+
+        function applyQuickEdit(field, index, value) {
+            const key = openEnemyKey;
+            if (!key) return;
+            const enemy = enemies[key];
+            const patch = {};
+            let what;
+            if (field.startsWith('enemy:')) {
+                patch[field.slice(6)] = value;
+                what = `${QUICK_FIELDS[field].label}: ${value}`;
+            } else {
+                const base = `offensiveActions/${index}`;
+                patch[`${base}/${field}`] = value;
+                if (field === 'type' && value === 'grab') patch[`${base}/unblockable`] = true;   // grabs are always unblockable
+                const name = (enemy.offensiveActions || [])[index]?.name || `Action ${index + 1}`;
+                const shown = value === null ? (field === 'unblockable' ? 'not unblockable' : 'none') : value === true ? 'yes' : valueLabel('', value);
+                what = `${name}: ${QUICK_FIELDS[field].label.toLowerCase()} ${shown}`;
+            }
+            closeEditPop();
+            saveEnemyPatch(key, patch, what);
+        }
+
+        document.addEventListener('click', (e) => {
+            const anchor = e.target.closest('#detailPanel [data-edit]');
+            if (anchor) { e.preventDefault(); openEditPop(anchor); return; }
+            const pop = document.getElementById('editPop');
+            if (!pop) return;
+            if (!e.target.closest('#editPop')) return closeEditPop();
+            const more = e.target.closest('[data-more]');
+            if (more) {
+                const index = parseInt(pop.dataset.index, 10);
+                if (more.dataset.more === 'unblockable') return applyQuickEdit('unblockable', index, true);
+                // Re-open as the condition menu at the same spot
+                const fake = editAnchor;
+                closeEditPop();
+                const tmp = document.createElement('button');
+                tmp.dataset.edit = 'condition';
+                tmp.dataset.virtual = '1';
+                tmp.dataset.index = String(index);
+                tmp.getBoundingClientRect = () => fake.getBoundingClientRect();
+                openEditPop(tmp);
+                return;
+            }
+            const optBtn = e.target.closest('.edit-opt[data-v]');
+            if (optBtn) {
+                const index = pop.dataset.index === '' ? null : parseInt(pop.dataset.index, 10);
+                applyQuickEdit(pop.dataset.field, index, JSON.parse(optBtn.dataset.v));
+            }
+        });
+
+        document.addEventListener('submit', (e) => {
+            const form = e.target.closest('#editPop form[data-number]');
+            if (!form) return;
+            e.preventDefault();
+            const pop = document.getElementById('editPop');
+            const raw = form.querySelector('input').value.trim();
+            if (!/^\d+$/.test(raw) || parseInt(raw, 10) < 1) {
+                form.querySelector('input').classList.add('invalid');
+                return;
+            }
+            applyQuickEdit(pop.dataset.field, parseInt(pop.dataset.index, 10), raw);
+        });
+
+        // Keep the menu attached while the panel scrolls
+        document.addEventListener('scroll', (e) => {
+            const pop = document.getElementById('editPop');
+            if (!pop || !editAnchor) return;
+            if (e.target.closest && e.target.closest('#editPop')) return;
+            if (!editAnchor.dataset.virtual && !document.body.contains(editAnchor)) return closeEditPop();
+            placePop(pop, editAnchor);
+        }, true);
+        // =================== END QUICK EDIT ===================
 
         // ===================== VALIDATION =====================
         // One set of rules for the editor (blocks Save) and the analysis "Gaps to fill" list.
