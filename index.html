@@ -390,6 +390,31 @@
         .video-unmute:hover { background: rgba(30,32,38,.95); }
         .video-unmute svg.icon { width: 16px; height: 16px; }
 
+        /* Field guide: info buttons + popover */
+        .help-dot {
+            display: inline-grid; place-items: center; width: 18px; height: 18px; margin-left: 4px; padding: 0;
+            vertical-align: -3px; border-radius: 50%; border: 0; background: transparent; color: var(--text-faint);
+            cursor: pointer; flex-shrink: 0;
+        }
+        .help-dot:hover, .help-dot[aria-expanded="true"] { color: var(--accent); background: var(--bg-hover); }
+        .help-dot svg.icon { width: 15px; height: 15px; }
+        .help-pop {
+            position: fixed; z-index: 1300; width: min(340px, calc(100vw - 24px)); max-height: min(420px, 70vh); overflow-y: auto;
+            background: var(--bg-overlay); color: var(--text); border: 1px solid var(--border-strong); border-radius: 10px;
+            box-shadow: var(--shadow); padding: 12px 14px; font-size: 13.5px; line-height: 1.5; text-transform: none; letter-spacing: 0; font-weight: 400;
+        }
+        .help-pop h5 { font-size: 14px; font-weight: 650; margin-bottom: 4px; }
+        .help-pop dl, .guide-values { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; margin-top: 8px; }
+        .help-pop dt, .guide-values dt { font-weight: 600; color: var(--text); white-space: nowrap; }
+        .help-pop dd, .guide-values dd { color: var(--text-muted); }
+        .field-guide details { border-top: 1px solid var(--border); padding: 10px 0; }
+        .field-guide details:last-child { border-bottom: 1px solid var(--border); }
+        .field-guide summary { cursor: pointer; font-weight: 600; }
+        .field-guide summary + p { color: var(--text-muted); font-size: 14px; margin-top: 6px; }
+        .guide-values { font-size: 14px; }
+        .field-guide-group { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); margin: 16px 0 4px; }
+        .tag[title] { cursor: help; }
+
         /* Share dialog */
         .share-panel { max-width: 480px; }
         .share-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
@@ -533,6 +558,9 @@
             <p>
                 This is not comprehensive as there are enemy details and systems hidden to the player. Certain sections of the enemy's behaviors are more vague (like wind-up speeds and attack ranges) because what is slow or fast and close or far changes per game. This allows me to document things quickly according to that specific game without calculating specific ranges or framecounts on wind-ups. The videos are attached so you can also make that judgement yourself.
             </p>
+            <h3>Field guide</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">What each field means. Tap the <svg class="icon" style="width:14px;height:14px;vertical-align:-2px"><use href="#i-info"/></svg> next to a field anywhere on the site for the same definition.</p>
+            <div class="field-guide" id="fieldGuide"></div>
             <h3>How to Use</h3>
             <ul>
                 <li><strong>Anyone can view</strong> all enemy entries</li>
@@ -824,32 +852,32 @@
                 </div>
 
                 <div class="complex-section">
-                    <h3>Offensive Actions <button type="button" class="btn btn-small btn-success" onclick="addOffensiveAction()">+ Add Action</button></h3>
+                    <h3><span>Offensive Actions<button type="button" class="help-dot" data-help="offensive" aria-label="What is offensive actions?"><svg class="icon"><use href="#i-info"/></svg></button></span> <button type="button" class="btn btn-small btn-success" onclick="addOffensiveAction()">+ Add Action</button></h3>
                     <div id="offensiveActionsList"></div>
                 </div>
 
                 <div class="complex-section">
-                    <h3>Defensive Actions <button type="button" class="btn btn-small btn-success" onclick="addDefensiveAction()">+ Add Action</button></h3>
+                    <h3><span>Defensive Actions<button type="button" class="help-dot" data-help="defensive" aria-label="What is defensive actions?"><svg class="icon"><use href="#i-info"/></svg></button></span> <button type="button" class="btn btn-small btn-success" onclick="addDefensiveAction()">+ Add Action</button></h3>
                     <div id="defensiveActionsList"></div>
                 </div>
 
                 <div class="complex-section">
-                    <h3>Support Actions <button type="button" class="btn btn-small btn-success" onclick="addSupportAction()">+ Add Action</button></h3>
+                    <h3><span>Support Actions<button type="button" class="help-dot" data-help="support" aria-label="What is support actions?"><svg class="icon"><use href="#i-info"/></svg></button></span> <button type="button" class="btn btn-small btn-success" onclick="addSupportAction()">+ Add Action</button></h3>
                     <div id="supportActionsList"></div>
                 </div>
 
                 <div class="complex-section">
-                    <h3>Reactions <button type="button" class="btn btn-small btn-success" onclick="addReaction()">+ Add Reaction</button></h3>
+                    <h3><span>Reactions<button type="button" class="help-dot" data-help="reaction" aria-label="What is reactions?"><svg class="icon"><use href="#i-info"/></svg></button></span> <button type="button" class="btn btn-small btn-success" onclick="addReaction()">+ Add Reaction</button></h3>
                     <div id="reactionsList"></div>
                 </div>
 
                 <div class="complex-section">
-                    <h3>Locomotion <button type="button" class="btn btn-small btn-success" onclick="addLocomotion()">+ Add Locomotion</button></h3>
+                    <h3><span>Locomotion<button type="button" class="help-dot" data-help="locomotion" aria-label="What is locomotion?"><svg class="icon"><use href="#i-info"/></svg></button></span> <button type="button" class="btn btn-small btn-success" onclick="addLocomotion()">+ Add Locomotion</button></h3>
                     <div id="locomotionList"></div>
                 </div>
 
                 <div class="complex-section">
-                    <h3>Special Traits <button type="button" class="btn btn-small btn-success" onclick="addSpecialTrait()">+ Add Trait</button></h3>
+                    <h3><span>Special Traits<button type="button" class="help-dot" data-help="trait" aria-label="What is special traits?"><svg class="icon"><use href="#i-info"/></svg></button></span> <button type="button" class="btn btn-small btn-success" onclick="addSpecialTrait()">+ Add Trait</button></h3>
                     <div id="specialTraitsList"></div>
                 </div>
 
@@ -1012,6 +1040,7 @@
 
         document.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
+            if (helpPopFor) return closeHelp();
             if (document.getElementById('shareModal').classList.contains('active')) return closeShare();
             if (document.getElementById('importModal').classList.contains('active')) return closeImport();
             if (document.getElementById('filterModal').classList.contains('active')) return closeFilters();
@@ -1533,7 +1562,7 @@
                     </div>
                     <div class="list-item-grid">
                         <div class="field-inline">
-                            <label>Type</label>
+                            <label>Type${helpDot('attackType')}</label>
                             <select onchange="updateOffensiveAction(${action.id}, 'type', this.value)" value="${action.type}">
                                 <option value="">Select...</option>
                                 <option value="melee" ${action.type === 'melee' ? 'selected' : ''}>Melee</option>
@@ -1543,7 +1572,7 @@
                             </select>
                         </div>
                         <div class="field-inline">
-                            <label>Range</label>
+                            <label>Range${helpDot('range')}</label>
                             <select onchange="updateOffensiveAction(${action.id}, 'range', this.value)">
                                 <option value="">Select...</option>
                                 <option value="close" ${action.range === 'close' ? 'selected' : ''}>Close</option>
@@ -1552,11 +1581,11 @@
                             </select>
                         </div>
                         <div class="field-inline">
-                            <label>Combo Count</label>
+                            <label>Combo Count${helpDot('combo')}</label>
                             <input type="number" value="${escapeHtml(action.comboCount)}" onchange="updateOffensiveAction(${action.id}, 'comboCount', this.value)" min="0">
                         </div>
                         <div class="field-inline">
-                            <label>Windup Time</label>
+                            <label>Windup Time${helpDot('windup')}</label>
                             <select onchange="updateOffensiveAction(${action.id}, 'windupTime', this.value)">
                                 <option value="">Select...</option>
                                 <option value="slow" ${action.windupTime === 'slow' ? 'selected' : ''}>Slow</option>
@@ -1565,7 +1594,7 @@
                             </select>
                         </div>
                         <div class="field-inline">
-                            <label>Damage Type</label>
+                            <label>Damage Type${helpDot('damage')}</label>
                             <select onchange="updateOffensiveAction(${action.id}, 'damageType', this.value)">
                                 <option value="">Select...</option>
                                 <option value="physical" ${action.damageType === 'physical' ? 'selected' : ''}>Physical</option>
@@ -1582,7 +1611,7 @@
                             </select>
                         </div>
                         <div class="field-inline">
-                            <label>Condition</label>
+                            <label>Condition${helpDot('condition')}</label>
                             <select onchange="updateOffensiveAction(${action.id}, 'condition', this.value)">
                                 <option value="">Select...</option>
                                 <option value="blind" ${action.condition === 'blind' ? 'selected' : ''}>Blind</option>
@@ -1597,7 +1626,7 @@
                     <label class="check-inline">
                         <input type="checkbox" data-action-id="${action.id}" ${action.unblockable === true ? 'checked' : ''} onchange="updateOffensiveAction(${action.id}, 'unblockable', this.checked)">
                         Unblockable <span style="color: var(--text-faint); font-size: 12px;">(any hit in this attack: unblockable, unparryable, critical blow, perilous, grabs…)</span>
-                    </label>
+                    </label>${helpDot('unblockable')}
                     <div class="field-inline">
                         <label>Details</label>
                         <textarea onchange="updateOffensiveAction(${action.id}, 'details', this.value)">${escapeHtml(action.details)}</textarea>
@@ -1652,7 +1681,7 @@
                     </div>
                     <div class="list-item-grid">
                         <div class="field-inline">
-                            <label>Type</label>
+                            <label>Type${helpDot('defenseType')}</label>
                             <select onchange="updateDefensiveAction(${action.id}, 'type', this.value)">
                                 <option value="">Select...</option>
                                 <option value="block" ${action.type === 'block' ? 'selected' : ''}>Block</option>
@@ -1662,7 +1691,7 @@
                             </select>
                         </div>
                         <div class="field-inline">
-                            <label>Defensive Reaction</label>
+                            <label>Defensive Reaction${helpDot('defenseFollowup')}</label>
                             <select onchange="updateDefensiveAction(${action.id}, 'defensiveReaction', this.value)">
                                 <option value="">Select...</option>
                                 <option value="block followup" ${action.defensiveReaction === 'block followup' ? 'selected' : ''}>Block Followup</option>
@@ -1718,7 +1747,7 @@
                     </div>
                     <div class="list-item-grid">
                         <div class="field-inline">
-                            <label>Type</label>
+                            <label>Type${helpDot('support')}</label>
                             <select onchange="updateSupportAction(${action.id}, 'type', this.value)">
                                 <option value="">Select...</option>
                                 <option value="heal self" ${action.type === 'heal self' ? 'selected' : ''}>Heal Self</option>
@@ -1776,7 +1805,7 @@
                     </div>
                     <div class="list-item-grid">
                         <div class="field-inline">
-                            <label>Type</label>
+                            <label>Type${helpDot('reaction')}</label>
                             <select onchange="updateReaction(${reaction.id}, 'type', this.value)">
                                 <option value="">Select...</option>
                                 <option value="reduced" ${reaction.type === 'reduced' ? 'selected' : ''}>Reduced Reactions</option>
@@ -1832,7 +1861,7 @@
                     </div>
                     <div class="list-item-grid">
                         <div class="field-inline">
-                            <label>Type</label>
+                            <label>Type${helpDot('locomotion')}</label>
                             <select onchange="updateLocomotion(${loco.id}, 'type', this.value)">
                                 <option value="">Select...</option>
                                 <option value="grounded" ${loco.type === 'grounded' ? 'selected' : ''}>Grounded</option>
@@ -1883,7 +1912,7 @@
                         <button type="button" class="btn btn-small btn-danger" onclick="removeSpecialTrait(${trait.id})">Remove</button>
                     </div>
                     <div class="field-inline" style="margin-bottom: 10px;">
-                        <label>Category</label>
+                        <label>Category${helpDot('trait')}</label>
                         <select onchange="updateSpecialTrait(${trait.id}, 'category', this.value)" style="flex: 1; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
                             <option value="">Select...</option>
                             <option value="equipment" ${trait.category === 'equipment' ? 'selected' : ''}>Equipment</option>
@@ -3010,13 +3039,13 @@
             activePlayer = null; // any playing video is replaced by this render
             const enemy = { key, ...enemies[key] };
             const owner = isOwner();
-            const tag = (label, value, cls = '') => `<span class="tag ${cls}">${label ? `${label} ` : ''}<strong>${escapeHtml(value)}</strong></span>`;
+            const tag = (label, value, cls = '', tip = '') => `<span class="tag ${cls}"${tip ? ` title="${escapeHtml(tip)}"` : ''}>${label ? `${label} ` : ''}<strong>${escapeHtml(value)}</strong></span>`;
 
             const heroTags = [];
-            if (enemy.type) heroTags.push(`<span class="tag type ${typeClass(enemy.type)}"><strong>${escapeHtml(enemy.type)}</strong></span>`);
-            if (enemy.size) heroTags.push(tag('Size', enemy.size));
+            if (enemy.type) heroTags.push(`<span class="tag type ${typeClass(enemy.type)}" title="${escapeHtml(guideTip('type', enemy.type))}"><strong>${escapeHtml(enemy.type)}</strong></span>`);
+            if (enemy.size) heroTags.push(tag('Size', enemy.size, '', guideTip('size', enemy.size)));
             if (enemy.weapon) heroTags.push(tag('', enemy.weapon));
-            (enemy.locomotion || []).forEach(l => l && l.type && heroTags.push(tag('', cap(l.type))));
+            (enemy.locomotion || []).forEach(l => l && l.type && heroTags.push(tag('', cap(l.type), '', guideTip('locomotion', l.type))));
 
             let sections = '';
             let side = '';
@@ -3043,13 +3072,13 @@
             if (offensive.length) {
                 const rows = offensive.map(a => {
                     const t = [];
-                    if (a.type) t.push(tag('', a.type === 'aoe' ? 'AOE' : cap(a.type)));
-                    if (a.range) t.push(tag('Range', cap(a.range)));
-                    if (a.comboCount) t.push(tag('Hits', a.comboCount));
-                    if (a.windupTime) t.push(tag('Windup', cap(a.windupTime)));
-                    if (a.damageType) t.push(`<span class="tag dmg dmg-${escapeHtml(a.damageType)}">${escapeHtml(cap(a.damageType))}</span>`);
-                    if (a.condition) t.push(`<span class="tag cond">${escapeHtml(cap(a.condition))}</span>`);
-                    if (a.unblockable === true) t.push(`<span class="tag unblockable">Unblockable</span>`);
+                    if (a.type) t.push(tag('', a.type === 'aoe' ? 'AOE' : cap(a.type), '', guideTip('attackType', a.type)));
+                    if (a.range) t.push(tag('Range', cap(a.range), '', guideTip('range', a.range)));
+                    if (a.comboCount) t.push(tag('Hits', a.comboCount, '', guideTip('combo')));
+                    if (a.windupTime) t.push(tag('Windup', cap(a.windupTime), '', guideTip('windup', a.windupTime)));
+                    if (a.damageType) t.push(`<span class="tag dmg dmg-${escapeHtml(a.damageType)}" title="${escapeHtml(guideTip('damage', a.damageType))}">${escapeHtml(cap(a.damageType))}</span>`);
+                    if (a.condition) t.push(`<span class="tag cond" title="${escapeHtml(guideTip('condition', a.condition))}">${escapeHtml(cap(a.condition))}</span>`);
+                    if (a.unblockable === true) t.push(`<span class="tag unblockable" title="${escapeHtml(guideTip('unblockable'))}">Unblockable</span>`);
                     return moveRow(a.name || cap(a.type) || 'Action', t, a.details);
                 }).join('');
                 sections += section('i-swords', 'Offensive actions', offensive.length, `<div class="move-list">${rows}</div>`);
@@ -3293,6 +3322,206 @@
         function initDarkMode() {
             applyTheme(readThemePref() !== 'disabled');
         }
+
+
+        // ===================== FIELD GUIDE =====================
+        // One source of truth for every definition: feeds the (i) popovers, the hover titles on tags,
+        // and the Field guide in the About page. Edit wording here and it updates everywhere.
+        // Scales like range, windup and size are relative to each game, not absolute.
+        const FIELD_GUIDE = {
+            type: { group: 'Enemy', label: 'Enemy type', summary: 'How much of a threat the enemy is meant to be within its game.', values: {
+                'Regular': 'Standard enemy. Usually in groups, dies quickly, small moveset.',
+                'Elite': 'Tougher version of a regular: more health, bigger moveset, often leads a group or stands alone.',
+                'Mini-Boss': 'Rare or unique encounter with its own health bar that is not a main story boss.',
+                'Boss': 'Major encounter, usually in its own arena with a named health bar.' } },
+            size: { group: 'Enemy', label: 'Enemy size', summary: 'Body size compared with the player character.', values: {
+                'Tiny': 'Far smaller than the player, around knee height or less.',
+                'Small': 'Noticeably smaller than the player, up to about chest height.',
+                'Medium': 'About the same size as the player.',
+                'Large': 'Clearly bigger than the player, up to around twice their height.',
+                'Huge': 'Several times the player\'s height. Attacks come from above.',
+                'Gargantuan': 'Environment-scale. The body itself is part of the arena.' } },
+            weapon: { group: 'Enemy', label: 'Weapon type', summary: 'What the enemy attacks with. Free text, including natural weapons like claws or teeth.' },
+            locomotion: { group: 'Enemy', label: 'Locomotion', summary: 'How the enemy moves around the environment.', values: {
+                'grounded': 'Walks or runs on the ground.',
+                'hovering': 'Floats just above the ground, ignoring terrain but staying within normal reach.',
+                'flying': 'Moves freely in the air and can leave melee reach.',
+                'swimming': 'Moves through water.' } },
+            variant: { group: 'Enemy', label: 'Variant', summary: 'Links enemies that share a base design, like the same body or moveset with a different weapon or upgrade.' },
+
+            offensive: { group: 'Offensive actions', label: 'Offensive actions', summary: 'Enemy actions mainly meant to damage their target. One entry per distinct attack or combo.' },
+            attackType: { group: 'Offensive actions', label: 'Attack type', summary: 'How the attack reaches the target.', values: {
+                'melee': 'Hits with body or weapon contact.',
+                'ranged': 'A projectile or beam that travels to the target.',
+                'grab': 'Seizes the player into a held or sync animation. Always counts as unblockable.',
+                'aoe': 'Damages an area rather than a single target: shockwaves, explosions, lingering fields.' } },
+            range: { group: 'Offensive actions', label: 'Range', summary: 'Where the player has to be for the attack to hit. Relative to the game.', values: {
+                'close': 'Within the enemy\'s normal weapon reach.',
+                'medium': 'A step or lunge away. The enemy closes the gap as part of the attack.',
+                'far': 'Across the arena. Projectiles, big leaps or long charges.' } },
+            combo: { group: 'Offensive actions', label: 'Combo count', summary: 'Number of damaging hits in the attack. 1 is a single strike. For variable combos, use the most hits seen. 99 means it continues until interrupted.' },
+            windup: { group: 'Offensive actions', label: 'Windup time', summary: 'How long the telegraph lasts before the hit, compared with that game\'s typical attack.', values: {
+                'fast': 'Quicker than usual. Hard to react to on sight.',
+                'medium': 'A typical, readable telegraph for that game.',
+                'slow': 'Long or delayed telegraph, often held to bait an early dodge.' } },
+            damage: { group: 'Offensive actions', label: 'Damage type', summary: 'The general category of damage, not the game\'s own name for it.', values: {
+                'physical': 'Strikes, slashes, stabs and bleed.',
+                'fire': 'Fire and burning.',
+                'ice': 'Frost and cold.',
+                'poison': 'Poison, toxins and venom.',
+                'force': 'Wind and raw kinetic force.',
+                'lightning': 'Electricity and shock.',
+                'psychic': 'Madness and mind attacks.',
+                'radiant': 'Holy and light.',
+                'necrotic': 'Death, blight and decay.',
+                'water': 'Water and pressure.',
+                'magic': 'Arcane and sorcery.' } },
+            condition: { group: 'Offensive actions', label: 'Condition', summary: 'A status the attack puts on the player beyond damage.', values: {
+                'blind': 'Vision is blocked or reduced.',
+                'deaf': 'Sound cues are blocked or reduced.',
+                'grappled': 'Held or restrained, usually until the grab ends or the player mashes free.',
+                'paralyze': 'Stunned and unable to act for a moment.',
+                'poisoned': 'Takes damage over time or carries a lasting debuff.',
+                'vulnerable': 'Takes extra damage or is open to a follow-up, like a broken guard.' } },
+            unblockable: { group: 'Offensive actions', label: 'Unblockable', summary: 'At least one hit in this attack can\'t be stopped by the game\'s standard block and needs another answer: dodge, deflect, jump, duck or escaping a grab. Includes "critical blow", "perilous" and "unparryable" attacks, and all grabs.' },
+
+            defensive: { group: 'Defense, support and reactions', label: 'Defensive actions', summary: 'Enemy actions mainly meant to avoid or reduce incoming damage.' },
+            defenseType: { group: 'Defense, support and reactions', label: 'Defensive action', summary: 'How the enemy protects itself.', values: {
+                'block': 'Absorbs hits with a guard or shield.',
+                'evade': 'Moves out of the way: dodge, backstep, sidestep.',
+                'deflect': 'A timed parry that negates the hit, often opening a counter.',
+                'none': 'Never defends.' } },
+            defenseFollowup: { group: 'Defense, support and reactions', label: 'Defensive followup', summary: 'A counterattack the enemy launches straight out of that defense.', values: {
+                'block followup': 'Attacks after blocking, often after a set number of blocked hits.',
+                'evade followup': 'Attacks out of an evade.',
+                'deflect followup': 'Attacks after deflecting the player.',
+                'none': 'Defends without countering.' } },
+            support: { group: 'Defense, support and reactions', label: 'Support actions', summary: 'Enemy actions that make themselves or their allies stronger.', values: {
+                'heal self': 'Restores its own health.',
+                'heal other': 'Restores an ally\'s health.',
+                'buff self': 'Strengthens itself for a time.',
+                'buff other': 'Strengthens an ally.',
+                'summon': 'Brings new enemies into the fight.',
+                'resurrect': 'Brings defeated enemies back.' } },
+            reaction: { group: 'Defense, support and reactions', label: 'Reactions', summary: 'How the enemy responds when it gets hit or interrupted.', values: {
+                'reduced': 'Flinches or staggers less than a standard enemy, including hyper armor or poise during its attacks.',
+                'increased': 'Reacts more than usual, like falling over from a specific move.',
+                'defensive': 'Answers getting hit by defending: blocking, evading or backing off.',
+                'offensive': 'Answers getting hit or parried by attacking.',
+                'death': 'Does something special when it dies: explodes, revives, drops something.' } },
+            trait: { group: 'Defense, support and reactions', label: 'Special traits', summary: 'Unique passive traits that change how the fight plays.', values: {
+                'equipment': 'Gear that changes the fight and can often be broken, like a shield or jetpack.',
+                'passive debuff': 'A lasting weakness on the enemy or a lasting penalty on the player.',
+                'passive buff': 'A lasting strength, like extra damage in a later phase.',
+                'aura': 'A persistent effect in an area around the enemy.',
+                'environmental interaction': 'Uses or changes the arena, like throwing rocks or breaking cover.',
+                'visibility': 'Hidden, invisible or ambushing.',
+                'dismemberment': 'Body parts can be removed, changing its moveset.',
+                'transformation': 'Changes form or moveset mid-fight.' } }
+        };
+
+        // "Large: Clearly bigger..." for a tag's hover title; field summary when there's no value
+        function guideTip(key, value) {
+            const f = FIELD_GUIDE[key];
+            if (!f) return '';
+            if (value !== undefined && f.values) {
+                const hit = Object.keys(f.values).find(k => k.toLowerCase() === String(value).toLowerCase());
+                if (hit) return `${cap(hit)}: ${f.values[hit]}`;
+            }
+            return f.summary;
+        }
+
+        function helpDot(key) {
+            const f = FIELD_GUIDE[key];
+            if (!f) return '';
+            return `<button type="button" class="help-dot" data-help="${key}" aria-label="What is ${escapeHtml(f.label.toLowerCase())}?" aria-expanded="false"><svg class="icon"><use href="#i-info"/></svg></button>`;
+        }
+
+        function guideValuesHtml(f) {
+            if (!f.values) return '';
+            return '<dl class="guide-values">' + Object.entries(f.values)
+                .map(([k, v]) => `<dt>${escapeHtml(k === 'aoe' ? 'AOE' : cap(k))}</dt><dd>${escapeHtml(v)}</dd>`).join('') + '</dl>';
+        }
+
+        let helpPopFor = null;
+        function openHelp(button) {
+            const key = button.dataset.help;
+            const f = FIELD_GUIDE[key];
+            if (!f) return;
+            if (helpPopFor === button) return closeHelp();
+            closeHelp();
+            const pop = document.createElement('div');
+            pop.className = 'help-pop';
+            pop.id = 'helpPop';
+            pop.setAttribute('role', 'tooltip');
+            pop.innerHTML = `<h5>${escapeHtml(f.label)}</h5><div>${escapeHtml(f.summary)}</div>${guideValuesHtml(f).replace('guide-values', '')}`;
+            document.body.appendChild(pop);
+            button.setAttribute('aria-expanded', 'true');
+            helpPopFor = button;
+            positionHelp();
+        }
+
+        // Keeps the popover attached to its button while the page or a panel scrolls
+        function positionHelp() {
+            const pop = document.getElementById('helpPop');
+            if (!pop || !helpPopFor) return;
+            if (!document.body.contains(helpPopFor)) return closeHelp();
+            const r = helpPopFor.getBoundingClientRect();
+            if (r.bottom < 0 || r.top > window.innerHeight) return closeHelp();
+            const w = pop.offsetWidth, h = pop.offsetHeight;
+            const left = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), window.innerWidth - w - 12);
+            let top = r.bottom + 8;
+            if (top + h > window.innerHeight - 12 && r.top - h - 8 > 12) top = r.top - h - 8;
+            pop.style.left = left + 'px';
+            pop.style.top = Math.max(12, top) + 'px';
+        }
+
+        function closeHelp() {
+            const pop = document.getElementById('helpPop');
+            if (pop) pop.remove();
+            if (helpPopFor) helpPopFor.setAttribute('aria-expanded', 'false');
+            helpPopFor = null;
+        }
+
+        // One listener handles every (i) button, including ones rendered later
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.help-dot');
+            if (btn) { e.preventDefault(); e.stopPropagation(); openHelp(btn); return; }
+            if (helpPopFor && !e.target.closest('#helpPop')) closeHelp();
+        }, true);
+        window.addEventListener('resize', positionHelp);
+        document.addEventListener('scroll', (e) => { if (!(e.target.closest && e.target.closest('#helpPop'))) positionHelp(); }, true);
+
+        // Static labels: editor fields and the filter panel
+        const STATIC_HELP = {
+            enemyType: 'type', enemySize: 'size', enemyWeapon: 'weapon', variantEnemy: 'variant',
+            filterType: 'type', filterSize: 'size', filterLocomotion: 'locomotion',
+            filterOffensiveType: 'attackType', filterOffensiveRange: 'range', filterOffensiveCombo: 'combo',
+            filterOffensiveWindup: 'windup', filterOffensiveDamage: 'damage', filterOffensiveCondition: 'condition',
+            filterOffensiveUnblockable: 'unblockable', filterDefensiveType: 'defenseType',
+            filterDefensiveReaction: 'defenseFollowup', filterSupportType: 'support', filterReactionType: 'reaction'
+        };
+        function addStaticHelpDots() {
+            Object.entries(STATIC_HELP).forEach(([id, key]) => {
+                const label = document.querySelector(`label[for="${id}"]`);
+                if (label && !label.querySelector('.help-dot')) label.insertAdjacentHTML('beforeend', helpDot(key));
+            });
+        }
+
+        function renderFieldGuide() {
+            const el = document.getElementById('fieldGuide');
+            if (!el) return;
+            let html = '', group = '';
+            Object.values(FIELD_GUIDE).forEach(f => {
+                if (f.group !== group) { group = f.group; html += `<div class="field-guide-group">${escapeHtml(group)}</div>`; }
+                html += `<details><summary>${escapeHtml(f.label)}</summary><p>${escapeHtml(f.summary)}</p>${guideValuesHtml(f)}</details>`;
+            });
+            el.innerHTML = html;
+        }
+
+        addStaticHelpDots();
+        renderFieldGuide();
+        // =================== END FIELD GUIDE ===================
 
         initDarkMode();
     </script>
